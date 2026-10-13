@@ -1,26 +1,26 @@
 {
-  "expo": {
-    "name": "RnCuicuic Example",
-    "slug": "rn-cuicuic-example",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "rncuicuic.example"
-    },
-    "android": {
-      "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
-      },
-      "package": "rncuicuic.example"
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
+    "expo": {
+        "name": "RnCuicuic Example",
+        "slug": "rn-cuic-example",
+        "version": "1.0.0",
+        "orientation": "portrait",
+        "icon": "./assets/icon.png",
+        "userInterfaceStyle": "light",
+        "ios": {
+            "supportsTablet": true,
+            "bundleIdentifier": "rncuicuic.example"
+        },
+        "android": {
+            "adaptiveIcon": {
+                "backgroundColor": "#E6F4FE",
+                "foregroundImage": "./assets/android-icon-foreground.png",
+                "backgroundImage": "./assets/android-icon-background.png",
+                "monochromeImage": "./assets/android-icon-monochrome.png"
+            },
+            "package": "rncuicuic.example"
+        },
+        "web": {
+            "favicon": "./assets/favicon.png"
+        }
     }
-  }
 }

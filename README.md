@@ -1,4 +1,4 @@
-# rn-cuicuic
+# rn-cuic
 
 customizable ui components for react native
 
@@ -6,7 +6,7 @@ customizable ui components for react native
 
 
 ```sh
-npm install rn-cuicuic
+npm install rn-cuic
 ```
 
 
@@ -14,7 +14,7 @@ npm install rn-cuicuic
 
 
 ```js
-import { multiply } from 'rn-cuicuic';
+import { multiply } from 'rn-cuic';
 
 // ...
 
