@@ -16,7 +16,7 @@
         "android": "expo start --android",
         "ios": "expo start --ios",
         "web": "expo start --web",
-        "build:ios": "xcodebuild ONLY_ACTIVE_ARCH=YES -workspace ios/RnCuicuicExample.xcworkspace -UseNewBuildSystem=YES -scheme RnCuicuicExample -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build -quiet",
+        "build:ios": "xcodebuild ONLY_ACTIVE_ARCH=YES -workspace ios/rncuicExample.xcworkspace -UseNewBuildSystem=YES -scheme rncuicExample -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build -quiet",
         "build:android": "cd android && ./gradlew assembleDebug -DtestBuildType=debug -Dorg.gradle.jvmargs=-Xmx4g",
         "build:web": "expo export --platform web"
     },

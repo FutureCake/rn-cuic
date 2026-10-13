@@ -1,14 +1,17 @@
 {
     "expo": {
-        "name": "RnCuicuic Example",
+        "name": "RnCuic Example",
         "slug": "rn-cuic-example",
         "version": "1.0.0",
         "orientation": "portrait",
         "icon": "./assets/icon.png",
         "userInterfaceStyle": "light",
+        "plugins": [
+            "@react-native-community/datetimepicker"
+        ],
         "ios": {
             "supportsTablet": true,
-            "bundleIdentifier": "rncuicuic.example"
+            "bundleIdentifier": "rncuic.example"
         },
         "android": {
             "adaptiveIcon": {
@@ -17,7 +20,7 @@
                 "backgroundImage": "./assets/android-icon-background.png",
                 "monochromeImage": "./assets/android-icon-monochrome.png"
             },
-            "package": "rncuicuic.example"
+            "package": "rncuic.example"
         },
         "web": {
             "favicon": "./assets/favicon.png"
