@@ -47,14 +47,14 @@
     ],
     "repository": {
         "type": "git",
-        "url": "git+https://tbd.com.git"
+        "url": "git+https://github.com/FutureCake/rn-cuic.git"
     },
-    "author": "FutureCake <thomas.c.hoek+cuic@gmail.com> (https://www.nothing.comwww.nothing.com)",
+    "author": "FutureCake <thomas.c.hoek+cuic@gmail.com> (https://www.github.com/FutureCake)",
     "license": "MIT",
     "bugs": {
-        "url": "https://tbd.com/issues"
+        "url": "https://github.com/FutureCake/rn-cuic/issues"
     },
-    "homepage": "https://tbd.com#readme",
+    "homepage": "https://github.com/FutureCake/rn-cuic#readme",
     "publishConfig": {
         "registry": "https://registry.npmjs.org/"
     },
