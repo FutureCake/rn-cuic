@@ -1,13 +1,11 @@
-import { Text, View, StyleSheet } from 'react-native';
-import { multiply } from 'rn-cuic';
-
-const result = multiply(3, 7);
+import { StyleSheet, Text } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Result: {result}</Text>
-    </View>
+    <GestureHandlerRootView style={styles.container}>
+      <Text>Hello, World!</Text>
+    </GestureHandlerRootView>
   );
 }
 

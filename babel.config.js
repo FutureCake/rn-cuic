@@ -1,3 +1,5 @@
+// Leave library worklets untransformed so the consuming app can compile them
+// with its own version of the Worklets Babel plugin.
 module.exports = {
   overrides: [
     {

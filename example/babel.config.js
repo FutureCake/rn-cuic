@@ -9,6 +9,7 @@ module.exports = function (api) {
 
   return getConfig(
     {
+      // Expo automatically enables the Worklets plugin when it is installed.
       presets: ['babel-preset-expo'],
     },
     { root, pkg }
