@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LiteUI } from '@storybook/react-native-ui-lite';
 import { registerRootComponent } from 'expo';
 
@@ -11,11 +10,7 @@ import { view } from './storybook.requires';
  * with application decorators/providers (theme, i18n, state, navigation, etc).
  */
 const StorybookUIRoot = view.getStorybookUI({
-  shouldPersistSelection: true,
-  storage: {
-    getItem: AsyncStorage.getItem,
-    setItem: AsyncStorage.setItem,
-  },
+  shouldPersistSelection: false,
   CustomUIComponent: LiteUI,
 });
 
