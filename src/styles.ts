@@ -5,4 +5,4 @@ import { createStylesManager } from './providers-and-hooks/styles-manager';
 export const componentStyles = { Button: buttonStyleDefinition };
 
 export const { StylesProvider, useResolveComponentStyles } =
-  createStylesManager(componentStyles);
+    createStylesManager(componentStyles);

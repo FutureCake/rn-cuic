@@ -1,14 +1,14 @@
 // Leave library worklets untransformed so the consuming app can compile them
 // with its own version of the Worklets Babel plugin.
 module.exports = {
-  overrides: [
-    {
-      exclude: /\/node_modules\//,
-      presets: ['module:react-native-builder-bob/babel-preset'],
-    },
-    {
-      include: /\/node_modules\//,
-      presets: ['module:@react-native/babel-preset'],
-    },
-  ],
+    overrides: [
+        {
+            exclude: /\/node_modules\//,
+            presets: ['module:react-native-builder-bob/babel-preset'],
+        },
+        {
+            include: /\/node_modules\//,
+            presets: ['module:@react-native/babel-preset'],
+        },
+    ],
 };

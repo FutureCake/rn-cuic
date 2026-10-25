@@ -1,6 +1,6 @@
 # rn-cuic
 
-customizable ui components for react native
+Customizable UI Components for react native
 
 ## Installation
 

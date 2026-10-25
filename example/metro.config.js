@@ -12,12 +12,12 @@ const root = path.resolve(__dirname, '..');
  * @type {import('metro-config').MetroConfig}
  */
 const config = withMetroConfig(getDefaultConfig(__dirname), {
-  root,
-  dirname: __dirname,
-  conditions: ['rn-cuic-source'],
+    root,
+    dirname: __dirname,
+    conditions: ['rn-cuic-source'],
 });
 
 module.exports = withStorybook(config, {
-  configPath: path.resolve(root, '.rnstorybook'),
-  liteMode: true,
+    configPath: path.resolve(root, '.rnstorybook'),
+    liteMode: true,
 });
