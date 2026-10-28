@@ -1,11 +1,19 @@
+import type { ReactNode } from 'react';
 import type {
     ColorValue,
+    ImageProps,
+    ImageSourcePropType,
     ImageStyle,
     PressableProps,
+    StyleProp,
+    TextProps,
     TextStyle,
     ViewStyle,
 } from 'react-native';
-import type { StyleDefinition } from '../../providers-and-hooks';
+import type {
+    ResolvedComponentTokens,
+    StyleDefinition,
+} from '../../providers-and-hooks';
 import type { StyleOverrides } from '../../utils/types';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'left-to-right';
@@ -35,13 +43,38 @@ export type ButtonStyleDefinition = StyleDefinition<
     { container: ViewStyle; text: TextStyle; icon: ImageStyle }
 >;
 
-export interface ButtonProps extends Omit<
-    PressableProps,
-    'children' | 'style'
-> {
-    text: string;
+type ButtonBaseProps = Omit<PressableProps, 'children' | 'style'> & {
     variant?: ButtonVariant;
     size?: ButtonSize;
     theme?: ThemeMode;
     styleOverrides?: StyleOverrides<ButtonSlots>;
-}
+};
+
+export type ButtonProps = ButtonBaseProps & {
+    /** Fallback label, replaced by an explicit Button.Text child. */
+    text?: string;
+    /** Fallback leading image, replaced by an explicit Button.Icon child. */
+    icon?: ImageSourcePropType;
+    children?: ReactNode;
+};
+
+export type ButtonTextProps = TextProps;
+
+export type ButtonIconRenderProps = {
+    tokens: ResolvedComponentTokens<ButtonStyleDefinition>;
+    style: StyleProp<ImageStyle>;
+    pressed: boolean;
+    disabled: boolean;
+};
+
+export type ButtonIconProps =
+    | (Omit<ImageProps, 'source' | 'children'> & {
+          source: ImageSourcePropType;
+          children?: never;
+      })
+    | {
+          source?: never;
+          /** Custom nodes own their styles; callbacks receive the slot style. */
+          children: ReactNode | ((props: ButtonIconRenderProps) => ReactNode);
+          style?: StyleProp<ImageStyle>;
+      };

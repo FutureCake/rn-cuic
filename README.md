@@ -75,12 +75,13 @@ function App() {
 Inside a component:
 
 ```tsx
-const styles = useResolveComponentStyles('Button', {
-	influencers: { variant: 'rounded', size: 'medium', theme: 'dark' },
+const { styles, tokens } = useResolveComponentStyles('Button', {
+	influencers: { variant: 'primary', size: 'small', theme: 'dark' },
 	states: { pressed: true, disabled: false },
 });
 // styles.container is ViewStyle + Reanimated transition settings.
 // styles.text is TextStyle + Reanimated transition settings.
+// tokens.iconSize and tokens.iconColor include active state overrides.
 ```
 
 Component names, influence names/values, state names, and returned slots are
@@ -109,8 +110,135 @@ callbacks receive all influences. Callbacks should be pure. Reanimated's
 `transition` configuration is spread into every returned slot: apply those styles
 to `Animated` elements to animate style changes. The manager itself does not
 manage interaction state, worklets, native behavior, or accessibility. Button
-owns its pressed/disabled behavior and applies both slot styles to animated
+owns its pressed/disabled behavior and applies its slot styles to animated
 elements.
+
+### Resolver return migration
+
+`useResolveComponentStyles` and the pure `resolveComponentStyles` now return
+`{ styles, tokens }` instead of a bare slot-style map. Existing callers must
+destructure `styles` before accessing slots. Tokens are typed as read-only and
+include defaults, influences, and active states. Slot-level `styleOverrides`
+and local part styles do not change these tokens.
+
+## Button slots
+
+The original text shorthand remains available, with an optional leading image:
+
+```tsx
+<Button text="Save" icon={saveImage} onPress={save} />
+```
+
+For composition, use `Button.Text` and `Button.Icon`. Both read resolved styles
+from the nearest Button through a private context, including pressed/disabled
+changes. They work through wrappers and fragments; using a part outside Button
+throws. The root accepts shorthand `text`/`icon` together with explicit children.
+Each explicit part overrides only its corresponding prop. Both props are optional,
+so `icon` alone can also render an icon-only button.
+
+```tsx
+<Button onPress={save}>
+	<Button.Icon source={saveImage} />
+	<Button.Text>Save</Button.Text>
+</Button>
+
+<Button onPress={save} accessibilityLabel="Save">
+	<Button.Icon source={saveImage} />
+</Button>
+```
+
+With no overrides, shorthand order is icon then text. A single override replaces
+its corresponding part in that order. When both parts are supplied as children,
+their order of appearance wins. Every explicit part is retained, including multiple
+instances of the same part; the corresponding fallback is omitted only once.
+
+```tsx
+// Custom icon, fallback text: icon then text.
+<Button text="Save" icon={saveImage}>
+	<Button.Icon source={customImage} />
+</Button>
+
+// Fallback icon, custom text: icon then text.
+<Button text="Fallback label" icon={saveImage}>
+	<Button.Text>Custom label</Button.Text>
+</Button>
+
+// Both overridden: explicit text then icon order is preserved.
+<Button text="Fallback label" icon={saveImage}>
+	<Button.Text>Custom label</Button.Text>
+	<Button.Icon source={customImage} />
+</Button>
+```
+
+Override detection recognizes direct parts, arrays, and fragments, not parts hidden
+inside wrappers or custom components. Such nested parts still consume context but
+do not suppress fallback props. Children are never cloned or reordered. Other
+custom children retain their relative order; any fallback icon goes before all
+children and any fallback text goes after them. An explicit empty part also
+suppresses its fallback. A conditional `false`/`null` child does not.
+
+Native text/image props are supported by the
+built-in parts. Built-in images are decorative (`accessible={false}`) by default;
+this can be overridden. Provide an accessible label for icon-only buttons.
+
+Local part `style` is applied after the root's resolved slot styles and
+`styleOverrides`. Existing icon spacing tokens are unchanged; configure spacing
+through the style definition or a container slot override.
+
+### Custom icon rendering
+
+`Button.Icon` accepts an image `source`, ordinary children, or a render-function
+child. Source and children are mutually exclusive. Plain children render unchanged,
+without a wrapper or automatic styles. A render function receives the complete
+resolved `tokens`, composed icon `style`, and effective `pressed`/`disabled` state:
+
+```tsx
+<Button onPress={save}>
+	<Button.Icon>
+		{({ tokens }) => (
+			<SaveSvg
+				width={tokens.iconSize}
+				height={tokens.iconSize}
+				fill={tokens.iconColor}
+			/>
+		)}
+	</Button.Icon>
+	<Button.Text>Save</Button.Text>
+</Button>
+```
+
+Custom renderers explicitly map tokens/styles to their renderer's API and own
+their accessibility and animation behavior. Image-only props such as `onLoad`
+belong to source mode, not custom mode. To honor slot or local style overrides,
+use the supplied `style` (mapping image properties such as `tintColor` as needed),
+rather than relying only on tokens.
+
+### Reusable slot contexts
+
+`createSlotContext<Value>(componentName)` is a public utility. Call it once at
+module scope per component family; it returns `{ Provider, useSlotContext }`.
+Each invocation creates an isolated context, and the hook throws without its
+matching provider. The optional hook argument names the consuming part in errors.
+
+```tsx
+import { createSlotContext } from 'rn-cuic';
+
+type DisclosureContext = {
+	expanded: boolean;
+	toggle: () => void;
+};
+
+const { Provider, useSlotContext } =
+	createSlotContext<DisclosureContext>('Disclosure');
+```
+
+The value shape is generic: add typed styles, tokens, state, actions, or any other
+component-specific fields without changing the utility. It does not resolve
+styles or manage state itself. Button's own provider and hook are private.
+
+`hasSlot(children, Part)` is also exported for components that need per-part
+fallbacks. It checks element identity through arrays/fragments without rendering
+components or traversing their contents.
 
 ## Contributing
 

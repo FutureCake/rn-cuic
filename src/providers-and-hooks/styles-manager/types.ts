@@ -119,6 +119,17 @@ export type ResolvedComponentStyles<Definition> =
         ? { [Slot in keyof Slots]: StyleProp<Slots[Slot]> }
         : never;
 
+/** Final tokens after influences and active states, before slot overrides. */
+export type ResolvedComponentTokens<Definition> =
+    DefinitionContract<Definition> extends { tokens: infer Tokens }
+        ? Readonly<Tokens>
+        : never;
+
+export type ResolvedComponentResult<Definition> = {
+    styles: ResolvedComponentStyles<Definition>;
+    tokens: ResolvedComponentTokens<Definition>;
+};
+
 /** Structural constraint only; public hook types use each definition's contract. */
 export interface StyleDefinitionShape {
     defaultTokens: object;

@@ -2,7 +2,7 @@ import { createContext, useContext, type ReactNode } from 'react';
 import { resolveComponentStyles } from './resolve';
 import type {
     ResolveComponentOptions,
-    ResolvedComponentStyles,
+    ResolvedComponentResult,
     StyleDefinitionShape,
 } from './types';
 
@@ -33,7 +33,7 @@ export function createStylesManager<
     >(
         component: Component,
         options: ResolveComponentOptions<Definitions[NoInfer<Component>]>
-    ): ResolvedComponentStyles<Definitions[Component]> {
+    ): ResolvedComponentResult<Definitions[Component]> {
         const styles = useContext(Context);
         if (styles === null) {
             throw new Error(

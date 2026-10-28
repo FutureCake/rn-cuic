@@ -1,7 +1,7 @@
 import type { StyleOverrides } from '../../utils/types';
 import type {
     ResolveComponentOptions,
-    ResolvedComponentStyles,
+    ResolvedComponentResult,
     StyleDefinitionShape,
 } from './types';
 
@@ -33,7 +33,7 @@ function evaluate(entry: TokenEntry, influences: Influences): Tokens {
 export function resolveComponentStyles<Definition extends StyleDefinitionShape>(
     definition: Definition,
     options: ResolveComponentOptions<NoInfer<Definition>>
-): ResolvedComponentStyles<Definition> {
+): ResolvedComponentResult<Definition> {
     // Erasure is isolated here; public inputs/outputs retain their component contract.
     const config = definition as unknown as RuntimeDefinition;
     const {
@@ -143,5 +143,5 @@ export function resolveComponentStyles<Definition extends StyleDefinitionShape>(
         slots[slot] =
             override === undefined ? baseStyle : [baseStyle, override];
     }
-    return slots as ResolvedComponentStyles<Definition>;
+    return { styles: slots, tokens } as ResolvedComponentResult<Definition>;
 }
