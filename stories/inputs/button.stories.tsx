@@ -1,32 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-native';
-import {
-    ActivityIndicator,
-    StyleSheet,
-    type ImageSourcePropType,
-} from 'react-native';
-import { Button, type ButtonProps } from 'rn-cuic';
+import { ActivityIndicator, type ImageSourcePropType } from 'react-native';
+import { Button } from 'rn-cuic';
 import { withRenderContainer } from '../helpers/render-container';
 
 const icon: ImageSourcePropType = require('../../example/assets/android-icon-monochrome.png');
-
-const styles = StyleSheet.create({
-    container: { gap: 8 },
-    text: { fontWeight: '700' },
-    icon: { width: 24, height: 24 },
-});
-
-// Select root controls without forwarding inherited shorthand content to children.
-function composedProps({
-    variant,
-    size,
-    theme,
-    disabled,
-    onPress,
-    onPressIn,
-    onPressOut,
-}: ButtonProps) {
-    return { variant, size, theme, disabled, onPress, onPressIn, onPressOut };
-}
 
 const meta = {
     title: 'Inputs/Button',
@@ -60,11 +37,17 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {};
 
 export const Disabled: Story = {
-    args: { text: 'Unavailable', disabled: true },
+    args: {
+        text: 'Unavailable',
+        disabled: true,
+    },
 };
 
 export const IconShorthand: Story = {
-    args: { text: 'Save', icon },
+    args: {
+        text: 'Save',
+        icon,
+    },
 };
 
 export const IconOverride: Story = {
@@ -106,7 +89,7 @@ export const BothOverridesInChildOrder: Story = {
 
 export const LeadingIcon: Story = {
     render: (args) => (
-        <Button {...composedProps(args)}>
+        <Button {...args}>
             <Button.Icon source={icon} />
             <Button.Text>{args.text}</Button.Text>
         </Button>
@@ -115,7 +98,7 @@ export const LeadingIcon: Story = {
 
 export const TrailingIcon: Story = {
     render: (args) => (
-        <Button {...composedProps(args)}>
+        <Button {...args}>
             <Button.Text>{args.text}</Button.Text>
             <Button.Icon source={icon} />
         </Button>
@@ -124,7 +107,7 @@ export const TrailingIcon: Story = {
 
 export const IconOnly: Story = {
     render: (args) => (
-        <Button {...composedProps(args)} accessibilityLabel="Save">
+        <Button {...args} accessibilityLabel="Save">
             <Button.Icon source={icon} />
         </Button>
     ),
@@ -132,7 +115,7 @@ export const IconOnly: Story = {
 
 export const CustomIconContent: Story = {
     render: (args) => (
-        <Button {...composedProps(args)}>
+        <Button {...args}>
             <Button.Icon>
                 <ActivityIndicator accessibilityLabel="Loading" />
             </Button.Icon>
@@ -143,7 +126,7 @@ export const CustomIconContent: Story = {
 
 export const TokenAwareIcon: Story = {
     render: (args) => (
-        <Button {...composedProps(args)}>
+        <Button {...args}>
             <Button.Icon>
                 {({ tokens }) => (
                     <ActivityIndicator
@@ -160,12 +143,9 @@ export const TokenAwareIcon: Story = {
 
 export const SlotOverrides: Story = {
     render: (args) => (
-        <Button
-            {...composedProps(args)}
-            styleOverrides={{ container: styles.container }}
-        >
-            <Button.Icon source={icon} style={styles.icon} />
-            <Button.Text style={styles.text}>{args.text}</Button.Text>
+        <Button {...args} styleOverrides={{ container: { gap: 8 } }}>
+            <Button.Icon source={icon} style={{ width: 24, height: 24 }} />
+            <Button.Text style={{ fontWeight: '700' }}>{args.text}</Button.Text>
         </Button>
     ),
 };
