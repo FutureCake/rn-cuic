@@ -7,8 +7,11 @@ type ButtonContextValue = ResolvedComponentResult<ButtonStyleDefinition> & {
     disabled: boolean;
 };
 
-const { Provider: ButtonSlotProvider, useSlotContext: useButtonContext } =
-    createSlotContext<ButtonContextValue>('Button');
+/** Each configured Button family owns its parts and their nearest-root context. */
+export function createButtonContext() {
+    return createSlotContext<ButtonContextValue>('Button');
+}
 
-export default ButtonSlotProvider;
-export { useButtonContext };
+export type UseButtonContext = ReturnType<
+    typeof createButtonContext
+>['useSlotContext'];

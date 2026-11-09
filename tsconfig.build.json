@@ -1,4 +1,9 @@
 {
-  "extends": "./tsconfig",
-  "exclude": ["example", "lib"]
+    "extends": "./tsconfig",
+    "exclude": [
+        "example",
+        "lib",
+        "type-tests",
+        "**/__tests__/**"
+    ]
 }

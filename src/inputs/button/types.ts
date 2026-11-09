@@ -21,6 +21,13 @@ export type ButtonSize = 'small' | 'large' | 'xlarge';
 export type ThemeMode = 'light' | 'dark';
 export type ButtonSlots = 'container' | 'text' | 'icon';
 export type ButtonStates = 'pressed' | 'disabled';
+
+export type ButtonInfluences<
+    Variant extends string = ButtonVariant,
+    Size extends string = ButtonSize,
+    Theme extends string = ThemeMode,
+> = { variant: Variant; size: Size; theme: Theme };
+
 export type ButtonTokens = {
     alignSelf: ViewStyle['alignSelf'];
     justifyContent: ViewStyle['justifyContent'];
@@ -36,24 +43,27 @@ export type ButtonTokens = {
     iconColor: ColorValue;
 };
 
-export type ButtonStyleDefinition = StyleDefinition<
-    { variant: ButtonVariant; size: ButtonSize; theme: ThemeMode },
+export type ButtonStyleDefinition<
+    Variant extends string = ButtonVariant,
+    Size extends string = ButtonSize,
+    Theme extends string = ThemeMode,
+> = StyleDefinition<
+    ButtonInfluences<Variant, Size, Theme>,
     ButtonTokens,
     ButtonStates,
     { container: ViewStyle; text: TextStyle; icon: ImageStyle }
 >;
 
-type ButtonBaseProps = Omit<PressableProps, 'children' | 'style'> & {
-    variant?: ButtonVariant;
-    size?: ButtonSize;
-    theme?: ThemeMode;
+export type ButtonProps<
+    Variant extends string = ButtonVariant,
+    Size extends string = ButtonSize,
+    Theme extends string = ThemeMode,
+> = Omit<PressableProps, 'children' | 'style'> & {
+    variant?: Variant;
+    size?: Size;
+    theme?: Theme;
     styleOverrides?: StyleOverrides<ButtonSlots>;
-};
-
-export type ButtonProps = ButtonBaseProps & {
-    /** Fallback label, replaced by an explicit Button.Text child. */
     text?: string;
-    /** Fallback leading image, replaced by an explicit Button.Icon child. */
     icon?: ImageSourcePropType;
     children?: ReactNode;
 };
@@ -68,13 +78,11 @@ export type ButtonIconRenderProps = {
 };
 
 export type ButtonIconProps =
-    | (Omit<ImageProps, 'source' | 'children'> & {
-          source: ImageSourcePropType;
+    | (Omit<ImageProps, 'children'> & {
           children?: never;
       })
     | {
           source?: never;
-          /** Custom nodes own their styles; callbacks receive the slot style. */
           children: ReactNode | ((props: ButtonIconRenderProps) => ReactNode);
           style?: StyleProp<ImageStyle>;
       };

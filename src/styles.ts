@@ -1,8 +1,12 @@
+import { createUI } from './create-ui';
 import { buttonStyleDefinition } from './inputs/button/styles';
-import { createStylesManager } from './providers-and-hooks/styles-manager';
 
-/** Add further annotated component definitions here to extend the typed hook. */
+/** Default preset; custom UI instances can provide their own definitions. */
 export const componentStyles = { Button: buttonStyleDefinition };
 
-export const { StylesProvider, useResolveComponentStyles } =
-    createStylesManager(componentStyles);
+export const { Button, StylesProvider, useResolveComponentStyles } = createUI({
+    Button: {
+        definition: componentStyles.Button,
+        defaults: { variant: 'primary', size: 'small', theme: 'light' },
+    },
+});

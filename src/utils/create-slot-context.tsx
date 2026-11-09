@@ -15,5 +15,5 @@ export function createSlotContext<Value extends object>(componentName: string) {
         return value;
     }
 
-    return { Provider: Context.Provider, useSlotContext };
+    return { ContextProvider: Context.Provider, useSlotContext };
 }
