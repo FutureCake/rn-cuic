@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-native';
 import { ActivityIndicator, type ImageSourcePropType } from 'react-native';
-import { Button } from 'rn-cuic';
+import { Button, useTheme } from 'rn-cuic';
 import { withRenderContainer } from '../helpers/render-container';
 
 const icon: ImageSourcePropType = require('../../example/assets/android-icon-monochrome.png');
@@ -20,7 +20,7 @@ const meta = {
         text: { control: 'text' },
         variant: {
             control: 'select',
-            options: ['primary', 'secondary', 'left-to-right'],
+            options: ['primary', 'secondary'],
         },
         size: { control: 'select', options: ['small', 'large', 'xlarge'] },
         theme: { control: 'select', options: ['light', 'dark'] },
@@ -148,4 +148,19 @@ export const SlotOverrides: Story = {
             <Button.Text style={{ fontWeight: '700' }}>{args.text}</Button.Text>
         </Button>
     ),
+};
+
+/** The ambient theme from StylesProvider; instances without a theme prop follow it. */
+function ThemeToggleDemo() {
+    const { theme, setTheme } = useTheme();
+    return (
+        <Button
+            text={`Theme: ${theme} (press to toggle)`}
+            onPress={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+        />
+    );
+}
+
+export const AmbientThemeToggle: Story = {
+    render: () => <ThemeToggleDemo />,
 };

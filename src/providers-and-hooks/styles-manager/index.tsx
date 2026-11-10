@@ -1,31 +1,115 @@
-import { createContext, useContext, type ReactNode } from 'react';
+import {
+    createContext,
+    useContext,
+    useMemo,
+    useState,
+    type ReactNode,
+} from 'react';
 import { resolveComponentStyles } from './resolve';
 import type {
     ResolveComponentOptions,
     ResolvedComponentResult,
+    StyleDefinitionOverride,
     StyleDefinitionShape,
 } from './types';
 
 /**
- * Creates an isolated provider/hook pair bound to a typed component collection.
- * Annotate each entry with its StyleDefinition to preserve all supported props,
- * states and slots, including optional resolvers not configured initially.
+ * Creates an isolated provider/hook set bound to a typed component collection
+ * and an ambient theme. Author definitions with the component's define helper
+ * (for example defineButtonStyles) to preserve the full typed contract.
  */
 export function createStylesManager<
     Definitions extends {
         [Component in keyof Definitions]: StyleDefinitionShape;
     },
->(defaultStyles: Definitions) {
-    const Context = createContext<Definitions | null>(null);
+    Theme extends string,
+>(defaultStyles: Definitions, defaultTheme: Theme) {
+    const StylesContext = createContext<Definitions | null>(null);
+    const ThemeContext = createContext<{
+        theme: Theme;
+        setTheme: (theme: Theme) => void;
+    } | null>(null);
+
+    /** Section-wise merge: provided sections win per key, the rest stay default. */
+    function mergeDefinitions(
+        overrides:
+            | {
+                [Name in keyof Definitions]?: StyleDefinitionOverride<
+                    Definitions[Name]
+                >;
+            }
+            | undefined
+    ): Definitions {
+        if (overrides === undefined) {
+            return defaultStyles;
+        }
+        const merged = { ...defaultStyles } as Record<
+            string,
+            StyleDefinitionShape
+        >;
+        for (const [name, override] of Object.entries(
+            overrides as Record<string, Partial<StyleDefinitionShape>>
+        )) {
+            const base = merged[name];
+            if (base === undefined || override === undefined) {
+                continue;
+            }
+            merged[name] = {
+                ...base,
+                ...override,
+                defaultTokens: {
+                    ...base.defaultTokens,
+                    ...override.defaultTokens,
+                },
+                influenceResolvers: {
+                    ...base.influenceResolvers,
+                    ...override.influenceResolvers,
+                },
+                stateResolvers: {
+                    ...base.stateResolvers,
+                    ...override.stateResolvers,
+                },
+                slotStyles: { ...base.slotStyles, ...override.slotStyles },
+            };
+        }
+        return merged as Definitions;
+    }
 
     function StylesProvider({
         children,
-        styles = defaultStyles,
+        styles,
+        theme: themeProp,
     }: {
         children: ReactNode;
-        styles?: NoInfer<Definitions>;
+        /** Partial per-component overrides, merged section-wise over the defaults. */
+        styles?: {
+            [Name in keyof Definitions]?: StyleDefinitionOverride<
+                Definitions[Name]
+            >;
+        };
+        /** Controls the ambient theme; omit to let setTheme manage it. */
+        theme?: NoInfer<Theme>;
     }) {
-        return <Context.Provider value={styles}>{children}</Context.Provider>;
+        const [internalTheme, setTheme] = useState(defaultTheme);
+        const theme = themeProp ?? internalTheme;
+        const definitions = useMemo(() => mergeDefinitions(styles), [styles]);
+        const themeValue = useMemo(() => ({ theme, setTheme }), [theme]);
+        return (
+            <StylesContext.Provider value={definitions}>
+                <ThemeContext.Provider value={themeValue}>
+                    {children}
+                </ThemeContext.Provider>
+            </StylesContext.Provider>
+        );
+    }
+
+    /** Ambient theme for this UI instance; shared by apps and components. */
+    function useTheme(): { theme: Theme; setTheme: (theme: Theme) => void } {
+        const value = useContext(ThemeContext);
+        if (value === null) {
+            throw new Error('useTheme must be used within StylesProvider.');
+        }
+        return value;
     }
 
     function useResolveComponentStyles<
@@ -34,7 +118,7 @@ export function createStylesManager<
         component: Component,
         options: ResolveComponentOptions<Definitions[NoInfer<Component>]>
     ): ResolvedComponentResult<Definitions[Component]> {
-        const styles = useContext(Context);
+        const styles = useContext(StylesContext);
         if (styles === null) {
             throw new Error(
                 'useResolveComponentStyles must be used within StylesProvider.'
@@ -43,8 +127,9 @@ export function createStylesManager<
         return resolveComponentStyles(styles[component], options);
     }
 
-    return { StylesProvider, useResolveComponentStyles };
+    return { StylesProvider, useTheme, useResolveComponentStyles };
 }
 
 export { resolveComponentStyles } from './resolve';
 export type * from './types';
+

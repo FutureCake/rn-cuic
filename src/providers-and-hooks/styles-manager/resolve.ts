@@ -1,4 +1,3 @@
-import type { StyleOverrides } from '../../utils/types';
 import type {
     ResolveComponentOptions,
     ResolvedComponentResult,
@@ -13,12 +12,10 @@ interface RuntimeDefinition {
     defaultTokens: Tokens;
     influenceResolvers: Record<
         string,
-        Record<PropertyKey, TokenEntry> | undefined
+        Record<PropertyKey, TokenEntry | undefined> | undefined
     >;
     stateResolvers: Record<string, TokenEntry | undefined>;
     slotStyles: Record<string, (tokens: Tokens) => object>;
-    influenceOrder?: readonly string[];
-    stateOrder?: readonly string[];
     transition?: object;
 }
 
@@ -37,26 +34,30 @@ export function resolveComponentStyles<Definition extends StyleDefinitionShape>(
     // Erasure is isolated here; public inputs/outputs retain their component contract.
     const config = definition as unknown as RuntimeDefinition;
     const {
-        influencers,
+        influences,
         states = {},
         overrides = {},
     } = options as {
-        influencers: Influences;
+        influences: Influences;
         states?: Record<string, boolean>;
-        overrides?: StyleOverrides<string>;
+        overrides?: Record<string, unknown>;
     };
     const tokens = { ...config.defaultTokens };
-    const declaredInfluences = Object.keys(config.influenceResolvers).map(
-        (key) => key.slice(0, -'Resolver'.length)
-    );
-    const influenceOrder = [
-        ...new Set([...(config.influenceOrder ?? []), ...declaredInfluences]),
-    ];
 
-    for (const key of influenceOrder) {
-        const group = config.influenceResolvers[`${key}Resolver`];
-        const value = influencers[key];
-        if (!group || value === undefined || !hasOwn(group, value)) {
+    // Declaration order; each influence applies at most once.
+    for (const [influence, group] of Object.entries(
+        config.influenceResolvers
+    )) {
+        const value = influences[influence];
+        if (group === undefined || value === undefined) {
+            continue;
+        }
+        if (!hasOwn(group, value)) {
+            if (__DEV__) {
+                console.warn(
+                    `No "${influence}" style entry for value "${String(value)}"; defaults apply.`
+                );
+            }
             continue;
         }
         const entry = group[value];
@@ -64,75 +65,17 @@ export function resolveComponentStyles<Definition extends StyleDefinitionShape>(
             continue;
         }
         // Match the type-level Omit: a resolver cannot inspect its own influence.
-        const otherInfluences = { ...influencers };
-        delete otherInfluences[key];
+        const otherInfluences = { ...influences };
+        delete otherInfluences[influence];
         Object.assign(tokens, evaluate(entry, otherInfluences));
     }
 
-    const stateOrder = [
-        ...new Set([
-            ...(config.stateOrder ?? []),
-            ...Object.keys(config.stateResolvers),
-        ]),
-    ];
-
-    for (const state of stateOrder) {
-        const entry = config.stateResolvers[state];
+    // Declaration order; later active states win.
+    for (const [state, entry] of Object.entries(config.stateResolvers)) {
         if (!states[state] || entry === undefined) {
             continue;
         }
-        if (typeof entry === 'function') {
-            Object.assign(tokens, entry(influencers));
-            continue;
-        }
-
-        const keys = Reflect.ownKeys(entry);
-        const influenceValues = new Set(Object.values(influencers).map(String));
-        const isTokenObject = keys.every((key) =>
-            hasOwn(config.defaultTokens, key)
-        );
-        const isInfluenceMap = keys.every((key) =>
-            typeof key === 'symbol'
-                ? Object.values(influencers).includes(key)
-                : influenceValues.has(key) || !hasOwn(config.defaultTokens, key)
-        );
-
-        if (keys.length > 0 && isTokenObject && isInfluenceMap) {
-            throw new Error(
-                `Ambiguous state "${state}": token names overlap influence values. Use a state callback instead.`
-            );
-        }
-        if (isTokenObject) {
-            Object.assign(tokens, entry);
-            continue;
-        }
-        if (!isInfluenceMap) {
-            throw new Error(
-                `State "${state}" mixes token keys and influence values.`
-            );
-        }
-
-        // Also consider influences that have no base resolver configured.
-        const stateInfluences = [
-            ...new Set([...influenceOrder, ...Object.keys(influencers)]),
-        ];
-        const matchedValues = new Set<PropertyKey>();
-        for (const key of stateInfluences) {
-            const value = influencers[key];
-            if (
-                value === undefined ||
-                matchedValues.has(value) ||
-                !hasOwn(entry, value)
-            ) {
-                continue;
-            }
-            matchedValues.add(value);
-            const override = entry[value as keyof typeof entry] as
-                TokenEntry | undefined;
-            if (override !== undefined) {
-                Object.assign(tokens, evaluate(override, influencers));
-            }
-        }
+        Object.assign(tokens, evaluate(entry, influences));
     }
 
     const slots: Record<string, object> = {};
@@ -141,7 +84,9 @@ export function resolveComponentStyles<Definition extends StyleDefinitionShape>(
         const override = overrides[slot];
         // Do not flatten or spread animated styles: retain their identity and metadata.
         slots[slot] =
-            override === undefined ? baseStyle : [baseStyle, override];
+            override === undefined
+                ? baseStyle
+                : [baseStyle, override as object];
     }
     return { styles: slots, tokens } as ResolvedComponentResult<Definition>;
 }
