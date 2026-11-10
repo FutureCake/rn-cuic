@@ -29,7 +29,7 @@ function evaluate(entry: TokenEntry, influences: Influences): Tokens {
 /** Pure resolver, shared by the hook and tests. Later token overrides win. */
 export function resolveComponentStyles<Definition extends StyleDefinitionShape>(
     definition: Definition,
-    options: ResolveComponentOptions<NoInfer<Definition>>
+    options: ResolveComponentOptions<Definition>
 ): ResolvedComponentResult<Definition> {
     // Erasure is isolated here; public inputs/outputs retain their component contract.
     const config = definition as unknown as RuntimeDefinition;

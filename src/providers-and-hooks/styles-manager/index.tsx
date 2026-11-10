@@ -88,7 +88,7 @@ export function createStylesManager<
             >;
         };
         /** Controls the ambient theme; omit to let setTheme manage it. */
-        theme?: NoInfer<Theme>;
+        theme?: Theme;
     }) {
         const [internalTheme, setTheme] = useState(defaultTheme);
         const theme = themeProp ?? internalTheme;
@@ -116,7 +116,7 @@ export function createStylesManager<
         Component extends keyof Definitions & string,
     >(
         component: Component,
-        options: ResolveComponentOptions<Definitions[NoInfer<Component>]>
+        options: ResolveComponentOptions<Definitions[Component]>
     ): ResolvedComponentResult<Definitions[Component]> {
         const styles = useContext(StylesContext);
         if (styles === null) {
