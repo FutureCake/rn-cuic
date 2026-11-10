@@ -1,5 +1,7 @@
 import { createButton } from './inputs/button/create-button';
 import type { ButtonStyleDefinition } from './inputs/button/types';
+import { createTextField } from './inputs/text-field/create-text-field';
+import type { TextFieldStyleDefinition } from './inputs/text-field/types';
 import { createToggle } from './inputs/toggle/create-toggle';
 import type { ToggleStyleDefinition } from './inputs/toggle/types';
 import { createStylesManager } from './providers-and-hooks/styles-manager';
@@ -7,12 +9,13 @@ import { createStylesManager } from './providers-and-hooks/styles-manager';
 /**
  * Create once at module scope. Returned components and hooks use this instance's
  * provider, not the library's default provider or another createUI instance.
- * Author definitions with defineButtonStyles/defineToggleStyles to infer names.
+ * Author definitions with the define*Styles helpers to infer names.
  */
 export function createUI<
     Variant extends string,
     Size extends string,
     Theme extends string,
+    FeedbackVariant extends string,
 >(config: {
     /** Initial ambient theme for this instance's StylesProvider. */
     theme: NoInfer<Theme>;
@@ -23,11 +26,16 @@ export function createUI<
     Toggle: {
         definition: ToggleStyleDefinition<NoInfer<Theme>>;
     };
+    TextField: {
+        definition: TextFieldStyleDefinition<FeedbackVariant, NoInfer<Theme>>;
+        defaults: NoInfer<{ feedbackVariant: FeedbackVariant }>;
+    };
 }) {
     const manager = createStylesManager(
         {
             Button: config.Button.definition,
             Toggle: config.Toggle.definition,
+            TextField: config.TextField.definition,
         },
         config.theme
     );
@@ -44,5 +52,12 @@ export function createUI<
         },
         useTheme: manager.useTheme,
     });
-    return { Button, Toggle, ...manager };
+    const TextField = createTextField<FeedbackVariant, Theme>({
+        defaults: config.TextField.defaults,
+        useStyles: function useTextFieldStyles(options) {
+            return manager.useResolveComponentStyles('TextField', options);
+        },
+        useTheme: manager.useTheme,
+    });
+    return { Button, Toggle, TextField, ...manager };
 }
