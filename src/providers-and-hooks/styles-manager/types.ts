@@ -14,10 +14,10 @@ export type TokenResolvers<
     Influences extends { [Key in keyof Influences]: PropertyKey },
     Tokens extends object,
 > = {
-        [Key in keyof Influences]?: {
-            [Value in Influences[Key]]?: TokenValue<Tokens, Omit<Influences, Key>>;
-        };
+    [Key in keyof Influences]?: {
+        [Value in Influences[Key]]?: TokenValue<Tokens, Omit<Influences, Key>>;
     };
+};
 
 /** Overrides applied when the corresponding component state is active. */
 export type StateTokenResolvers<
@@ -25,8 +25,8 @@ export type StateTokenResolvers<
     Tokens extends object,
     States extends string,
 > = {
-        [State in States]?: TokenValue<Tokens, Influences>;
-    };
+    [State in States]?: TokenValue<Tokens, Influences>;
+};
 
 /** Maps fully resolved tokens to each slot's specific native style type. */
 export type SlotStyleResolvers<
@@ -35,8 +35,8 @@ export type SlotStyleResolvers<
         [Slot in keyof SlotStyles]: TextStyle | ViewStyle;
     },
 > = {
-        [Slot in keyof SlotStyles]: (tokens: Tokens) => SlotStyles[Slot];
-    };
+    [Slot in keyof SlotStyles]: (tokens: Tokens) => SlotStyles[Slot];
+};
 
 /**
  * Influences are named, resolved component props (after defaults are applied).
@@ -86,25 +86,25 @@ export type StyleDefinitionOverride<Definition> =
         states: infer States extends string;
         slots: infer Slots;
     }
-    ? {
-        defaultTokens?: Partial<Tokens>;
-        influenceResolvers?: {
-            [Key in keyof Influences]?: {
-                [Value in Influences[Key]]?: TokenValue<
-                    Tokens,
-                    Omit<Influences, Key>
-                >;
-            };
-        };
-        stateResolvers?: {
-            [State in States]?: TokenValue<Tokens, Influences>;
-        };
-        slotStyles?: {
-            [Slot in keyof Slots]?: (tokens: Tokens) => Slots[Slot];
-        };
-        transition?: CSSTransitionProperties;
-    }
-    : never;
+        ? {
+              defaultTokens?: Partial<Tokens>;
+              influenceResolvers?: {
+                  [Key in keyof Influences]?: {
+                      [Value in Influences[Key]]?: TokenValue<
+                          Tokens,
+                          Omit<Influences, Key>
+                      >;
+                  };
+              };
+              stateResolvers?: {
+                  [State in States]?: TokenValue<Tokens, Influences>;
+              };
+              slotStyles?: {
+                  [Slot in keyof Slots]?: (tokens: Tokens) => Slots[Slot];
+              };
+              transition?: CSSTransitionProperties;
+          }
+        : never;
 
 export type ResolveComponentOptions<Definition> =
     DefinitionContract<Definition> extends {
@@ -112,25 +112,25 @@ export type ResolveComponentOptions<Definition> =
         states: infer States extends string;
         slots: infer Slots extends object;
     }
-    ? {
-        influences: Influences;
-        states?: Partial<Record<States, boolean>>;
-        /** Applied last per slot, preserving style arrays. */
-        overrides?: StyleOverrides<Slots>;
-    }
-    : never;
+        ? {
+              influences: Influences;
+              states?: Partial<Record<States, boolean>>;
+              /** Applied last per slot, preserving style arrays. */
+              overrides?: StyleOverrides<Slots>;
+          }
+        : never;
 
 /** Native slot styles and optional overrides, composed as style arrays. */
 export type ResolvedComponentStyles<Definition> =
     DefinitionContract<Definition> extends { slots: infer Slots }
-    ? { [Slot in keyof Slots]: StyleProp<Slots[Slot]> }
-    : never;
+        ? { [Slot in keyof Slots]: StyleProp<Slots[Slot]> }
+        : never;
 
 /** Final tokens after influences and active states, before slot overrides. */
 export type ResolvedComponentTokens<Definition> =
     DefinitionContract<Definition> extends { tokens: infer Tokens }
-    ? Readonly<Tokens>
-    : never;
+        ? Readonly<Tokens>
+        : never;
 
 export type ResolvedComponentResult<Definition> = {
     styles: ResolvedComponentStyles<Definition>;

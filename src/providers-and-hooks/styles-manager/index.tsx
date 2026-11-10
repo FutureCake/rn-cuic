@@ -34,10 +34,10 @@ export function createStylesManager<
     function mergeDefinitions(
         overrides:
             | {
-                [Name in keyof Definitions]?: StyleDefinitionOverride<
-                    Definitions[Name]
-                >;
-            }
+                  [Name in keyof Definitions]?: StyleDefinitionOverride<
+                      Definitions[Name]
+                  >;
+              }
             | undefined
     ): Definitions {
         if (overrides === undefined) {
@@ -132,4 +132,3 @@ export function createStylesManager<
 
 export { resolveComponentStyles } from './resolve';
 export type * from './types';
-

@@ -13,11 +13,11 @@ type InfluenceValueMap<
     Size extends string,
     Theme extends string,
 > = {
-        [Value in Values]: TokenValue<
-            ButtonTokens,
-            Omit<ButtonInfluences<Variant, Size, Theme>, OwnKey>
-        >;
-    };
+    [Value in Values]: TokenValue<
+        ButtonTokens,
+        Omit<ButtonInfluences<Variant, Size, Theme>, OwnKey>
+    >;
+};
 
 /**
  * The single authoring path for Button style definitions. Supported variant,

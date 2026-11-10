@@ -21,19 +21,13 @@ import type { StyleOverrides } from '../../utils/types';
 export type ButtonVariant = 'primary' | 'secondary';
 export type ButtonSize = 'small' | 'large' | 'xlarge';
 export type ThemeMode = 'light' | 'dark';
+export type ButtonStates = 'pressed' | 'disabled';
+
 export type ButtonSlotStyles = {
     container: ViewStyle;
     text: TextStyle;
     icon: ImageStyle;
 };
-export type ButtonSlots = keyof ButtonSlotStyles;
-export type ButtonStates = 'pressed' | 'disabled';
-
-export type ButtonInfluences<
-    Variant extends string = ButtonVariant,
-    Size extends string = ButtonSize,
-    Theme extends string = ThemeMode,
-> = { variant: Variant; size: Size; theme: Theme };
 
 export type ButtonTokens = {
     alignSelf: ViewStyle['alignSelf'];
@@ -50,6 +44,12 @@ export type ButtonTokens = {
     bgColor: ColorValue;
     iconColor: ColorValue;
 };
+
+export type ButtonInfluences<
+    Variant extends string = ButtonVariant,
+    Size extends string = ButtonSize,
+    Theme extends string = ThemeMode,
+> = { variant: Variant; size: Size; theme: Theme };
 
 export type ButtonStyleDefinition<
     Variant extends string = ButtonVariant,
@@ -74,7 +74,8 @@ export type ButtonBuilderOptions<
             ButtonStyleDefinition<Variant, Size, Theme>
         >
     ) => ResolvedComponentResult<ButtonStyleDefinition<Variant, Size, Theme>>;
-    useTheme: () => { theme: Theme; setTheme: (theme: Theme) => void };
+    /** Read-only ambient theme; components consume it but never set it. */
+    useTheme: () => { theme: Theme };
 };
 
 export type ButtonProps<
@@ -103,10 +104,10 @@ export type ButtonIconRenderProps = {
 
 export type ButtonIconProps =
     | (Omit<ImageProps, 'children'> & {
-        children?: never;
-    })
+          children?: never;
+      })
     | {
-        source?: never;
-        children: ReactNode | ((props: ButtonIconRenderProps) => ReactNode);
-        style?: StyleProp<ImageStyle>;
-    };
+          source?: never;
+          children: ReactNode | ((props: ButtonIconRenderProps) => ReactNode);
+          style?: StyleProp<ImageStyle>;
+      };
