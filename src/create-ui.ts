@@ -1,5 +1,7 @@
 import { createButton } from './inputs/button/create-button';
 import type { ButtonStyleDefinition } from './inputs/button/types';
+import { createChip } from './inputs/chip/create-chip';
+import type { ChipStyleDefinition } from './inputs/chip/types';
 import { createSwitch } from './inputs/switch/create-switch';
 import type { SwitchStyleDefinition } from './inputs/switch/types';
 import { createTextField } from './inputs/text-field/create-text-field';
@@ -18,12 +20,17 @@ export function createUI<
     Size extends string,
     Theme extends string,
     FeedbackVariant extends string,
+    ChipSize extends string,
 >(config: {
     /** Initial ambient theme for this instance's StylesProvider. */
     theme: NoInfer<Theme>;
     Button: {
         definition: ButtonStyleDefinition<Variant, Size, Theme>;
         defaults: NoInfer<{ variant: Variant; size: Size }>;
+    };
+    Chip: {
+        definition: ChipStyleDefinition<ChipSize, NoInfer<Theme>>;
+        defaults: NoInfer<{ size: ChipSize }>;
     };
     Toggle: {
         definition: ToggleStyleDefinition<NoInfer<Theme>>;
@@ -39,6 +46,7 @@ export function createUI<
     const manager = createStylesManager(
         {
             Button: config.Button.definition,
+            Chip: config.Chip.definition,
             Toggle: config.Toggle.definition,
             Switch: config.Switch.definition,
             TextField: config.TextField.definition,
@@ -49,6 +57,13 @@ export function createUI<
         defaults: config.Button.defaults,
         useStyles: function useButtonStyles(options) {
             return manager.useResolveComponentStyles('Button', options);
+        },
+        useTheme: manager.useTheme,
+    });
+    const Chip = createChip<ChipSize, Theme>({
+        defaults: config.Chip.defaults,
+        useStyles: function useChipStyles(options) {
+            return manager.useResolveComponentStyles('Chip', options);
         },
         useTheme: manager.useTheme,
     });
@@ -71,5 +86,5 @@ export function createUI<
         },
         useTheme: manager.useTheme,
     });
-    return { Button, Toggle, Switch, TextField, ...manager };
+    return { Button, Chip, Toggle, Switch, TextField, ...manager };
 }
