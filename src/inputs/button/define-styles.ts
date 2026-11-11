@@ -5,10 +5,24 @@ import type {
     ButtonTokens,
 } from './types';
 
+/** One value map; callbacks receive the other influences, never their own. */
+type InfluenceValueMap<
+    Values extends string,
+    OwnKey extends keyof ButtonInfluences,
+    Variant extends string,
+    Size extends string,
+    Theme extends string,
+> = {
+    [Value in Values]: TokenValue<
+        ButtonTokens,
+        Omit<ButtonInfluences<Variant, Size, Theme>, OwnKey>
+    >;
+};
+
 /**
- * Infer supported names from resolver keys, retaining the full definition contract.
- * Use an empty entry (`outline: {}`) for a name that needs no token overrides.
- * For sparse resolver maps, annotate with ButtonStyleDefinition<V, S, T> instead.
+ * The single authoring path for Button style definitions. Supported variant,
+ * size and theme names are inferred from the resolver maps; use an empty
+ * entry (`outline: {}`) for a name that needs no token overrides.
  */
 export function defineButtonStyles<
     Variant extends string,
@@ -20,45 +34,27 @@ export function defineButtonStyles<
         'influenceResolvers'
     > & {
         influenceResolvers: {
-            variantResolver: {
-                [Value in Variant]: TokenValue<
-                    ButtonTokens,
-                    Omit<
-                        ButtonInfluences<
-                            NoInfer<Variant>,
-                            NoInfer<Size>,
-                            NoInfer<Theme>
-                        >,
-                        'variant'
-                    >
-                >;
-            };
-            sizeResolver: {
-                [Value in Size]: TokenValue<
-                    ButtonTokens,
-                    Omit<
-                        ButtonInfluences<
-                            NoInfer<Variant>,
-                            NoInfer<Size>,
-                            NoInfer<Theme>
-                        >,
-                        'size'
-                    >
-                >;
-            };
-            themeResolver: {
-                [Value in Theme]: TokenValue<
-                    ButtonTokens,
-                    Omit<
-                        ButtonInfluences<
-                            NoInfer<Variant>,
-                            NoInfer<Size>,
-                            NoInfer<Theme>
-                        >,
-                        'theme'
-                    >
-                >;
-            };
+            variant: InfluenceValueMap<
+                Variant,
+                'variant',
+                NoInfer<Variant>,
+                NoInfer<Size>,
+                NoInfer<Theme>
+            >;
+            size: InfluenceValueMap<
+                Size,
+                'size',
+                NoInfer<Variant>,
+                NoInfer<Size>,
+                NoInfer<Theme>
+            >;
+            theme: InfluenceValueMap<
+                Theme,
+                'theme',
+                NoInfer<Variant>,
+                NoInfer<Size>,
+                NoInfer<Theme>
+            >;
         };
     }
 ): ButtonStyleDefinition<Variant, Size, Theme> {

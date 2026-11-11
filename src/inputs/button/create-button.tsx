@@ -1,16 +1,18 @@
 import { useState } from 'react';
 import { Pressable } from 'react-native';
 import Animated from 'react-native-reanimated';
-import type { UIComponentBuilderOptions } from '../../ui-component';
 import { hasSlot } from '../../utils/has-slot';
-import { createButtonContext } from './context';
-import { createButtonIcon } from './slots/icon';
-import { createButtonText } from './slots/text';
-import type { ButtonProps, ButtonStyleDefinition } from './types';
+import { ContextProvider } from './context';
+import { ButtonIcon } from './slots/icon';
+import { ButtonText } from './slots/text';
+import type { ButtonBuilderOptions, ButtonProps } from './types';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-/** Bind shared behavior and stable compound parts once, at factory creation. */
+/**
+ * Bind shared behavior to the configured defaults and style hooks; the slot
+ * parts are shared and resolve the nearest Button root's context.
+ */
 export function createButton<
     Variant extends string,
     Size extends string,
@@ -18,18 +20,15 @@ export function createButton<
 >({
     defaults,
     useStyles,
-}: UIComponentBuilderOptions<ButtonStyleDefinition<Variant, Size, Theme>>) {
-    const { ContextProvider, useSlotContext } = createButtonContext();
-    const ButtonText = createButtonText(useSlotContext);
-    const ButtonIcon = createButtonIcon(useSlotContext);
-
+    useTheme,
+}: ButtonBuilderOptions<Variant, Size, Theme>) {
     function ButtonRoot({
         text,
         icon,
         children,
         variant = defaults.variant,
         size = defaults.size,
-        theme = defaults.theme,
+        theme: themeProp,
         disabled = false,
         onPressIn,
         onPressOut,
@@ -38,10 +37,12 @@ export function createButton<
         styleOverrides,
         ...props
     }: ButtonProps<Variant, Size, Theme>) {
+        const { theme: ambientTheme } = useTheme();
+        const theme = themeProp ?? ambientTheme;
         const [pressed, setPressed] = useState(false);
         const effectivePressed = pressed && !disabled;
         const { styles, tokens } = useStyles({
-            influencers: { variant, size, theme },
+            influences: { variant, size, theme },
             states: { disabled, pressed: effectivePressed },
             overrides: styleOverrides,
         });

@@ -1,4 +1,5 @@
-import type { ButtonStyleDefinition, ButtonVariant, ThemeMode } from './types';
+import { defineButtonStyles } from './define-styles';
+import type { ButtonVariant, ThemeMode } from './types';
 
 const themeColors = {
     light: {
@@ -37,60 +38,56 @@ function stateColors(
         : { ...colors, bgColor: 'transparent' };
 }
 
-export const buttonStyleDefinition: ButtonStyleDefinition = {
+/**
+ * Default preset: a complete, usable button out of the box.
+ * Every size supplies its full scale; fonts default to the platform system font.
+ */
+export const buttonStyleDefinition = defineButtonStyles({
     defaultTokens: {
         alignSelf: 'auto',
         justifyContent: 'center',
-        fontSize: 0,
-        fontFamily: '',
-        paddingX: 0,
-        paddingY: 0,
-        iconGap: 0,
-        iconSize: 0,
-        radius: 0,
+        fontSize: 17,
+        fontFamily: undefined,
+        paddingX: 16,
+        paddingY: 10,
+        iconGap: 8,
+        iconSize: 20,
+        radius: 8,
         ...themeColors.light.default,
     },
-    influenceOrder: ['theme', 'variant', 'size'],
-    stateOrder: ['pressed', 'disabled'],
     influenceResolvers: {
-        themeResolver: {
+        theme: {
             light: themeColors.light.default,
             dark: themeColors.dark.default,
         },
-        variantResolver: {
-            'primary': {
-                radius: 8,
-                justifyContent: 'center',
-                fontFamily: 'SF-Pro-Regular',
-            },
-            'secondary': ({ theme }) => ({
-                radius: 0,
-                justifyContent: 'center',
-                fontFamily: 'SF-Pro-Light',
-                ...transparentColors(theme),
-            }),
-            'left-to-right': ({ theme }) => ({
-                justifyContent: 'flex-start',
-                fontFamily: 'SF-Pro-Regular',
-                ...transparentColors(theme),
-            }),
+        variant: {
+            primary: {},
+            secondary: ({ theme }) => transparentColors(theme),
         },
-        sizeResolver: {
-            small: ({ variant }) => ({
-                radius: variant === 'left-to-right' ? 0 : 9999,
-                paddingY: variant === 'left-to-right' ? 0 : 8,
-                paddingX: variant === 'left-to-right' ? 0 : 16,
-                fontSize: 21,
-                iconSize: 32,
-            }),
-            large: ({ variant }) => ({
-                paddingY: 16,
-                paddingX: 0,
-                fontSize: variant === 'secondary' ? 21 : 28,
-                iconSize: 64,
-            }),
+        size: {
+            small: {
+                paddingX: 16,
+                paddingY: 8,
+                fontSize: 15,
+                iconSize: 18,
+                iconGap: 6,
+                radius: 8,
+            },
+            large: {
+                paddingX: 24,
+                paddingY: 14,
+                fontSize: 20,
+                iconSize: 24,
+                iconGap: 8,
+                radius: 10,
+            },
             xlarge: {
-                fontSize: 36,
+                paddingX: 32,
+                paddingY: 18,
+                fontSize: 24,
+                iconSize: 28,
+                iconGap: 10,
+                radius: 12,
             },
         },
     },
@@ -124,4 +121,4 @@ export const buttonStyleDefinition: ButtonStyleDefinition = {
         }),
     },
     transition: { transitionProperty: 'all', transitionDuration: 150 },
-};
+});

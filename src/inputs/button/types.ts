@@ -1,38 +1,36 @@
 import type { ReactNode } from 'react';
 import type {
     ColorValue,
-    ImageProps,
     ImageSourcePropType,
     ImageStyle,
     PressableProps,
-    StyleProp,
-    TextProps,
     TextStyle,
     ViewStyle,
 } from 'react-native';
 import type {
-    ResolvedComponentTokens,
+    ResolveComponentOptions,
+    ResolvedComponentResult,
     StyleDefinition,
 } from '../../providers-and-hooks';
 import type { StyleOverrides } from '../../utils/types';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'left-to-right';
+export type ButtonVariant = 'primary' | 'secondary';
 export type ButtonSize = 'small' | 'large' | 'xlarge';
 export type ThemeMode = 'light' | 'dark';
-export type ButtonSlots = 'container' | 'text' | 'icon';
 export type ButtonStates = 'pressed' | 'disabled';
 
-export type ButtonInfluences<
-    Variant extends string = ButtonVariant,
-    Size extends string = ButtonSize,
-    Theme extends string = ThemeMode,
-> = { variant: Variant; size: Size; theme: Theme };
+export type ButtonSlotStyles = {
+    container: ViewStyle;
+    text: TextStyle;
+    icon: ImageStyle;
+};
 
 export type ButtonTokens = {
     alignSelf: ViewStyle['alignSelf'];
     justifyContent: ViewStyle['justifyContent'];
     fontSize: number;
-    fontFamily: string;
+    /** Leave undefined to use the platform system font. */
+    fontFamily: TextStyle['fontFamily'];
     paddingX: ViewStyle['padding'];
     paddingY: ViewStyle['padding'];
     iconGap: number;
@@ -43,6 +41,12 @@ export type ButtonTokens = {
     iconColor: ColorValue;
 };
 
+export type ButtonInfluences<
+    Variant extends string = ButtonVariant,
+    Size extends string = ButtonSize,
+    Theme extends string = ThemeMode,
+> = { variant: Variant; size: Size; theme: Theme };
+
 export type ButtonStyleDefinition<
     Variant extends string = ButtonVariant,
     Size extends string = ButtonSize,
@@ -51,8 +55,24 @@ export type ButtonStyleDefinition<
     ButtonInfluences<Variant, Size, Theme>,
     ButtonTokens,
     ButtonStates,
-    { container: ViewStyle; text: TextStyle; icon: ImageStyle }
+    ButtonSlotStyles
 >;
+
+/** Supplied by createUI: configured defaults plus instance-bound hooks. */
+export type ButtonBuilderOptions<
+    Variant extends string = ButtonVariant,
+    Size extends string = ButtonSize,
+    Theme extends string = ThemeMode,
+> = {
+    defaults: { variant: Variant; size: Size };
+    useStyles: (
+        options: ResolveComponentOptions<
+            ButtonStyleDefinition<Variant, Size, Theme>
+        >
+    ) => ResolvedComponentResult<ButtonStyleDefinition<Variant, Size, Theme>>;
+    /** Read-only ambient theme; components consume it but never set it. */
+    useTheme: () => { theme: Theme };
+};
 
 export type ButtonProps<
     Variant extends string = ButtonVariant,
@@ -61,28 +81,10 @@ export type ButtonProps<
 > = Omit<PressableProps, 'children' | 'style'> & {
     variant?: Variant;
     size?: Size;
+    /** Overrides the ambient theme from StylesProvider for this instance. */
     theme?: Theme;
-    styleOverrides?: StyleOverrides<ButtonSlots>;
+    styleOverrides?: StyleOverrides<ButtonSlotStyles>;
     text?: string;
     icon?: ImageSourcePropType;
     children?: ReactNode;
 };
-
-export type ButtonTextProps = TextProps;
-
-export type ButtonIconRenderProps = {
-    tokens: ResolvedComponentTokens<ButtonStyleDefinition>;
-    style: StyleProp<ImageStyle>;
-    pressed: boolean;
-    disabled: boolean;
-};
-
-export type ButtonIconProps =
-    | (Omit<ImageProps, 'children'> & {
-          children?: never;
-      })
-    | {
-          source?: never;
-          children: ReactNode | ((props: ButtonIconRenderProps) => ReactNode);
-          style?: StyleProp<ImageStyle>;
-      };
