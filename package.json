@@ -33,6 +33,7 @@
     ],
     "scripts": {
         "example": "yarn workspace rn-cuic-example",
+        "storybook": "yarn workspace rn-cuic-example storybook",
         "clean": "del-cli lib",
         "prepare": "bob build",
         "typecheck": "tsc",

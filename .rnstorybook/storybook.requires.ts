@@ -3,17 +3,17 @@
 import {
     start,
     updateView,
-    type Features,
     type View,
+    type Features,
 } from '@storybook/react-native';
 
-import '@storybook/addon-ondevice-actions/register';
 import '@storybook/addon-ondevice-controls/register';
+import '@storybook/addon-ondevice-actions/register';
 
 const normalizedStories = [
     {
         titlePrefix: '',
-        directory: './stories',
+        directory: '../stories',
         files: '**/*.stories.?(ts|tsx|js|jsx)',
         importPathMatcher:
             /^\.(?:(?:^|\/|(?:(?:(?!(?:^|\/)\.).)*?)\/)(?!\.)(?=.)[^/]*?\.stories\.(?:ts|tsx|js|jsx)?)$/,
