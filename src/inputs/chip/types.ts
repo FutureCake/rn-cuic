@@ -82,6 +82,12 @@ export type ChipProps<
     theme?: Theme;
     /** Controlled selection; pressing the chip fires onChange with the next value. */
     selected?: boolean;
+    /**
+     * The chip is interactive only while an interaction handler (onChange,
+     * onPress, onPressIn/Out, onLongPress) is supplied. Without one it is a
+     * static display item: no pressed feedback, announced as text with
+     * `selected` conveyed when true. A close affordance stays operable.
+     */
     onChange?: (selected: boolean) => void;
     styleOverrides?: StyleOverrides<ChipSlotStyles>;
     text?: string;

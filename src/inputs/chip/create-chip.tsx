@@ -35,8 +35,9 @@ export function createChip<Size extends string, Theme extends string>({
         onPress,
         onPressIn,
         onPressOut,
+        onLongPress,
         accessibilityState,
-        accessibilityRole = 'checkbox',
+        accessibilityRole,
         styleOverrides,
         ...props
     }: ChipProps<Size, Theme>) {
@@ -51,6 +52,13 @@ export function createChip<Size extends string, Theme extends string>({
         });
         const showsShorthandIcon =
             icon !== undefined && (showIcon === 'always' || selected);
+        /** No interaction handlers → static display item. */
+        const interactive =
+            onChange !== undefined ||
+            onPress !== undefined ||
+            onPressIn !== undefined ||
+            onPressOut !== undefined ||
+            onLongPress !== undefined;
 
         return (
             <ContextProvider
@@ -65,25 +73,47 @@ export function createChip<Size extends string, Theme extends string>({
             >
                 <AnimatedPressable
                     {...props}
-                    disabled={disabled}
-                    accessibilityRole={accessibilityRole}
-                    accessibilityState={{
-                        ...accessibilityState,
-                        checked: selected,
-                        disabled,
-                    }}
-                    onPress={(event) => {
-                        onChange?.(!selected);
-                        onPress?.(event);
-                    }}
-                    onPressIn={(event) => {
-                        setPressed(true);
-                        onPressIn?.(event);
-                    }}
-                    onPressOut={(event) => {
-                        setPressed(false);
-                        onPressOut?.(event);
-                    }}
+                    disabled={interactive ? disabled : undefined}
+                    accessibilityRole={
+                        accessibilityRole ?? (interactive ? 'checkbox' : 'text')
+                    }
+                    accessibilityState={
+                        interactive
+                            ? {
+                                  ...accessibilityState,
+                                  checked: selected,
+                                  disabled,
+                              }
+                            : {
+                                  ...accessibilityState,
+                                  selected: selected || undefined,
+                              }
+                    }
+                    onLongPress={onLongPress}
+                    onPress={
+                        interactive
+                            ? (event) => {
+                                  onChange?.(!selected);
+                                  onPress?.(event);
+                              }
+                            : undefined
+                    }
+                    onPressIn={
+                        interactive
+                            ? (event) => {
+                                  setPressed(true);
+                                  onPressIn?.(event);
+                              }
+                            : undefined
+                    }
+                    onPressOut={
+                        interactive
+                            ? (event) => {
+                                  setPressed(false);
+                                  onPressOut?.(event);
+                              }
+                            : undefined
+                    }
                     style={styles.container}
                 >
                     {showsShorthandIcon && !hasSlot(children, ChipIcon) && (

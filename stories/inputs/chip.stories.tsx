@@ -61,6 +61,25 @@ export const Disabled: Story = {
     args: { text: 'Unavailable', disabled: true },
 };
 
+export const DisplayOnly: Story = {
+    args: { text: 'Read-only tag', icon, showIcon: 'always' },
+    render: (args) => (
+        <Chip {...args} onChange={undefined} onPress={undefined} />
+    ),
+};
+
+export const DisplayOnlyRemovable: Story = {
+    args: { text: 'Static but removable' },
+    render: (args) => (
+        <Chip
+            {...args}
+            onChange={undefined}
+            onPress={undefined}
+            onClose={() => args.onClose?.()}
+        />
+    ),
+};
+
 export const IconWhenSelected: Story = {
     args: { text: 'Shows icon on select', icon },
 };
