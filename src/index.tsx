@@ -1,6 +1,7 @@
 export { createUI } from './create-ui';
 export {
     Button,
+    Chip,
     componentStyles,
     StylesProvider,
     Switch,
@@ -14,6 +15,12 @@ export type * from './inputs/button/slots/icon';
 export type * from './inputs/button/slots/text';
 export { buttonStyleDefinition } from './inputs/button/styles';
 export type * from './inputs/button/types';
+export { defineChipStyles } from './inputs/chip/define-styles';
+export type * from './inputs/chip/slots/close';
+export type * from './inputs/chip/slots/icon';
+export type * from './inputs/chip/slots/text';
+export { chipStyleDefinition } from './inputs/chip/styles';
+export type * from './inputs/chip/types';
 export { defineSwitchStyles } from './inputs/switch/define-styles';
 export type * from './inputs/switch/slots/option';
 export { switchStyleDefinition } from './inputs/switch/styles';
