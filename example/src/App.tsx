@@ -1,85 +1,47 @@
 import { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import {
-    Button,
-    StylesProvider,
-    Switch,
-    TextField,
-    Toggle,
-    useTheme,
-} from 'rn-cuic';
+import CustomComponentsScreen from './custom-components';
+import StyledComponentsScreen from './styled-components';
+
+const screens = [
+    { key: 'styled', title: 'Default preset' },
+    { key: 'custom', title: 'Custom createUI' },
+] as const;
+
+type ScreenKey = (typeof screens)[number]['key'];
 
 export default function App() {
+    const [screen, setScreen] = useState<ScreenKey>('styled');
+
     return (
         <GestureHandlerRootView style={styles.root}>
-            <StylesProvider>
-                <Showcase />
-            </StylesProvider>
-        </GestureHandlerRootView>
-    );
-}
-
-const frequencies = [
-    { title: 'Daily', value: 'daily' },
-    { title: 'Weekly', value: 'weekly' },
-    { title: 'Monthly', value: 'monthly' },
-];
-
-function Showcase() {
-    const { theme, setTheme } = useTheme();
-    const dark = theme === 'dark';
-
-    const [frequency, setFrequency] = useState('daily');
-    const [email, setEmail] = useState('');
-
-    return (
-        <View
-            style={[
-                styles.container,
-                { backgroundColor: dark ? '#111111' : '#ffffff' },
-            ]}
-        >
-            <View style={styles.row}>
-                <Text style={[styles.label, dark && styles.labelDark]}>
-                    Dark theme
-                </Text>
-                <Toggle
-                    active={dark}
-                    onChange={(next) => setTheme(next ? 'dark' : 'light')}
-                />
+            <View style={styles.tabs}>
+                {screens.map(({ key, title }) => (
+                    <Pressable
+                        key={key}
+                        accessibilityRole="tab"
+                        accessibilityState={{ selected: screen === key }}
+                        onPress={() => setScreen(key)}
+                        style={[styles.tab, screen === key && styles.tabActive]}
+                    >
+                        <Text
+                            style={[
+                                styles.tabTitle,
+                                screen === key && styles.tabTitleActive,
+                            ]}
+                        >
+                            {title}
+                        </Text>
+                    </Pressable>
+                ))}
             </View>
-
-            <Switch
-                options={frequencies}
-                value={frequency}
-                onChange={setFrequency}
-            />
-
-            <TextField
-                header="Email"
-                placeholder="you@example.com"
-                value={email}
-                onChangeText={setEmail}
-                feedback="We never share your email."
-                validation={{
-                    showFeedbackOn: 'blur',
-                    validator: (text) =>
-                        /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text)
-                            ? { valid: true }
-                            : {
-                                  valid: false,
-                                  variant: 'error',
-                                  message: 'Enter a valid email address.',
-                              },
-                }}
-            />
-
-            <Button
-                text="Subscribe"
-                onPress={() => console.log('subscribe', { email, frequency })}
-            />
-        </View>
+            {screen === 'styled' ? (
+                <StyledComponentsScreen />
+            ) : (
+                <CustomComponentsScreen />
+            )}
+        </GestureHandlerRootView>
     );
 }
 
@@ -87,22 +49,28 @@ const styles = StyleSheet.create({
     root: {
         flex: 1,
     },
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        padding: 24,
-        gap: 24,
-    },
-    row: {
+    tabs: {
         flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
+        gap: 8,
+        paddingTop: 64,
+        paddingHorizontal: 24,
+        paddingBottom: 12,
+        backgroundColor: '#f4f4f5',
     },
-    label: {
-        fontSize: 16,
+    tab: {
+        flex: 1,
+        alignItems: 'center',
+        paddingVertical: 8,
+        borderRadius: 8,
+    },
+    tabActive: {
+        backgroundColor: '#111111',
+    },
+    tabTitle: {
+        fontSize: 14,
         color: '#111111',
     },
-    labelDark: {
+    tabTitleActive: {
         color: '#ffffff',
     },
 });
