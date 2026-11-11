@@ -18,6 +18,7 @@ const config = withMetroConfig(getDefaultConfig(__dirname), {
 });
 
 module.exports = withStorybook(config, {
+    enabled: process.env.EXPO_PUBLIC_STORYBOOK_ENABLED === 'true',
     configPath: path.resolve(root, '.rnstorybook'),
     liteMode: true,
 });
