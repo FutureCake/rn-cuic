@@ -1,5 +1,6 @@
 import { createUI } from './create-ui';
 import { buttonStyleDefinition } from './inputs/button/styles';
+import { switchStyleDefinition } from './inputs/switch/styles';
 import { textFieldStyleDefinition } from './inputs/text-field/styles';
 import { toggleStyleDefinition } from './inputs/toggle/styles';
 
@@ -7,12 +8,14 @@ import { toggleStyleDefinition } from './inputs/toggle/styles';
 export const componentStyles = {
     Button: buttonStyleDefinition,
     Toggle: toggleStyleDefinition,
+    Switch: switchStyleDefinition,
     TextField: textFieldStyleDefinition,
 };
 
 export const {
     Button,
     Toggle,
+    Switch,
     TextField,
     StylesProvider,
     useTheme,
@@ -25,6 +28,9 @@ export const {
     },
     Toggle: {
         definition: toggleStyleDefinition,
+    },
+    Switch: {
+        definition: switchStyleDefinition,
     },
     TextField: {
         definition: textFieldStyleDefinition,

@@ -1,5 +1,7 @@
 import { createButton } from './inputs/button/create-button';
 import type { ButtonStyleDefinition } from './inputs/button/types';
+import { createSwitch } from './inputs/switch/create-switch';
+import type { SwitchStyleDefinition } from './inputs/switch/types';
 import { createTextField } from './inputs/text-field/create-text-field';
 import type { TextFieldStyleDefinition } from './inputs/text-field/types';
 import { createToggle } from './inputs/toggle/create-toggle';
@@ -26,6 +28,9 @@ export function createUI<
     Toggle: {
         definition: ToggleStyleDefinition<NoInfer<Theme>>;
     };
+    Switch: {
+        definition: SwitchStyleDefinition<NoInfer<Theme>>;
+    };
     TextField: {
         definition: TextFieldStyleDefinition<FeedbackVariant, NoInfer<Theme>>;
         defaults: NoInfer<{ feedbackVariant: FeedbackVariant }>;
@@ -35,6 +40,7 @@ export function createUI<
         {
             Button: config.Button.definition,
             Toggle: config.Toggle.definition,
+            Switch: config.Switch.definition,
             TextField: config.TextField.definition,
         },
         config.theme
@@ -52,6 +58,12 @@ export function createUI<
         },
         useTheme: manager.useTheme,
     });
+    const Switch = createSwitch<Theme>({
+        useStyles: function useSwitchStyles(options) {
+            return manager.useResolveComponentStyles('Switch', options);
+        },
+        useTheme: manager.useTheme,
+    });
     const TextField = createTextField<FeedbackVariant, Theme>({
         defaults: config.TextField.defaults,
         useStyles: function useTextFieldStyles(options) {
@@ -59,5 +71,5 @@ export function createUI<
         },
         useTheme: manager.useTheme,
     });
-    return { Button, Toggle, TextField, ...manager };
+    return { Button, Toggle, Switch, TextField, ...manager };
 }

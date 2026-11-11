@@ -16,10 +16,6 @@ const meta = {
     },
     argTypes: {
         theme: { control: 'select', options: ['light', 'dark'] },
-        feedbackVariant: {
-            control: 'select',
-            options: ['info', 'warning', 'error'],
-        },
         disabled: { control: 'boolean' },
         onChangeText: { action: 'changed' },
     },
@@ -52,11 +48,15 @@ export const WithFeedback: Story = {
 };
 
 export const WarningFeedback: Story = {
-    args: { feedback: 'Check this field.', feedbackVariant: 'warning' },
+    args: {
+        feedback: { message: 'Check this field.', variant: 'warning' },
+    },
 };
 
 export const ErrorFeedback: Story = {
-    args: { feedback: 'This field is required.', feedbackVariant: 'error' },
+    args: {
+        feedback: { message: 'This field is required.', variant: 'error' },
+    },
 };
 
 export const Disabled: Story = {

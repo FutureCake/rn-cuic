@@ -1,94 +1,30 @@
 import { useState } from 'react';
-import { TextInput, type TextInputProps } from 'react-native';
 import Animated from 'react-native-reanimated';
-import type { ResolvedComponentResult } from '../../providers-and-hooks';
-import { createSlotContext } from '../../utils/create-slot-context';
 import { hasSlot } from '../../utils/has-slot';
+import { ContextProvider } from './context';
+import { TextFieldFeedback } from './slots/feedback';
+import { TextFieldHeader } from './slots/header';
+import { TextFieldInput } from './slots/input';
 import type {
     TextFieldBuilderOptions,
-    TextFieldFeedbackProps,
-    TextFieldHeaderProps,
-    TextFieldInputProps,
     TextFieldProps,
-    TextFieldStyleDefinition,
     ValidationResult,
 } from './types';
 
-const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
-
-/** Fixed TextField tokens/slots: parts can share the default-generic contract. */
-type TextFieldContextValue =
-    ResolvedComponentResult<TextFieldStyleDefinition> & {
-        /** Root-owned native input props, including the wrapped handlers. */
-        inputProps: TextInputProps;
-        /** Active (invalid, visible) validation message, if any. */
-        validationMessage: string | undefined;
-        message: string | undefined;
-        variant: string;
-    };
-
 /**
- * Bind shared behavior and stable compound parts once, at factory creation.
- * Each configured TextField family owns its parts and their nearest-root context.
+ * Bind shared behavior to the configured defaults and style hooks; the slot
+ * parts are shared and resolve the nearest TextField root's context.
  */
 export function createTextField<Variant extends string, Theme extends string>({
     defaults,
     useStyles,
     useTheme,
 }: TextFieldBuilderOptions<Variant, Theme>) {
-    const { ContextProvider, useSlotContext } =
-        createSlotContext<TextFieldContextValue>('TextField');
-
-    function TextFieldHeader({ style, ...props }: TextFieldHeaderProps) {
-        const { styles } = useSlotContext('TextField.Header');
-        return <Animated.Text {...props} style={[styles.header, style]} />;
-    }
-
-    function TextFieldInput({ style }: TextFieldInputProps) {
-        const { styles, inputProps } = useSlotContext('TextField.Input');
-        return (
-            <AnimatedTextInput {...inputProps} style={[styles.input, style]} />
-        );
-    }
-
-    function TextFieldFeedback({
-        children,
-        style,
-        ...props
-    }: TextFieldFeedbackProps) {
-        const { styles, tokens, validationMessage, message, variant } =
-            useSlotContext('TextField.Feedback');
-
-        if (typeof children === 'function') {
-            return (
-                <>
-                    {children({
-                        message,
-                        variant,
-                        tokens,
-                        style: [styles.feedback, style],
-                    })}
-                </>
-            );
-        }
-
-        const content = validationMessage ?? children ?? message;
-        if (content === undefined || content === null || content === '') {
-            return null;
-        }
-        return (
-            <Animated.Text {...props} style={[styles.feedback, style]}>
-                {content}
-            </Animated.Text>
-        );
-    }
-
     function TextFieldRoot({
         theme: themeProp,
         disabled = false,
         header,
         feedback,
-        feedbackVariant = defaults.feedbackVariant,
         validation,
         style,
         styleOverrides,
@@ -114,7 +50,12 @@ export function createTextField<Variant extends string, Theme extends string>({
             (validation.showFeedbackOn === 'change' || hasBlurred)
                 ? validationResult
                 : undefined;
-        const variant = activeValidation?.variant ?? feedbackVariant;
+        const feedbackProp =
+            typeof feedback === 'string' ? { message: feedback } : feedback;
+        const variant =
+            activeValidation?.variant ??
+            feedbackProp?.variant ??
+            defaults.feedbackVariant;
         const validationMessage = activeValidation?.message;
 
         const { styles, tokens } = useStyles({
@@ -154,7 +95,7 @@ export function createTextField<Variant extends string, Theme extends string>({
                         },
                     },
                     validationMessage,
-                    message: validationMessage ?? feedback,
+                    message: validationMessage ?? feedbackProp?.message,
                     variant,
                 }}
             >
@@ -166,7 +107,9 @@ export function createTextField<Variant extends string, Theme extends string>({
                     {children}
                     {!hasSlot(children, TextFieldInput) && <TextFieldInput />}
                     {!hasSlot(children, TextFieldFeedback) && (
-                        <TextFieldFeedback>{feedback}</TextFieldFeedback>
+                        <TextFieldFeedback>
+                            {feedbackProp?.message}
+                        </TextFieldFeedback>
                     )}
                 </Animated.View>
             </ContextProvider>

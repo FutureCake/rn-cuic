@@ -1,19 +1,15 @@
 import type { ReactNode } from 'react';
 import type {
     ColorValue,
-    ImageProps,
     ImageSourcePropType,
     ImageStyle,
     PressableProps,
-    StyleProp,
-    TextProps,
     TextStyle,
     ViewStyle,
 } from 'react-native';
 import type {
     ResolveComponentOptions,
     ResolvedComponentResult,
-    ResolvedComponentTokens,
     StyleDefinition,
 } from '../../providers-and-hooks';
 import type { StyleOverrides } from '../../utils/types';
@@ -92,22 +88,3 @@ export type ButtonProps<
     icon?: ImageSourcePropType;
     children?: ReactNode;
 };
-
-export type ButtonTextProps = TextProps;
-
-export type ButtonIconRenderProps = {
-    tokens: ResolvedComponentTokens<ButtonStyleDefinition>;
-    style: StyleProp<ImageStyle>;
-    pressed: boolean;
-    disabled: boolean;
-};
-
-export type ButtonIconProps =
-    | (Omit<ImageProps, 'children'> & {
-          children?: never;
-      })
-    | {
-          source?: never;
-          children: ReactNode | ((props: ButtonIconRenderProps) => ReactNode);
-          style?: StyleProp<ImageStyle>;
-      };

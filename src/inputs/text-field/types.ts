@@ -3,14 +3,12 @@ import type {
     ColorValue,
     TextInputProps as RNTextInputProps,
     StyleProp,
-    TextProps,
     TextStyle,
     ViewStyle,
 } from 'react-native';
 import type {
     ResolveComponentOptions,
     ResolvedComponentResult,
-    ResolvedComponentTokens,
     StyleDefinition,
 } from '../../providers-and-hooks';
 import type { StyleOverrides } from '../../utils/types';
@@ -18,9 +16,15 @@ import type { ThemeMode } from '../button/types';
 
 export type FeedbackVariant = 'info' | 'warning' | 'error';
 
+export type Feedback<Variant extends string = FeedbackVariant> = {
+    message: string;
+    /** Falls back to the configured default variant. */
+    variant?: Variant;
+};
+
 export type ValidationResult<Variant extends string = FeedbackVariant> = {
     valid: boolean;
-    /** Feedback variant while invalid; falls back to the input's variant. */
+    /** Feedback variant while invalid; falls back to the feedback's variant. */
     variant?: Variant;
     message?: string;
 };
@@ -104,8 +108,7 @@ export type TextFieldProps<
     /** Shorthand for a TextField.Header child. */
     header?: string;
     /** Default feedback message; shorthand for a TextField.Feedback child. */
-    feedback?: string;
-    feedbackVariant?: Variant;
+    feedback?: string | Feedback<Variant>;
     validation?: Validation<Variant>;
     /** Outer container style. */
     style?: StyleProp<ViewStyle>;
@@ -115,27 +118,4 @@ export type TextFieldProps<
      * render order; parts that are omitted fall back to their defaults.
      */
     children?: ReactNode;
-};
-
-export type TextFieldHeaderProps = TextProps;
-
-/** Native input props are set on the root; the slot only positions/styles it. */
-export type TextFieldInputProps = {
-    style?: StyleProp<TextStyle>;
-};
-
-export type TextFieldFeedbackRenderProps = {
-    /** Invalid validation message, else the `feedback` prop. */
-    message: string | undefined;
-    variant: string;
-    tokens: ResolvedComponentTokens<TextFieldStyleDefinition>;
-    style: StyleProp<TextStyle>;
-};
-
-export type TextFieldFeedbackProps = Omit<TextProps, 'children'> & {
-    /**
-     * Static content is replaced by an active validation message; a render
-     * function receives the resolved feedback and decides itself.
-     */
-    children?: ReactNode | ((props: TextFieldFeedbackRenderProps) => ReactNode);
 };

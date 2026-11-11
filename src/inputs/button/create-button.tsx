@@ -1,28 +1,17 @@
 import { useState } from 'react';
 import { Pressable } from 'react-native';
 import Animated from 'react-native-reanimated';
-import type { ResolvedComponentResult } from '../../providers-and-hooks';
-import { createSlotContext } from '../../utils/create-slot-context';
 import { hasSlot } from '../../utils/has-slot';
-import type {
-    ButtonBuilderOptions,
-    ButtonIconProps,
-    ButtonProps,
-    ButtonStyleDefinition,
-    ButtonTextProps,
-} from './types';
+import { ContextProvider } from './context';
+import { ButtonIcon } from './slots/icon';
+import { ButtonText } from './slots/text';
+import type { ButtonBuilderOptions, ButtonProps } from './types';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-/** Fixed Button tokens/slots: parts can share the default-generic contract. */
-type ButtonContextValue = ResolvedComponentResult<ButtonStyleDefinition> & {
-    pressed: boolean;
-    disabled: boolean;
-};
-
 /**
- * Bind shared behavior and stable compound parts once, at factory creation.
- * Each configured Button family owns its parts and their nearest-root context.
+ * Bind shared behavior to the configured defaults and style hooks; the slot
+ * parts are shared and resolve the nearest Button root's context.
  */
 export function createButton<
     Variant extends string,
@@ -33,50 +22,6 @@ export function createButton<
     useStyles,
     useTheme,
 }: ButtonBuilderOptions<Variant, Size, Theme>) {
-    const { ContextProvider, useSlotContext } =
-        createSlotContext<ButtonContextValue>('Button');
-
-    function ButtonText({ style, ...props }: ButtonTextProps) {
-        const { styles } = useSlotContext('Button.Text');
-        return <Animated.Text {...props} style={[styles.text, style]} />;
-    }
-
-    function ButtonIcon({
-        source,
-        children,
-        style,
-        ...props
-    }: ButtonIconProps) {
-        const { styles, tokens, pressed, disabled } =
-            useSlotContext('Button.Icon');
-
-        if (typeof children === 'function') {
-            return (
-                <>
-                    {children({
-                        tokens,
-                        style: [styles.icon, style],
-                        pressed,
-                        disabled,
-                    })}
-                </>
-            );
-        }
-
-        if (source === undefined) {
-            return <>{children}</>;
-        }
-
-        return (
-            <Animated.Image
-                accessible={false}
-                {...props}
-                source={source}
-                style={[styles.icon, style]}
-            />
-        );
-    }
-
     function ButtonRoot({
         text,
         icon,
