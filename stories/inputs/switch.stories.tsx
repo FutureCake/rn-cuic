@@ -1,8 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-native';
 import { useState } from 'react';
 import Animated from 'react-native-reanimated';
-import { Switch, type SwitchProps } from 'rn-cuic';
+import { type SwitchProps } from 'rn-cuic';
 import { withRenderContainer } from '../helpers/render-container';
+import { Switch } from '../helpers/ui';
 
 const options = [
     { title: 'Daily', value: 'daily' },

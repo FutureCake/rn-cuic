@@ -1,8 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-native';
 import { useState } from 'react';
 import { Text } from 'react-native';
-import { TextField, type TextFieldProps } from 'rn-cuic';
+import { type TextFieldProps } from 'rn-cuic';
 import { withRenderContainer } from '../helpers/render-container';
+import { TextField } from '../helpers/ui';
 
 const meta = {
     title: 'Inputs/TextField',

@@ -1,5 +1,5 @@
 import { View } from 'react-native';
-import { StylesProvider } from 'rn-cuic';
+import { StylesProvider } from './ui';
 
 function RenderContainer({ children }: { children: React.ReactNode }) {
     return (

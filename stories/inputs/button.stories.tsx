@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-native';
 import { ActivityIndicator, type ImageSourcePropType } from 'react-native';
-import { Button, useTheme } from 'rn-cuic';
 import { withRenderContainer } from '../helpers/render-container';
+import { Button, useTheme } from '../helpers/ui';
 
 const icon: ImageSourcePropType = require('../../example/assets/android-icon-monochrome.png');
 

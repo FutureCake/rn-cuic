@@ -2,8 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react-native';
 import { useState, type ComponentProps } from 'react';
 import { ActivityIndicator, type ImageSourcePropType } from 'react-native';
 import Animated from 'react-native-reanimated';
-import { Chip } from 'rn-cuic';
 import { withRenderContainer } from '../helpers/render-container';
+import { Chip } from '../helpers/ui';
 
 const icon: ImageSourcePropType = require('../../example/assets/android-icon-monochrome.png');
 

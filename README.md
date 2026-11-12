@@ -58,11 +58,16 @@ custom native apps after adding or changing native dependencies.
 
 ## Quick start
 
-Wrap your app once and use the components. No style configuration is required;
-the default preset applies:
+Call `createUI` once at module scope, selecting only the components your app
+uses. An empty selection (`{}`) applies the default preset for that component:
 
 ```tsx
-import { Button, StylesProvider } from 'rn-cuic';
+import { createUI } from 'rn-cuic';
+
+const { Button, StylesProvider } = createUI({
+    theme: 'light',
+    Button: {},
+});
 
 export function App() {
     return (
@@ -85,7 +90,12 @@ The theme is ambient: `StylesProvider` owns it and every component inside
 follows it. `useTheme` reads and updates it from anywhere in the subtree:
 
 ```tsx
-import { Button, StylesProvider, useTheme } from 'rn-cuic';
+import { createUI } from 'rn-cuic';
+
+const { Button, StylesProvider, useTheme } = createUI({
+    theme: 'light',
+    Button: {},
+});
 
 function ThemeSwitch() {
     const { theme, setTheme } = useTheme();
@@ -107,8 +117,8 @@ export function App() {
 }
 ```
 
-- The provider starts at the factory's configured default theme (`'light'` for
-  the default preset).
+- The provider starts at the `createUI` config's `theme` (`'light'` in the
+  examples above).
 - Pass `theme` to the provider to drive it from app state instead; the prop
   takes precedence over `setTheme`: `<StylesProvider theme={colorScheme}>`.
 - A `theme` prop on a single component instance overrides the ambient theme for
@@ -271,10 +281,11 @@ export function App() {
 
 Each `createUI` call returns an independent family. A component or hook without
 its **own matching provider** throws, even inside another family's provider.
-Do not mix compound parts from different families. The library's default
-exports (`Button`, `StylesProvider`, `useTheme`, …) are simply the preset
-family: `createUI` called with `buttonStyleDefinition`, `primary`/`small`
-defaults, and a `'light'` theme.
+Do not mix compound parts from different families. The library ships no
+pre-built component instances: every app calls `createUI`, and the preset
+definitions (`buttonStyleDefinition`, …) are used whenever a selected component
+omits `definition`. Preset fallbacks resolve the `light`/`dark` themes, so
+supply a definition for every selected component when using custom theme names.
 
 ## Button slots
 

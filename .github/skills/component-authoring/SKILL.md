@@ -57,7 +57,7 @@ src/inputs/<component>/
 ├── styles.ts             # <component>StyleDefinition preset, dogfoods define-styles
 ├── create-<component>.tsx# create<Component>({ defaults?, useStyles, useTheme })
 │                         #   → root component; Object.assign(Root, { Slot… })
-├── index.tsx             # export { <Component> as default } from '../../default-ui'
+├── index.tsx             # re-exports define-styles, styles, types (no component)
 ├── context.ts            # ONLY if compound slots: module-level
 │                         #   createSlotContext<ContextValue>('<Component>')
 │                         #   exporting { ContextProvider, useSlotContext }
@@ -92,21 +92,28 @@ Rules:
 
 ## Registration checklist (every new component)
 
-1. [create-ui.ts](../../../src/create-ui.ts) — add a config key
-   `{ definition, defaults? }`, a generic per custom influence, and the
-   `create<Component>` call wiring `manager.useResolveComponentStyles`.
-   All families must author every component — a new component is a breaking
-   change to `createUI` callers; that is accepted.
-2. [default-ui.ts](../../../src/default-ui.ts) — add the preset definition to
-   `componentStyles` and the `createUI` call (with defaults), and export the
-   component.
-3. [src/index.tsx](../../../src/index.tsx) — export the component (from
-   default-ui), `define<Component>Styles`, `<component>StyleDefinition`,
-   `export type *` from types.ts **and from every slot file**.
+1. [create-ui.ts](../../../src/create-ui.ts) — add the preset definition to
+   `componentStyles`; add an optional config key to `UIConfig` (union of the
+   preset branch `{ definition?: undefined; defaults?: …preset names… }` and the
+   custom branch `{ definition; defaults }`), a generic per custom influence
+   with a preset default; extend `ComponentDefinitions`/`BuiltComponents`; add
+   the guarded `if (config.<Component>)` blocks in the implementation (preset
+   definition/defaults fallbacks, `create<Component>` wired to
+   `manager.useResolveComponentStyles`). Components are built only when their
+   key is selected — adding one is not a breaking change.
+2. `src/inputs/<component>/index.tsx` — the component barrel: export
+   `define<Component>Styles`, `export * from './styles'` and `'./types'`, and
+   `export type *` from every slot file.
+3. [src/index.tsx](../../../src/index.tsx) — add a single
+   `export * from './inputs/<component>';` line. Components themselves are
+   never exported; consumers get them from their own `createUI` call.
 4. `src/inputs/index.ts` (or the matching category barrel) if applicable.
-5. Story in `stories/<category>/<component>.stories.tsx` (stories are part of
-   the build typecheck). Use `withRenderContainer` decorator; demo shorthand
-   props, compound slots, and render-function children.
+5. [stories/helpers/ui.ts](../../../stories/helpers/ui.ts) — add the component
+   key to the shared story family and its destructured export.
+6. Story in `stories/<category>/<component>.stories.tsx` (stories are part of
+   the build typecheck). Import the component from `../helpers/ui`, use the
+   `withRenderContainer` decorator; demo shorthand props, compound slots, and
+   render-function children.
 
 ## New component: interview first — zero ambiguity
 
