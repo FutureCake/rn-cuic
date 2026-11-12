@@ -3,6 +3,7 @@ import {
     chipFactory,
     createUI,
     switchFactory,
+    textAreaFactory,
     textFieldFactory,
     toggleFactory,
 } from 'rn-cuic';
@@ -14,6 +15,7 @@ export const {
     Toggle,
     Switch,
     TextField,
+    TextArea,
     StylesProvider,
     useTheme,
 } = createUI({
@@ -24,5 +26,6 @@ export const {
         Toggle: toggleFactory(),
         Switch: switchFactory(),
         TextField: textFieldFactory(),
+        TextArea: textAreaFactory(),
     },
 });
