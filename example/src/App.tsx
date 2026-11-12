@@ -9,6 +9,7 @@ import {
 import { chipFactory } from 'rn-cuic/chip';
 import { createUI } from 'rn-cuic/core';
 import { switchFactory } from 'rn-cuic/switch';
+import { textAreaFactory } from 'rn-cuic/text-area';
 import { textFieldFactory } from 'rn-cuic/text-field';
 import { toggleFactory } from 'rn-cuic/toggle';
 
@@ -79,20 +80,29 @@ const customButtonDefinition = defineButtonStyles({
 // One selective family: a custom Button definition, presets for the rest.
 // Importing only the factories the app uses keeps the rest of the library
 // out of the bundle.
-const { Button, Chip, Toggle, Switch, TextField, StylesProvider, useTheme } =
-    createUI({
-        theme: 'light',
-        components: {
-            Button: buttonFactory({
-                definition: customButtonDefinition,
-                defaults: { variant: 'tertiary', size: 'large' },
-            }),
-            Chip: chipFactory(),
-            Toggle: toggleFactory(),
-            Switch: switchFactory(),
-            TextField: textFieldFactory(),
-        },
-    });
+const {
+    Button,
+    Chip,
+    Toggle,
+    Switch,
+    TextField,
+    TextArea,
+    StylesProvider,
+    useTheme,
+} = createUI({
+    theme: 'light',
+    components: {
+        Button: buttonFactory({
+            definition: customButtonDefinition,
+            defaults: { variant: 'tertiary', size: 'large' },
+        }),
+        Chip: chipFactory(),
+        Toggle: toggleFactory(),
+        Switch: switchFactory(),
+        TextField: textFieldFactory(),
+        TextArea: textAreaFactory(),
+    },
+});
 
 const frequencies = [
     { title: 'Daily', value: 'daily' },
@@ -119,6 +129,7 @@ function Showcase() {
     const [frequency, setFrequency] = useState('daily');
     const [selectedTopics, setSelectedTopics] = useState(['News']);
     const [email, setEmail] = useState('');
+    const [message, setMessage] = useState('');
 
     return (
         <ScrollView
@@ -178,6 +189,16 @@ function Showcase() {
                                   message: 'Enter a valid email address.',
                               },
                 }}
+            />
+
+            <TextArea
+                header="Message"
+                placeholder="Anything you want to add?"
+                value={message}
+                onChangeText={setMessage}
+                numLines={3}
+                maxLines={8}
+                feedback="Grows with your message, up to 8 lines."
             />
 
             <Button

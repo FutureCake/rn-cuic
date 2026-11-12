@@ -20,6 +20,9 @@
             "rn-cuic/switch": [
                 "./src/inputs/switch/index"
             ],
+            "rn-cuic/text-area": [
+                "./src/inputs/text-area/index"
+            ],
             "rn-cuic/text-field": [
                 "./src/inputs/text-field/index"
             ]
