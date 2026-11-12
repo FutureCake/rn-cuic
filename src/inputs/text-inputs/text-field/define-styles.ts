@@ -1,22 +1,5 @@
-import type { TokenValue } from '../../providers-and-hooks/styles-manager/types';
-import type {
-    TextFieldInfluences,
-    TextFieldStyleDefinition,
-    TextFieldTokens,
-} from './types';
-
-/** One value map; callbacks receive the other influences, never their own. */
-type InfluenceValueMap<
-    Values extends string,
-    OwnKey extends keyof TextFieldInfluences,
-    Variant extends string,
-    Theme extends string,
-> = {
-    [Value in Values]: TokenValue<
-        TextFieldTokens,
-        Omit<TextFieldInfluences<Variant, Theme>, OwnKey>
-    >;
-};
+import type { InfluenceValueMap } from '../shared/types';
+import type { TextFieldStyleDefinition, TextFieldTokens } from './types';
 
 /**
  * The single authoring path for TextField style definitions. Supported
@@ -33,12 +16,14 @@ export function defineTextFieldStyles<
     > & {
         influenceResolvers: {
             theme: InfluenceValueMap<
+                TextFieldTokens,
                 Theme,
                 'theme',
                 NoInfer<Variant>,
                 NoInfer<Theme>
             >;
             feedbackVariant: InfluenceValueMap<
+                TextFieldTokens,
                 Variant,
                 'feedbackVariant',
                 NoInfer<Variant>,

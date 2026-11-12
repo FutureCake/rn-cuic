@@ -10,34 +10,36 @@ import type {
     ResolveComponentOptions,
     ResolvedComponentResult,
     StyleDefinition,
-} from '../../providers-and-hooks';
-import type { StyleOverrides } from '../../utils/types';
-import type { ThemeMode } from '../button/types';
+} from '../../../providers-and-hooks';
+import type { StyleOverrides } from '../../../utils/types';
+import type { ThemeMode } from '../../button/types';
 import type {
     Feedback,
     FeedbackVariant,
+    FieldInfluences,
+    FieldStates,
     Validation,
-} from '../text-field/types';
+} from '../shared/types';
 
-/** TextArea shares the TextField feedback and validation contract. */
+/** Shared field contract, re-exported for the text-field entry point. */
 export type {
     Feedback,
     FeedbackVariant,
     Validation,
     ValidationResult,
-} from '../text-field/types';
+} from '../shared/types';
 
 /** Declaration order matters: disabled is declared last so it wins. */
-export type TextAreaStates = 'focused' | 'disabled';
+export type TextFieldStates = FieldStates;
 
-export type TextAreaSlotStyles = {
+export type TextFieldSlotStyles = {
     container: ViewStyle;
     header: TextStyle;
     input: TextStyle;
     feedback: TextStyle;
 };
 
-export type TextAreaTokens = {
+export type TextFieldTokens = {
     fontSize: number;
     headerFontSize: number;
     feedbackFontSize: number;
@@ -46,8 +48,7 @@ export type TextAreaTokens = {
     borderWidth: number;
     radius: ViewStyle['borderRadius'];
     paddingX: ViewStyle['padding'];
-    /** Numeric: participates in the numLines/grow height calculation. */
-    paddingY: number;
+    paddingY: ViewStyle['padding'];
     /** Space between the header, input and feedback. */
     gap: number;
     textColor: ColorValue;
@@ -57,70 +58,56 @@ export type TextAreaTokens = {
     feedbackColor: ColorValue;
 };
 
-export type TextAreaInfluences<
+export type TextFieldInfluences<
     Variant extends string = FeedbackVariant,
     Theme extends string = ThemeMode,
-> = { feedbackVariant: Variant; theme: Theme };
+> = FieldInfluences<Variant, Theme>;
 
-export type TextAreaStyleDefinition<
+export type TextFieldStyleDefinition<
     Variant extends string = FeedbackVariant,
     Theme extends string = ThemeMode,
 > = StyleDefinition<
-    TextAreaInfluences<Variant, Theme>,
-    TextAreaTokens,
-    TextAreaStates,
-    TextAreaSlotStyles
+    TextFieldInfluences<Variant, Theme>,
+    TextFieldTokens,
+    TextFieldStates,
+    TextFieldSlotStyles
 >;
 
 /** Supplied by createUI: configured defaults plus instance-bound hooks. */
-export type TextAreaBuilderOptions<
+export type TextFieldBuilderOptions<
     Variant extends string = FeedbackVariant,
     Theme extends string = ThemeMode,
 > = {
     defaults: { feedbackVariant: Variant };
     useStyles: (
         options: ResolveComponentOptions<
-            TextAreaStyleDefinition<Variant, Theme>
+            TextFieldStyleDefinition<Variant, Theme>
         >
-    ) => ResolvedComponentResult<TextAreaStyleDefinition<Variant, Theme>>;
+    ) => ResolvedComponentResult<TextFieldStyleDefinition<Variant, Theme>>;
     /** Read-only ambient theme; components consume it but never set it. */
     useTheme: () => { theme: Theme };
 };
 
-export type TextAreaProps<
+export type TextFieldProps<
     Variant extends string = FeedbackVariant,
     Theme extends string = ThemeMode,
 > = Omit<
     RNTextInputProps,
-    | 'style'
-    | 'editable'
-    | 'placeholderTextColor'
-    | 'children'
-    | 'multiline'
-    | 'numberOfLines'
+    'style' | 'editable' | 'placeholderTextColor' | 'children'
 > & {
     /** Overrides the ambient theme from StylesProvider for this instance. */
     theme?: Theme;
     disabled?: boolean;
-    /**
-     * Height of the input in text lines (the minimum while growing); content
-     * beyond it scrolls unless the field grows. Defaults to 4.
-     */
-    numLines?: number;
-    /** Grow with the content instead of scrolling past numLines. */
-    grow?: boolean;
-    /** Caps growth at this many lines; supplying it implies `grow`. */
-    maxLines?: number;
-    /** Shorthand for a TextArea.Header child. */
+    /** Shorthand for a TextField.Header child. */
     header?: string;
-    /** Default feedback message; shorthand for a TextArea.Feedback child. */
+    /** Default feedback message; shorthand for a TextField.Feedback child. */
     feedback?: string | Feedback<Variant>;
     validation?: Validation<Variant>;
     /** Outer container style. */
     style?: StyleProp<ViewStyle>;
-    styleOverrides?: StyleOverrides<TextAreaSlotStyles>;
+    styleOverrides?: StyleOverrides<TextFieldSlotStyles>;
     /**
-     * Compose TextArea.Header, TextArea.Input and TextArea.Feedback in
+     * Compose TextField.Header, TextField.Input and TextField.Feedback in
      * render order; parts that are omitted fall back to their defaults.
      */
     children?: ReactNode;

@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import type { StyleProp, TextProps, TextStyle } from 'react-native';
-import Animated from 'react-native-reanimated';
-import type { ResolvedComponentTokens } from '../../../providers-and-hooks';
+import type { ResolvedComponentTokens } from '../../../../providers-and-hooks';
+import { SharedHeaderSlot } from '../../shared/header-slot';
 import { useSlotContext } from '../context';
 import type { TextAreaStyleDefinition } from '../types';
 
@@ -15,20 +15,13 @@ export type TextAreaHeaderProps = Omit<TextProps, 'children'> & {
     children?: ReactNode | ((props: TextAreaHeaderRenderProps) => ReactNode);
 };
 
-export function TextAreaHeader({
-    children,
-    style,
-    ...props
-}: TextAreaHeaderProps) {
+export function TextAreaHeader(props: TextAreaHeaderProps) {
     const { styles, tokens } = useSlotContext('TextArea.Header');
-
-    if (typeof children === 'function') {
-        return <>{children({ tokens, style: [styles.header, style] })}</>;
-    }
-
     return (
-        <Animated.Text {...props} style={[styles.header, style]}>
-            {children}
-        </Animated.Text>
+        <SharedHeaderSlot
+            {...props}
+            tokens={tokens}
+            slotStyle={styles.header}
+        />
     );
 }

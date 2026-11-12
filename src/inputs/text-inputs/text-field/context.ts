@@ -1,6 +1,6 @@
 import type { TextInputProps } from 'react-native';
-import type { ResolvedComponentResult } from '../../providers-and-hooks';
-import { createSlotContext } from '../../utils';
+import type { ResolvedComponentResult } from '../../../providers-and-hooks';
+import { createSlotContext } from '../../../utils';
 import type { TextFieldStyleDefinition } from './types';
 
 /** Fixed TextField tokens/slots: parts can share the default-generic contract. */

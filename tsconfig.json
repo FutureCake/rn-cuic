@@ -21,10 +21,10 @@
                 "./src/inputs/switch/index"
             ],
             "rn-cuic/text-area": [
-                "./src/inputs/text-area/index"
+                "./src/inputs/text-inputs/text-area/index"
             ],
             "rn-cuic/text-field": [
-                "./src/inputs/text-field/index"
+                "./src/inputs/text-inputs/text-field/index"
             ]
         },
         "allowUnreachableCode": false,

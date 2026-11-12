@@ -1,6 +1,6 @@
-import type { UIComponentDescriptor } from '../../core';
-import type { StyleDefinitionShape } from '../../providers-and-hooks/styles-manager/types';
-import type { ThemeMode } from '../button/types';
+import type { UIComponentDescriptor } from '../../../core';
+import type { StyleDefinitionShape } from '../../../providers-and-hooks/styles-manager/types';
+import type { ThemeMode } from '../../button/types';
 import { createTextArea } from './create-text-area';
 import { textAreaStyleDefinition } from './styles';
 import type { FeedbackVariant, TextAreaStyleDefinition } from './types';

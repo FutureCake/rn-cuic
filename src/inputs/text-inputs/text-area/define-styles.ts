@@ -1,22 +1,5 @@
-import type { TokenValue } from '../../providers-and-hooks/styles-manager/types';
-import type {
-    TextAreaInfluences,
-    TextAreaStyleDefinition,
-    TextAreaTokens,
-} from './types';
-
-/** One value map; callbacks receive the other influences, never their own. */
-type InfluenceValueMap<
-    Values extends string,
-    OwnKey extends keyof TextAreaInfluences,
-    Variant extends string,
-    Theme extends string,
-> = {
-    [Value in Values]: TokenValue<
-        TextAreaTokens,
-        Omit<TextAreaInfluences<Variant, Theme>, OwnKey>
-    >;
-};
+import type { InfluenceValueMap } from '../shared/types';
+import type { TextAreaStyleDefinition, TextAreaTokens } from './types';
 
 /**
  * The single authoring path for TextArea style definitions. Supported
@@ -33,12 +16,14 @@ export function defineTextAreaStyles<
     > & {
         influenceResolvers: {
             theme: InfluenceValueMap<
+                TextAreaTokens,
                 Theme,
                 'theme',
                 NoInfer<Variant>,
                 NoInfer<Theme>
             >;
             feedbackVariant: InfluenceValueMap<
+                TextAreaTokens,
                 Variant,
                 'feedbackVariant',
                 NoInfer<Variant>,

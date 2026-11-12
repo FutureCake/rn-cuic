@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import type { StyleProp, TextProps, TextStyle } from 'react-native';
-import Animated from 'react-native-reanimated';
-import type { ResolvedComponentTokens } from '../../../providers-and-hooks';
+import type { ResolvedComponentTokens } from '../../../../providers-and-hooks';
+import { SharedFeedbackSlot } from '../../shared/feedback-slot';
 import { useSlotContext } from '../context';
 import type { TextFieldStyleDefinition } from '../types';
 
@@ -21,34 +21,17 @@ export type TextFieldFeedbackProps = Omit<TextProps, 'children'> & {
     children?: ReactNode | ((props: TextFieldFeedbackRenderProps) => ReactNode);
 };
 
-export function TextFieldFeedback({
-    children,
-    style,
-    ...props
-}: TextFieldFeedbackProps) {
+export function TextFieldFeedback(props: TextFieldFeedbackProps) {
     const { styles, tokens, validationMessage, message, variant } =
         useSlotContext('TextField.Feedback');
-
-    if (typeof children === 'function') {
-        return (
-            <>
-                {children({
-                    message,
-                    variant,
-                    tokens,
-                    style: [styles.feedback, style],
-                })}
-            </>
-        );
-    }
-
-    const content = validationMessage ?? children ?? message;
-    if (content === undefined || content === null || content === '') {
-        return null;
-    }
     return (
-        <Animated.Text {...props} style={[styles.feedback, style]}>
-            {content}
-        </Animated.Text>
+        <SharedFeedbackSlot
+            {...props}
+            tokens={tokens}
+            slotStyle={styles.feedback}
+            validationMessage={validationMessage}
+            message={message}
+            variant={variant}
+        />
     );
 }
