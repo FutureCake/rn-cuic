@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-native';
 import { useState } from 'react';
-import { Toggle, type ToggleProps } from 'rn-cuic';
+import { type ToggleProps } from 'rn-cuic';
 import { withRenderContainer } from '../helpers/render-container';
+import { Toggle } from '../helpers/ui';
 
 const meta = {
     title: 'Inputs/Toggle',

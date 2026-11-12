@@ -10,6 +10,36 @@
             "types": "./lib/typescript/src/index.d.ts",
             "default": "./lib/module/index.js"
         },
+        "./core": {
+            "rn-cuic-source": "./src/core.ts",
+            "types": "./lib/typescript/src/core.d.ts",
+            "default": "./lib/module/core.js"
+        },
+        "./button": {
+            "rn-cuic-source": "./src/inputs/button/index.tsx",
+            "types": "./lib/typescript/src/inputs/button/index.d.ts",
+            "default": "./lib/module/inputs/button/index.js"
+        },
+        "./chip": {
+            "rn-cuic-source": "./src/inputs/chip/index.tsx",
+            "types": "./lib/typescript/src/inputs/chip/index.d.ts",
+            "default": "./lib/module/inputs/chip/index.js"
+        },
+        "./toggle": {
+            "rn-cuic-source": "./src/inputs/toggle/index.tsx",
+            "types": "./lib/typescript/src/inputs/toggle/index.d.ts",
+            "default": "./lib/module/inputs/toggle/index.js"
+        },
+        "./switch": {
+            "rn-cuic-source": "./src/inputs/switch/index.tsx",
+            "types": "./lib/typescript/src/inputs/switch/index.d.ts",
+            "default": "./lib/module/inputs/switch/index.js"
+        },
+        "./text-field": {
+            "rn-cuic-source": "./src/inputs/text-field/index.tsx",
+            "types": "./lib/typescript/src/inputs/text-field/index.d.ts",
+            "default": "./lib/module/inputs/text-field/index.js"
+        },
         "./package.json": "./package.json"
     },
     "files": [
