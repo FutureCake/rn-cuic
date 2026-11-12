@@ -58,15 +58,17 @@ custom native apps after adding or changing native dependencies.
 
 ## Quick start
 
-Call `createUI` once at module scope, selecting only the components your app
-uses. An empty selection (`{}`) applies the default preset for that component:
+Call `createUI` once at module scope, passing a factory per component your app
+uses. A factory called with no arguments applies that component's preset:
 
 ```tsx
-import { createUI } from 'rn-cuic';
+import { buttonFactory, createUI } from 'rn-cuic';
 
 const { Button, StylesProvider } = createUI({
     theme: 'light',
-    Button: {},
+    components: {
+        Button: buttonFactory(),
+    },
 });
 
 export function App() {
@@ -84,17 +86,43 @@ and the native `Pressable` props. Pressed/disabled styling and animated style
 transitions are built in. Components and hooks throw when used outside their
 matching `StylesProvider`.
 
+## Smaller bundles: subpath imports
+
+Importing from the root `'rn-cuic'` pulls every component into the bundle
+(Metro does not tree-shake). The subpath entries expose the exact same API but
+bundle only what you import:
+
+```tsx
+import { buttonFactory } from 'rn-cuic/button';
+import { createUI } from 'rn-cuic/core';
+
+const { Button, StylesProvider } = createUI({
+    theme: 'light',
+    components: {
+        Button: buttonFactory(),
+    },
+});
+```
+
+A factory with no arguments selects the preset; pass `{ definition, defaults }`
+for a custom family. `rn-cuic/core` exports `createUI`, the styles manager, and
+the shared utilities; `rn-cuic/button`, `rn-cuic/chip`, `rn-cuic/toggle`,
+`rn-cuic/switch`, and `rn-cuic/text-field` each export their factory,
+`define<Component>Styles`, the preset definition, and all component types.
+
 ## Theming
 
 The theme is ambient: `StylesProvider` owns it and every component inside
 follows it. `useTheme` reads and updates it from anywhere in the subtree:
 
 ```tsx
-import { createUI } from 'rn-cuic';
+import { buttonFactory, createUI } from 'rn-cuic';
 
 const { Button, StylesProvider, useTheme } = createUI({
     theme: 'light',
-    Button: {},
+    components: {
+        Button: buttonFactory(),
+    },
 });
 
 function ThemeSwitch() {
@@ -190,7 +218,12 @@ required `variant`, `size`, and `theme` resolver maps. Every supported value
 needs an entry; `{}` declares one without token overrides.
 
 ```tsx
-import { buttonStyleDefinition, createUI, defineButtonStyles } from 'rn-cuic';
+import {
+    buttonFactory,
+    buttonStyleDefinition,
+    createUI,
+    defineButtonStyles,
+} from 'rn-cuic';
 
 export const buttonDefinition = defineButtonStyles({
     defaultTokens: {
@@ -253,9 +286,11 @@ export const {
     useTheme: useAppTheme,
 } = createUI({
     theme: 'day',
-    Button: {
-        definition: buttonDefinition,
-        defaults: { variant: 'solid', size: 'compact' },
+    components: {
+        Button: buttonFactory({
+            definition: buttonDefinition,
+            defaults: { variant: 'solid', size: 'compact' },
+        }),
     },
 });
 ```
@@ -282,10 +317,10 @@ export function App() {
 Each `createUI` call returns an independent family. A component or hook without
 its **own matching provider** throws, even inside another family's provider.
 Do not mix compound parts from different families. The library ships no
-pre-built component instances: every app calls `createUI`, and the preset
-definitions (`buttonStyleDefinition`, …) are used whenever a selected component
-omits `definition`. Preset fallbacks resolve the `light`/`dark` themes, so
-supply a definition for every selected component when using custom theme names.
+pre-built component instances: every app calls `createUI`, and a factory called
+without a `definition` uses its preset (`buttonStyleDefinition`, …). Preset
+fallbacks resolve the `light`/`dark` themes, so supply a definition for every
+selected component when using custom theme names.
 
 ## Button slots
 

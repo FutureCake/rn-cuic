@@ -1,7 +1,16 @@
 import { useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { buttonStyleDefinition, createUI, defineButtonStyles } from 'rn-cuic';
+import {
+    buttonFactory,
+    buttonStyleDefinition,
+    defineButtonStyles,
+} from 'rn-cuic/button';
+import { chipFactory } from 'rn-cuic/chip';
+import { createUI } from 'rn-cuic/core';
+import { switchFactory } from 'rn-cuic/switch';
+import { textFieldFactory } from 'rn-cuic/text-field';
+import { toggleFactory } from 'rn-cuic/toggle';
 
 const brand = {
     light: { main: '#4f46e5', pressed: '#3730a3', on: '#ffffff' },
@@ -68,17 +77,21 @@ const customButtonDefinition = defineButtonStyles({
 });
 
 // One selective family: a custom Button definition, presets for the rest.
+// Importing only the factories the app uses keeps the rest of the library
+// out of the bundle.
 const { Button, Chip, Toggle, Switch, TextField, StylesProvider, useTheme } =
     createUI({
         theme: 'light',
-        Button: {
-            definition: customButtonDefinition,
-            defaults: { variant: 'tertiary', size: 'large' },
+        components: {
+            Button: buttonFactory({
+                definition: customButtonDefinition,
+                defaults: { variant: 'tertiary', size: 'large' },
+            }),
+            Chip: chipFactory(),
+            Toggle: toggleFactory(),
+            Switch: switchFactory(),
+            TextField: textFieldFactory(),
         },
-        Chip: {},
-        Toggle: {},
-        Switch: {},
-        TextField: {},
     });
 
 const frequencies = [

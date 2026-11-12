@@ -57,7 +57,10 @@ src/inputs/<component>/
 ├── styles.ts             # <component>StyleDefinition preset, dogfoods define-styles
 ├── create-<component>.tsx# create<Component>({ defaults?, useStyles, useTheme })
 │                         #   → root component; Object.assign(Root, { Slot… })
-├── index.tsx             # re-exports define-styles, styles, types (no component)
+├── factory.ts            # <component>Factory → UIComponentDescriptor for the
+│                         #   subpath/core createUI (preset + custom overloads)
+├── index.tsx             # re-exports define-styles, factory, styles, types
+│                         #   (no component)
 ├── context.ts            # ONLY if compound slots: module-level
 │                         #   createSlotContext<ContextValue>('<Component>')
 │                         #   exporting { ContextProvider, useSlotContext }
@@ -92,25 +95,31 @@ Rules:
 
 ## Registration checklist (every new component)
 
-1. [create-ui.ts](../../../src/create-ui.ts) — add the preset definition to
-   `componentStyles`; add an optional config key to `UIConfig` (union of the
-   preset branch `{ definition?: undefined; defaults?: …preset names… }` and the
-   custom branch `{ definition; defaults }`), a generic per custom influence
-   with a preset default; extend `ComponentDefinitions`/`BuiltComponents`; add
-   the guarded `if (config.<Component>)` blocks in the implementation (preset
-   definition/defaults fallbacks, `create<Component>` wired to
-   `manager.useResolveComponentStyles`). Components are built only when their
-   key is selected — adding one is not a breaking change.
+1. `src/inputs/<component>/factory.ts` — `<component>Factory` returning a
+   `UIComponentDescriptor` (import type from `../../core`). Preset overload
+   (`definition?: undefined`, optional preset-typed `defaults`) + custom
+   overload (`definition` required, `defaults: NoInfer<…>` required); loose
+   implementation signature returns `UIComponentDescriptor<StyleDefinitionShape,
+   ThemeMode, unknown>`, applies preset fallbacks (factories are the single
+   source of preset defaults), and builds via `create<Component>` with
+   `useStyles(options as never)`. Components are built only when their factory
+   is passed to `createUI` — adding one is not a breaking change.
 2. `src/inputs/<component>/index.tsx` — the component barrel: export
-   `define<Component>Styles`, `export * from './styles'` and `'./types'`, and
-   `export type *` from every slot file.
+   `define<Component>Styles`, `<component>Factory`, `export * from './styles'`
+   and `'./types'`, and `export type *` from every slot file.
 3. [src/index.tsx](../../../src/index.tsx) — add a single
-   `export * from './inputs/<component>';` line. Components themselves are
-   never exported; consumers get them from their own `createUI` call.
-4. `src/inputs/index.ts` (or the matching category barrel) if applicable.
-5. [stories/helpers/ui.ts](../../../stories/helpers/ui.ts) — add the component
-   key to the shared story family and its destructured export.
-6. Story in `stories/<category>/<component>.stories.tsx` (stories are part of
+   `export * from './inputs/<component>';` line. The root barrel also
+   `export * from './core'`; new component export names must not clash with
+   core's (clashing `export *` names are silently dropped).
+4. [package.json](../../../package.json) `exports` +
+   [tsconfig.json](../../../tsconfig.json) `paths` — add the
+   `rn-cuic/<component>` subpath entry (`rn-cuic-source` → src barrel, `types`
+   → `lib/typescript/src/…/index.d.ts`, `default` → `lib/module/…/index.js`).
+5. `src/inputs/index.ts` (or the matching category barrel) if applicable.
+6. [stories/helpers/ui.ts](../../../stories/helpers/ui.ts) — add
+   `<component>Factory()` to the shared story family and its destructured
+   export.
+7. Story in `stories/<category>/<component>.stories.tsx` (stories are part of
    the build typecheck). Import the component from `../helpers/ui`, use the
    `withRenderContainer` decorator; demo shorthand props, compound slots, and
    render-function children.
@@ -125,7 +134,7 @@ and get confirmation.
 | Contract item | Must be answered |
 |---|---|
 | Name & category | inputs / containers / informationals? |
-| Influences | Which besides `theme`? Value names? Library defaults? Which are `createUI` `defaults`? |
+| Influences | Which besides `theme`? Value names? Library defaults? Which are factory `defaults`? |
 | Tokens | Full token list with RN style types; which are per-theme vs fixed? |
 | States | Which booleans? Precedence order on conflicts? |
 | Slot styles | Every visual part and its style type (ViewStyle/TextStyle/ImageStyle) |

@@ -4,6 +4,24 @@
         "paths": {
             "rn-cuic": [
                 "./src/index"
+            ],
+            "rn-cuic/core": [
+                "./src/core"
+            ],
+            "rn-cuic/button": [
+                "./src/inputs/button/index"
+            ],
+            "rn-cuic/chip": [
+                "./src/inputs/chip/index"
+            ],
+            "rn-cuic/toggle": [
+                "./src/inputs/toggle/index"
+            ],
+            "rn-cuic/switch": [
+                "./src/inputs/switch/index"
+            ],
+            "rn-cuic/text-field": [
+                "./src/inputs/text-field/index"
             ]
         },
         "allowUnreachableCode": false,
