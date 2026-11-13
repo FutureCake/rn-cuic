@@ -10,7 +10,7 @@ rn-cuic is a themeable RN component library. Every component follows the same
 style-resolution architecture and the same strict folder layout. Never invent a
 new structure; copy the patterns of the existing components
 ([button](../../../src/inputs/button/), [toggle](../../../src/inputs/toggle/),
-[text-field](../../../src/inputs/text-field/)).
+[text-field](../../../src/inputs/text-inputs/text-field/)).
 
 ## Core concepts (in dependency order)
 
@@ -73,6 +73,15 @@ Rules:
 - Slot prop types live **with the slot file**, never in types.ts.
 - Components without compound slots (Toggle) have **no** context.ts or slots/
   — do not add them speculatively.
+- Closely related components may be grouped in a family folder with a shared
+  module (`src/inputs/text-inputs/{shared/, text-field/, text-area/}`). Each
+  component keeps the full per-component layout above and its own exported
+  slot components (slot identity drives `hasSlot`), plus its own `styles.ts`
+  preset — only behavior (`shared/use-field-behavior.ts`), contract types
+  (`shared/types.ts`: `Feedback`, `Validation`, `FieldStates`,
+  `FieldInfluences`, `InfluenceValueMap`) and slot bodies
+  (`shared/*-slot.tsx`) are shared. Subpath exports stay per component
+  (`rn-cuic/text-field`, `rn-cuic/text-area`).
 - Simplify whenever possible (user principle: "if we can simplify we should
   always simplify"). No factory wrappers around slot components; no unused
   abstraction layers.
@@ -80,7 +89,10 @@ Rules:
 ## Implementation requirements
 
 - Render only Reanimated components (`Animated.View`, `Animated.Text`,
-  `Animated.createAnimatedComponent(...)`) — never raw RN elements.
+  shared wrappers from [src/lib.ts](../../../src/lib.ts) such as
+  `AnimatedPressable`/`AnimatedTextInput` — add new
+  `Animated.createAnimatedComponent(...)` instances there) — never raw RN
+  elements. `ThemeMode` lives in `src/utils/types.ts` (not button).
 - Root owns behavior and native props; slots only position/style (TextField
   passes native input props to its Input slot via context).
 - Props: omit conflicting native props (`style`, `children`, plus

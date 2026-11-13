@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import Animated from 'react-native-reanimated';
-import { hasSlot } from '../../utils/has-slot';
+import { hasSlot } from '../../../utils/has-slot';
+import {
+    buildFieldInputProps,
+    useFieldBehavior,
+} from '../shared/use-field-behavior';
 import { ContextProvider } from './context';
 import { TextAreaFeedback } from './slots/feedback';
 import { TextAreaHeader } from './slots/header';
 import { TextAreaInput } from './slots/input';
-import type {
-    TextAreaBuilderOptions,
-    TextAreaProps,
-    ValidationResult,
-} from './types';
+import type { TextAreaBuilderOptions, TextAreaProps } from './types';
 
 /**
  * Bind shared behavior to the configured defaults and style hooks; the slot
@@ -40,11 +40,6 @@ export function createTextArea<Variant extends string, Theme extends string>({
     }: TextAreaProps<Variant, Theme>) {
         const { theme: ambientTheme } = useTheme();
         const theme = themeProp ?? ambientTheme;
-        const [focused, setFocused] = useState(false);
-        const [hasBlurred, setHasBlurred] = useState(false);
-        const [validationResult, setValidationResult] = useState<
-            ValidationResult<Variant> | undefined
-        >(undefined);
         /** One line of the input's font, measured from the hidden probe. */
         const [measuredLineHeight, setMeasuredLineHeight] = useState<
             number | undefined
@@ -59,24 +54,21 @@ export function createTextArea<Variant extends string, Theme extends string>({
         );
         const text = props.value ?? internalText;
 
-        const activeValidation =
-            validation !== undefined &&
-            validationResult !== undefined &&
-            !validationResult.valid &&
-            (validation.showFeedbackOn === 'change' || hasBlurred)
-                ? validationResult
-                : undefined;
-        const feedbackProp =
-            typeof feedback === 'string' ? { message: feedback } : feedback;
-        const variant =
-            activeValidation?.variant ??
-            feedbackProp?.variant ??
-            defaults.feedbackVariant;
-        const validationMessage = activeValidation?.message;
+        const field = useFieldBehavior({
+            feedback,
+            validation,
+            defaultVariant: defaults.feedbackVariant,
+            onChangeText: (next) => {
+                setInternalText(next);
+                onChangeText?.(next);
+            },
+            onFocus,
+            onBlur,
+        });
 
         const { styles, tokens } = useStyles({
-            influences: { feedbackVariant: variant, theme },
-            states: { focused: focused && !disabled, disabled },
+            influences: { feedbackVariant: field.variant, theme },
+            states: { focused: field.focused && !disabled, disabled },
             overrides: {
                 ...styleOverrides,
                 container: [styleOverrides?.container, style],
@@ -106,32 +98,18 @@ export function createTextArea<Variant extends string, Theme extends string>({
                     tokens,
                     inputHeight,
                     inputProps: {
-                        ...props,
+                        ...buildFieldInputProps({
+                            props,
+                            disabled,
+                            accessibilityState,
+                            placeholderColor: tokens.placeholderColor,
+                            handlers: field.handlers,
+                        }),
                         multiline: true,
-                        editable: !disabled,
-                        accessibilityState: { ...accessibilityState, disabled },
-                        placeholderTextColor: tokens.placeholderColor,
-                        onChangeText: (next) => {
-                            setInternalText(next);
-                            onChangeText?.(next);
-                            if (!validation) return;
-                            const result = validation.validator(next);
-                            setValidationResult(result);
-                            validation.onValidation?.(result);
-                        },
-                        onFocus: (event) => {
-                            setFocused(true);
-                            onFocus?.(event);
-                        },
-                        onBlur: (event) => {
-                            setFocused(false);
-                            setHasBlurred(true);
-                            onBlur?.(event);
-                        },
                     },
-                    validationMessage,
-                    message: validationMessage ?? feedbackProp?.message,
-                    variant,
+                    validationMessage: field.validationMessage,
+                    message: field.message,
+                    variant: field.variant,
                 }}
             >
                 <Animated.View style={styles.container}>
@@ -191,7 +169,7 @@ export function createTextArea<Variant extends string, Theme extends string>({
                     {!hasSlot(children, TextAreaInput) && <TextAreaInput />}
                     {!hasSlot(children, TextAreaFeedback) && (
                         <TextAreaFeedback>
-                            {feedbackProp?.message}
+                            {field.feedbackMessage}
                         </TextAreaFeedback>
                     )}
                 </Animated.View>

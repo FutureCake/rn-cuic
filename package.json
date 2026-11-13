@@ -36,14 +36,14 @@
             "default": "./lib/module/inputs/switch/index.js"
         },
         "./text-area": {
-            "rn-cuic-source": "./src/inputs/text-area/index.tsx",
-            "types": "./lib/typescript/src/inputs/text-area/index.d.ts",
-            "default": "./lib/module/inputs/text-area/index.js"
+            "rn-cuic-source": "./src/inputs/text-inputs/text-area/index.tsx",
+            "types": "./lib/typescript/src/inputs/text-inputs/text-area/index.d.ts",
+            "default": "./lib/module/inputs/text-inputs/text-area/index.js"
         },
         "./text-field": {
-            "rn-cuic-source": "./src/inputs/text-field/index.tsx",
-            "types": "./lib/typescript/src/inputs/text-field/index.d.ts",
-            "default": "./lib/module/inputs/text-field/index.js"
+            "rn-cuic-source": "./src/inputs/text-inputs/text-field/index.tsx",
+            "types": "./lib/typescript/src/inputs/text-inputs/text-field/index.d.ts",
+            "default": "./lib/module/inputs/text-inputs/text-field/index.js"
         },
         "./package.json": "./package.json"
     },

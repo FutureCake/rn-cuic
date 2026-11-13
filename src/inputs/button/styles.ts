@@ -1,5 +1,6 @@
+import type { ThemeMode } from '../../utils/types';
 import { defineButtonStyles } from './define-styles';
-import type { ButtonVariant, ThemeMode } from './types';
+import type { ButtonVariant } from './types';
 
 const themeColors = {
     light: {

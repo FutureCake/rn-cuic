@@ -1,14 +1,11 @@
 import { useState } from 'react';
-import { Pressable } from 'react-native';
-import Animated from 'react-native-reanimated';
+import { AnimatedPressable } from '../../lib';
 import { hasSlot } from '../../utils/has-slot';
 import { ContextProvider } from './context';
 import { ChipClose } from './slots/close';
 import { ChipIcon } from './slots/icon';
 import { ChipText } from './slots/text';
 import type { ChipBuilderOptions, ChipProps } from './types';
-
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 /**
  * Bind shared behavior to the configured defaults and style hooks; the slot

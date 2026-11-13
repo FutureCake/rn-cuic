@@ -9,9 +9,9 @@ import {
 import { chipFactory } from 'rn-cuic/chip';
 import { createUI } from 'rn-cuic/core';
 import { switchFactory } from 'rn-cuic/switch';
-import { textAreaFactory } from 'rn-cuic/text-area';
-import { textFieldFactory } from 'rn-cuic/text-field';
 import { toggleFactory } from 'rn-cuic/toggle';
+import { textAreaFactory } from '../../src/inputs/text-inputs/text-area';
+import { textFieldFactory } from '../../src/inputs/text-inputs/text-field';
 
 const brand = {
     light: { main: '#4f46e5', pressed: '#3730a3', on: '#ffffff' },

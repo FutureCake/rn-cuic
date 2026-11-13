@@ -1,6 +1,6 @@
-import type { UIComponentDescriptor } from '../../core';
-import type { StyleDefinitionShape } from '../../providers-and-hooks/styles-manager/types';
-import type { ThemeMode } from '../button/types';
+import type { UIComponentDescriptor } from '../../../core';
+import type { StyleDefinitionShape } from '../../../providers-and-hooks/styles-manager/types';
+import type { ThemeMode } from '../../../utils/types';
 import { createTextField } from './create-text-field';
 import { textFieldStyleDefinition } from './styles';
 import type { FeedbackVariant, TextFieldStyleDefinition } from './types';

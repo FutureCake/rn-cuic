@@ -12,11 +12,10 @@ import type {
     ResolvedComponentResult,
     StyleDefinition,
 } from '../../providers-and-hooks';
-import type { StyleOverrides } from '../../utils/types';
+import type { StyleOverrides, ThemeMode } from '../../utils/types';
 
 export type ButtonVariant = 'primary' | 'secondary';
 export type ButtonSize = 'small' | 'large' | 'xlarge';
-export type ThemeMode = 'light' | 'dark';
 export type ButtonStates = 'pressed' | 'disabled';
 
 export type ButtonSlotStyles = {

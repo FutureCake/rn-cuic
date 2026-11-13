@@ -1,13 +1,9 @@
 import type { UIComponentDescriptor } from '../../core';
 import type { StyleDefinitionShape } from '../../providers-and-hooks/styles-manager/types';
+import type { ThemeMode } from '../../utils/types';
 import { createButton } from './create-button';
 import { buttonStyleDefinition } from './styles';
-import type {
-    ButtonSize,
-    ButtonStyleDefinition,
-    ButtonVariant,
-    ThemeMode,
-} from './types';
+import type { ButtonSize, ButtonStyleDefinition, ButtonVariant } from './types';
 
 /**
  * Button entry for core createUI. Call with no config for the preset

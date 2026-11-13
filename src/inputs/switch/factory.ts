@@ -1,6 +1,6 @@
 import type { UIComponentDescriptor } from '../../core';
 import type { StyleDefinitionShape } from '../../providers-and-hooks/styles-manager/types';
-import type { ThemeMode } from '../button/types';
+import type { ThemeMode } from '../../utils/types';
 import { createSwitch } from './create-switch';
 import { switchStyleDefinition } from './styles';
 import type { SwitchStyleDefinition } from './types';
