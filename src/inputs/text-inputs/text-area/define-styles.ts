@@ -1,4 +1,4 @@
-import type { InfluenceValueMap } from '../shared/types';
+import type { FieldInfluenceResolvers } from '../shared/types';
 import type { TextAreaStyleDefinition, TextAreaTokens } from './types';
 
 /**
@@ -14,22 +14,11 @@ export function defineTextAreaStyles<
         TextAreaStyleDefinition<NoInfer<Variant>, NoInfer<Theme>>,
         'influenceResolvers'
     > & {
-        influenceResolvers: {
-            theme: InfluenceValueMap<
-                TextAreaTokens,
-                Theme,
-                'theme',
-                NoInfer<Variant>,
-                NoInfer<Theme>
-            >;
-            feedbackVariant: InfluenceValueMap<
-                TextAreaTokens,
-                Variant,
-                'feedbackVariant',
-                NoInfer<Variant>,
-                NoInfer<Theme>
-            >;
-        };
+        influenceResolvers: FieldInfluenceResolvers<
+            TextAreaTokens,
+            Variant,
+            Theme
+        >;
     }
 ): TextAreaStyleDefinition<Variant, Theme> {
     return definition;

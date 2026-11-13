@@ -89,7 +89,10 @@ Rules:
 ## Implementation requirements
 
 - Render only Reanimated components (`Animated.View`, `Animated.Text`,
-  `Animated.createAnimatedComponent(...)`) — never raw RN elements.
+  shared wrappers from [src/lib.ts](../../../src/lib.ts) such as
+  `AnimatedPressable`/`AnimatedTextInput` — add new
+  `Animated.createAnimatedComponent(...)` instances there) — never raw RN
+  elements. `ThemeMode` lives in `src/utils/types.ts` (not button).
 - Root owns behavior and native props; slots only position/style (TextField
   passes native input props to its Input slot via context).
 - Props: omit conflicting native props (`style`, `children`, plus

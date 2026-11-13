@@ -1,24 +1,12 @@
-import type { ReactNode } from 'react';
+import type { ColorValue, TextStyle, ViewStyle } from 'react-native';
+import type { StyleDefinition } from '../../../providers-and-hooks';
+import type { ThemeMode } from '../../../utils/types';
 import type {
-    ColorValue,
-    TextInputProps as RNTextInputProps,
-    StyleProp,
-    TextStyle,
-    ViewStyle,
-} from 'react-native';
-import type {
-    ResolveComponentOptions,
-    ResolvedComponentResult,
-    StyleDefinition,
-} from '../../../providers-and-hooks';
-import type { StyleOverrides } from '../../../utils/types';
-import type { ThemeMode } from '../../button/types';
-import type {
-    Feedback,
     FeedbackVariant,
+    FieldBaseProps,
+    FieldBuilderOptions,
     FieldInfluences,
     FieldStates,
-    Validation,
 } from '../shared/types';
 
 /** Shared field contract, re-exported for the text-area entry point. */
@@ -78,32 +66,28 @@ export type TextAreaStyleDefinition<
 export type TextAreaBuilderOptions<
     Variant extends string = FeedbackVariant,
     Theme extends string = ThemeMode,
-> = {
-    defaults: { feedbackVariant: Variant };
-    useStyles: (
-        options: ResolveComponentOptions<
-            TextAreaStyleDefinition<Variant, Theme>
-        >
-    ) => ResolvedComponentResult<TextAreaStyleDefinition<Variant, Theme>>;
-    /** Read-only ambient theme; components consume it but never set it. */
-    useTheme: () => { theme: Theme };
-};
+> = FieldBuilderOptions<
+    TextAreaStyleDefinition<Variant, Theme>,
+    Variant,
+    Theme
+>;
 
+/**
+ * Compose TextArea.Header, TextArea.Input and TextArea.Feedback in render
+ * order via children; parts that are omitted fall back to their defaults.
+ *
+ * Height measurement reads the resolved `fontSize`/`fontFamily` tokens, so
+ * change text metrics through the style definition (or StylesProvider
+ * overrides) rather than `styleOverrides.input` or `TextArea.Input`'s own
+ * style, or the measured line height will drift from the rendered text.
+ */
 export type TextAreaProps<
     Variant extends string = FeedbackVariant,
     Theme extends string = ThemeMode,
 > = Omit<
-    RNTextInputProps,
-    | 'style'
-    | 'editable'
-    | 'placeholderTextColor'
-    | 'children'
-    | 'multiline'
-    | 'numberOfLines'
+    FieldBaseProps<Variant, Theme, TextAreaSlotStyles>,
+    'multiline' | 'numberOfLines'
 > & {
-    /** Overrides the ambient theme from StylesProvider for this instance. */
-    theme?: Theme;
-    disabled?: boolean;
     /**
      * Height of the input in text lines (the minimum while growing); content
      * beyond it scrolls unless the field grows. Defaults to 4.
@@ -113,17 +97,4 @@ export type TextAreaProps<
     grow?: boolean;
     /** Caps growth at this many lines; supplying it implies `grow`. */
     maxLines?: number;
-    /** Shorthand for a TextArea.Header child. */
-    header?: string;
-    /** Default feedback message; shorthand for a TextArea.Feedback child. */
-    feedback?: string | Feedback<Variant>;
-    validation?: Validation<Variant>;
-    /** Outer container style. */
-    style?: StyleProp<ViewStyle>;
-    styleOverrides?: StyleOverrides<TextAreaSlotStyles>;
-    /**
-     * Compose TextArea.Header, TextArea.Input and TextArea.Feedback in
-     * render order; parts that are omitted fall back to their defaults.
-     */
-    children?: ReactNode;
 };

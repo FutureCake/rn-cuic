@@ -1,6 +1,6 @@
 import type { UIComponentDescriptor } from '../../core';
 import type { StyleDefinitionShape } from '../../providers-and-hooks/styles-manager/types';
-import type { ThemeMode } from '../button/types';
+import type { ThemeMode } from '../../utils/types';
 import { createToggle } from './create-toggle';
 import { toggleStyleDefinition } from './styles';
 import type { ToggleStyleDefinition } from './types';

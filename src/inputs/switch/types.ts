@@ -11,8 +11,7 @@ import type {
     ResolvedComponentResult,
     StyleDefinition,
 } from '../../providers-and-hooks';
-import type { StyleOverrides } from '../../utils/types';
-import type { ThemeMode } from '../button/types';
+import type { StyleOverrides, ThemeMode } from '../../utils/types';
 
 export type SwitchStates = 'disabled';
 

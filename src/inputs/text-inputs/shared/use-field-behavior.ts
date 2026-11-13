@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { TextInputProps } from 'react-native';
+import type { ColorValue, TextInputProps } from 'react-native';
 import type { Feedback, Validation, ValidationResult } from './types';
 
 type FieldBehaviorOptions<Variant extends string> = {
@@ -69,5 +69,29 @@ export function useFieldBehavior<Variant extends string>({
                 onBlur?.(event);
             }) satisfies TextInputProps['onBlur'],
         },
+    };
+}
+
+/** Assemble the root-owned native input props handed to the Input slot. */
+export function buildFieldInputProps({
+    props,
+    disabled,
+    accessibilityState,
+    placeholderColor,
+    handlers,
+}: {
+    /** Remaining native input props from the root's rest parameter. */
+    props: TextInputProps;
+    disabled: boolean;
+    accessibilityState: TextInputProps['accessibilityState'];
+    placeholderColor: ColorValue;
+    handlers: Pick<TextInputProps, 'onChangeText' | 'onFocus' | 'onBlur'>;
+}): TextInputProps {
+    return {
+        ...props,
+        editable: !disabled,
+        accessibilityState: { ...accessibilityState, disabled },
+        placeholderTextColor: placeholderColor,
+        ...handlers,
     };
 }

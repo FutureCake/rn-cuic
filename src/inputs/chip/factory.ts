@@ -1,6 +1,6 @@
 import type { UIComponentDescriptor } from '../../core';
 import type { StyleDefinitionShape } from '../../providers-and-hooks/styles-manager/types';
-import type { ThemeMode } from '../button/types';
+import type { ThemeMode } from '../../utils/types';
 import { createChip } from './create-chip';
 import { chipStyleDefinition } from './styles';
 import type { ChipSize, ChipStyleDefinition } from './types';

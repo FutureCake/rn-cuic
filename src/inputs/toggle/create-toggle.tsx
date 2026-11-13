@@ -1,8 +1,6 @@
-import { Pressable } from 'react-native';
 import Animated from 'react-native-reanimated';
+import { AnimatedPressable } from '../../lib';
 import type { ToggleBuilderOptions, ToggleProps } from './types';
-
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 /**
  * Bind shared behavior once, at factory creation. The toggle is controlled:

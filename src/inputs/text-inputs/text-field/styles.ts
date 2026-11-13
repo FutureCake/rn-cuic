@@ -93,7 +93,7 @@ export const textFieldStyleDefinition = defineTextFieldStyles({
             fontSize: tokens.feedbackFontSize,
             color: tokens.feedbackColor,
             marginTop: tokens.gap,
-            paddingRight: tokens.paddingY,
+            paddingRight: tokens.paddingX,
         }),
     },
     transition: { transitionProperty: 'all', transitionDuration: 150 },

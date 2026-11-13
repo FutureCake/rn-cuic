@@ -1,6 +1,9 @@
 import Animated from 'react-native-reanimated';
 import { hasSlot } from '../../../utils/has-slot';
-import { useFieldBehavior } from '../shared/use-field-behavior';
+import {
+    buildFieldInputProps,
+    useFieldBehavior,
+} from '../shared/use-field-behavior';
 import { ContextProvider } from './context';
 import { TextFieldFeedback } from './slots/feedback';
 import { TextFieldHeader } from './slots/header';
@@ -56,13 +59,13 @@ export function createTextField<Variant extends string, Theme extends string>({
                 value={{
                     styles,
                     tokens,
-                    inputProps: {
-                        ...props,
-                        editable: !disabled,
-                        accessibilityState: { ...accessibilityState, disabled },
-                        placeholderTextColor: tokens.placeholderColor,
-                        ...field.handlers,
-                    },
+                    inputProps: buildFieldInputProps({
+                        props,
+                        disabled,
+                        accessibilityState,
+                        placeholderColor: tokens.placeholderColor,
+                        handlers: field.handlers,
+                    }),
                     validationMessage: field.validationMessage,
                     message: field.message,
                     variant: field.variant,

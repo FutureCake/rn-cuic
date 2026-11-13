@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import Animated from 'react-native-reanimated';
 import { hasSlot } from '../../../utils/has-slot';
-import { useFieldBehavior } from '../shared/use-field-behavior';
+import {
+    buildFieldInputProps,
+    useFieldBehavior,
+} from '../shared/use-field-behavior';
 import { ContextProvider } from './context';
 import { TextAreaFeedback } from './slots/feedback';
 import { TextAreaHeader } from './slots/header';
@@ -95,12 +98,14 @@ export function createTextArea<Variant extends string, Theme extends string>({
                     tokens,
                     inputHeight,
                     inputProps: {
-                        ...props,
+                        ...buildFieldInputProps({
+                            props,
+                            disabled,
+                            accessibilityState,
+                            placeholderColor: tokens.placeholderColor,
+                            handlers: field.handlers,
+                        }),
                         multiline: true,
-                        editable: !disabled,
-                        accessibilityState: { ...accessibilityState, disabled },
-                        placeholderTextColor: tokens.placeholderColor,
-                        ...field.handlers,
                     },
                     validationMessage: field.validationMessage,
                     message: field.message,

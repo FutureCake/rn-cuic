@@ -1,19 +1,13 @@
 import type { ReactNode } from 'react';
-import {
-    Pressable,
-    type StyleProp,
-    type TextStyle,
-    type ViewStyle,
-} from 'react-native';
+import type { StyleProp, TextStyle, ViewStyle } from 'react-native';
 import Animated, {
     interpolateColor,
     useAnimatedStyle,
 } from 'react-native-reanimated';
+import { AnimatedPressable } from '../../../lib';
 import type { ResolvedComponentTokens } from '../../../providers-and-hooks';
 import { useSlotContext } from '../context';
 import type { SwitchStyleDefinition } from '../types';
-
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export type SwitchOptionRenderProps = {
     title: string;
