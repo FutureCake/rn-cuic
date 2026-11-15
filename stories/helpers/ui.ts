@@ -1,4 +1,5 @@
 import {
+    bottomSheetFactory,
     buttonFactory,
     chipFactory,
     createUI,
@@ -10,6 +11,7 @@ import {
 
 /** One preset family shared by all stories; mirrors a consumer's module-scope call. */
 export const {
+    BottomSheet,
     Button,
     Chip,
     Toggle,
@@ -21,6 +23,7 @@ export const {
 } = createUI({
     theme: 'light',
     components: {
+        BottomSheet: bottomSheetFactory(),
         Button: buttonFactory(),
         Chip: chipFactory(),
         Toggle: toggleFactory(),

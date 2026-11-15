@@ -10,7 +10,8 @@ rn-cuic is a themeable RN component library. Every component follows the same
 style-resolution architecture and the same strict folder layout. Never invent a
 new structure; copy the patterns of the existing components
 ([button](../../../src/inputs/button/), [toggle](../../../src/inputs/toggle/),
-[text-field](../../../src/inputs/text-inputs/text-field/)).
+[text-field](../../../src/inputs/text-inputs/text-field/), and for containers
+[bottom-sheet](../../../src/containers/bottom-sheet/)).
 
 ## Core concepts (in dependency order)
 
@@ -64,6 +65,18 @@ src/inputs/<component>/
 ├── context.ts            # ONLY if compound slots: module-level
 │                         #   createSlotContext<ContextValue>('<Component>')
 │                         #   exporting { ContextProvider, useSlotContext }
+├── constants.ts          # ONLY if fixed behavioral constants exist (gesture
+│                         #   thresholds, durations, spring configs). These are
+│                         #   deliberately NOT tokens — not themeable.
+├── hooks/                # ONLY if the root outgrows comfortable reading:
+│   └── use-<name>.ts     #   cohesive dedicated hooks (bottom-sheet:
+│                         #   use-bottom-sheet-slots = slot extraction + its
+│                         #   dev warnings; use-bottom-sheet-animation = the
+│                         #   whole gesture/animation engine). Extract only
+│                         #   when it clarifies — never split units that would
+│                         #   need heavy value-wiring between hooks, and never
+│                         #   create hooks for their own sake. The root keeps
+│                         #   styles resolution, flags/dev warnings and render.
 └── slots/                # ONLY if compound slots
     └── <slot>.tsx        # Plain component + its Props/RenderProps types
                           #   co-located in the same file
@@ -95,6 +108,11 @@ Rules:
   elements. `ThemeMode` lives in `src/utils/types.ts` (not button).
 - Root owns behavior and native props; slots only position/style (TextField
   passes native input props to its Input slot via context).
+- Positioned/overlay components (containers): structural positioning styles
+  (absolute fill, anchoring, overflow clipping) live in the create file via
+  `StyleSheet.create`, NOT in slotStyles — so style overrides can restyle but
+  never break positioning (slot styles are merged after structural, so
+  intentional lifting/insetting via overrides still wins).
 - Props: omit conflicting native props (`style`, `children`, plus
   behavior-owned ones like `editable`); `styleOverrides:
   StyleOverrides<SlotStyles>` on every root; a root `style` prop (if offered)
@@ -135,6 +153,12 @@ Rules:
    the build typecheck). Import the component from `../helpers/ui`, use the
    `withRenderContainer` decorator; demo shorthand props, compound slots, and
    render-function children.
+8. [example/src/App.tsx](../../../example/src/App.tsx) — add the component to
+   the example app: `<component>Factory()` (preset, via its `rn-cuic/<component>`
+   subpath import) in the module-scope `createUI` call and a minimal demo in
+   `Showcase`. If the component needs runtime infrastructure (providers such
+   as `KeyboardProvider`, root views), wire it in `App` — the example is also
+   the smoke test for consumer setup requirements.
 
 ## New component: interview first — zero ambiguity
 
@@ -197,6 +221,7 @@ snippet, a screenshot/spec):
 ```sh
 yarn tsc --project tsconfig.build.json --noEmit
 yarn eslint --fix src/inputs/<component> stories/<category>/<component>.stories.tsx
+yarn tsc --project example/tsconfig.json --noEmit
 ```
 
 - Prettier tabWidth=4; let `eslint --fix` settle formatting.
