@@ -8,6 +8,9 @@
             "rn-cuic/core": [
                 "./src/core"
             ],
+            "rn-cuic/bottom-sheet": [
+                "./src/containers/bottom-sheet/index"
+            ],
             "rn-cuic/button": [
                 "./src/inputs/button/index"
             ],

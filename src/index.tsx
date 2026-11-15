@@ -1,3 +1,4 @@
+export * from './containers/bottom-sheet';
 export * from './core';
 export * from './inputs/button';
 export * from './inputs/chip';

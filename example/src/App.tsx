@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { KeyboardProvider } from 'react-native-keyboard-controller';
+import { bottomSheetFactory } from 'rn-cuic/bottom-sheet';
 import {
     buttonFactory,
     buttonStyleDefinition,
@@ -81,6 +83,7 @@ const customButtonDefinition = defineButtonStyles({
 // Importing only the factories the app uses keeps the rest of the library
 // out of the bundle.
 const {
+    BottomSheet,
     Button,
     Chip,
     Toggle,
@@ -92,6 +95,7 @@ const {
 } = createUI({
     theme: 'light',
     components: {
+        BottomSheet: bottomSheetFactory(),
         Button: buttonFactory({
             definition: customButtonDefinition,
             defaults: { variant: 'tertiary', size: 'large' },
@@ -115,9 +119,11 @@ const topics = ['News', 'Sports', 'Tech'];
 export default function App() {
     return (
         <GestureHandlerRootView style={styles.root}>
-            <StylesProvider>
-                <Showcase />
-            </StylesProvider>
+            <KeyboardProvider>
+                <StylesProvider>
+                    <Showcase />
+                </StylesProvider>
+            </KeyboardProvider>
         </GestureHandlerRootView>
     );
 }
@@ -130,83 +136,118 @@ function Showcase() {
     const [selectedTopics, setSelectedTopics] = useState(['News']);
     const [email, setEmail] = useState('');
     const [message, setMessage] = useState('');
+    const [sheetOpen, setSheetOpen] = useState(true);
 
     return (
-        <ScrollView
+        <View
             style={[
                 styles.screen,
                 { backgroundColor: dark ? '#111111' : '#ffffff' },
             ]}
-            contentContainerStyle={styles.container}
         >
-            <View style={styles.row}>
-                <Text style={[styles.label, dark && styles.labelDark]}>
-                    Dark theme
-                </Text>
-                <Toggle
-                    active={dark}
-                    onChange={(next) => setTheme(next ? 'dark' : 'light')}
-                />
-            </View>
-
-            <Switch
-                options={frequencies}
-                value={frequency}
-                onChange={setFrequency}
-            />
-
-            <View style={styles.chips}>
-                {topics.map((topic) => (
-                    <Chip
-                        key={topic}
-                        text={topic}
-                        selected={selectedTopics.includes(topic)}
-                        onChange={(next) =>
-                            setSelectedTopics((current) =>
-                                next
-                                    ? [...current, topic]
-                                    : current.filter((t) => t !== topic)
-                            )
-                        }
+            <ScrollView
+                style={styles.screen}
+                contentContainerStyle={styles.container}
+            >
+                <View style={styles.row}>
+                    <Text style={[styles.label, dark && styles.labelDark]}>
+                        Dark theme
+                    </Text>
+                    <Toggle
+                        active={dark}
+                        onChange={(next) => setTheme(next ? 'dark' : 'light')}
                     />
-                ))}
-            </View>
+                </View>
 
-            <TextField
-                header="Email"
-                placeholder="you@example.com"
-                value={email}
-                onChangeText={setEmail}
-                feedback="We never share your email."
-                validation={{
-                    showFeedbackOn: 'blur',
-                    validator: (text) =>
-                        /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text)
-                            ? { valid: true }
-                            : {
-                                  valid: false,
-                                  variant: 'error',
-                                  message: 'Enter a valid email address.',
-                              },
-                }}
-            />
+                <Switch
+                    options={frequencies}
+                    value={frequency}
+                    onChange={setFrequency}
+                />
 
-            <TextArea
-                header="Message"
-                placeholder="Anything you want to add?"
-                value={message}
-                onChangeText={setMessage}
-                numLines={3}
-                maxLines={8}
-                feedback="Grows with your message, up to 8 lines."
-            />
+                <View style={styles.chips}>
+                    {topics.map((topic) => (
+                        <Chip
+                            key={topic}
+                            text={topic}
+                            selected={selectedTopics.includes(topic)}
+                            onChange={(next) =>
+                                setSelectedTopics((current) =>
+                                    next
+                                        ? [...current, topic]
+                                        : current.filter((t) => t !== topic)
+                                )
+                            }
+                        />
+                    ))}
+                </View>
 
-            <Button
-                variant="tertiary"
-                text="Subscribe"
-                onPress={() => console.log('subscribe', { email, frequency })}
-            />
-        </ScrollView>
+                <TextField
+                    header="Email"
+                    placeholder="you@example.com"
+                    value={email}
+                    onChangeText={setEmail}
+                    feedback="We never share your email."
+                    validation={{
+                        showFeedbackOn: 'blur',
+                        validator: (text) =>
+                            /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text)
+                                ? { valid: true }
+                                : {
+                                      valid: false,
+                                      variant: 'error',
+                                      message: 'Enter a valid email address.',
+                                  },
+                    }}
+                />
+
+                <TextArea
+                    header="Message"
+                    placeholder="Anything you want to add?"
+                    value={message}
+                    onChangeText={setMessage}
+                    numLines={3}
+                    maxLines={8}
+                    feedback="Grows with your message, up to 8 lines."
+                />
+
+                <Button
+                    variant="tertiary"
+                    text="Subscribe"
+                    onPress={() =>
+                        console.log('subscribe', { email, frequency })
+                    }
+                />
+
+                <Button
+                    text="Open bottom sheet"
+                    onPress={() => setSheetOpen(true)}
+                />
+            </ScrollView>
+
+            {sheetOpen && (
+                <BottomSheet
+                    minimizedClosable={false}
+                    onClose={() => setSheetOpen(false)}
+                    showHandleOnMinimized
+                >
+                    <BottomSheet.Minimized>
+                        <Text style={[styles.label, dark && styles.labelDark]}>
+                            Quick note — tap to expand
+                        </Text>
+                    </BottomSheet.Minimized>
+                    <BottomSheet.Content>
+                        <TextField
+                            header="Note"
+                            placeholder="The sheet rises with the keyboard…"
+                        />
+                        <Text style={[styles.label, dark && styles.labelDark]}>
+                            Swipe down to minimize, further to close.
+                        </Text>
+                    </BottomSheet.Content>
+                </BottomSheet>
+            )}
+        </View>
     );
 }
 
