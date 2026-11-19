@@ -12,7 +12,7 @@ const meta = {
     args: {
         text: 'Press and hold',
         variant: 'primary',
-        size: 'small',
+        size: 's',
         theme: 'light',
         disabled: false,
     },
@@ -22,7 +22,7 @@ const meta = {
             control: 'select',
             options: ['primary', 'secondary'],
         },
-        size: { control: 'select', options: ['small', 'large', 'xlarge'] },
+        size: { control: 'select', options: ['s', 'l', 'xl'] },
         theme: { control: 'select', options: ['light', 'dark'] },
         disabled: { control: 'boolean' },
         onPress: { action: 'pressed' },

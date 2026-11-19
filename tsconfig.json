@@ -20,6 +20,9 @@
             "rn-cuic/chips": [
                 "./src/components/inputs/chips/index"
             ],
+            "rn-cuic/icon": [
+                "./src/components/visuals/icon/index"
+            ],
             "rn-cuic/toggle": [
                 "./src/components/inputs/toggle/index"
             ],

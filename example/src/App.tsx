@@ -14,6 +14,7 @@ import { switchFactory } from '../../src/components/inputs/switch';
 import { textAreaFactory } from '../../src/components/inputs/text-inputs/text-area';
 import { textFieldFactory } from '../../src/components/inputs/text-inputs/text-field';
 import { toggleFactory } from '../../src/components/inputs/toggle';
+import { iconFactory } from '../../src/components/visuals/icon';
 
 const brand = {
     light: { main: '#4f46e5', pressed: '#3730a3', on: '#ffffff' },
@@ -56,9 +57,9 @@ const customButtonDefinition = defineButtonStyles({
             }),
         },
         size: {
-            small: { paddingX: 16, paddingY: 8, fontSize: 15, iconSize: 18 },
-            large: { paddingX: 24, paddingY: 14, fontSize: 20, iconSize: 24 },
-            xlarge: { paddingX: 32, paddingY: 18, fontSize: 24, iconSize: 28 },
+            s: { paddingX: 16, paddingY: 8, fontSize: 15, iconSize: 18 },
+            l: { paddingX: 24, paddingY: 14, fontSize: 20, iconSize: 24 },
+            xl: { paddingX: 32, paddingY: 18, fontSize: 24, iconSize: 28 },
         },
     },
     stateResolvers: {
@@ -86,6 +87,7 @@ const {
     BottomSheet,
     Button,
     Chips,
+    Icon,
     Toggle,
     Switch,
     TextField,
@@ -98,9 +100,10 @@ const {
         BottomSheet: bottomSheetFactory(),
         Button: buttonFactory({
             definition: customButtonDefinition,
-            defaults: { variant: 'tertiary', size: 'large' },
+            defaults: { variant: 'tertiary', size: 'l' },
         }),
         Chips: chipsFactory(),
+        Icon: iconFactory(),
         Toggle: toggleFactory(),
         Switch: switchFactory(),
         TextField: textFieldFactory(),
@@ -205,6 +208,16 @@ function Showcase() {
                     maxLines={8}
                     feedback="Grows with your message, up to 8 lines."
                 />
+
+                <View style={styles.row}>
+                    {(['xs', 's', 'm', 'l', 'xl'] as const).map((size) => (
+                        <Icon
+                            key={size}
+                            size={size}
+                            source={require('../assets/android-icon-monochrome.png')}
+                        />
+                    ))}
+                </View>
 
                 <Button
                     variant="tertiary"

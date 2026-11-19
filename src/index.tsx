@@ -6,4 +6,5 @@ export * from './components/inputs/switch';
 export * from './components/inputs/text-inputs/text-area';
 export * from './components/inputs/text-inputs/text-field';
 export * from './components/inputs/toggle';
+export * from './components/visuals/icon';
 export * from './core';

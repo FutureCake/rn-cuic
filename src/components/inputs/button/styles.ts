@@ -66,7 +66,7 @@ export const buttonStyleDefinition = defineButtonStyles({
             secondary: ({ theme }) => transparentColors(theme),
         },
         size: {
-            small: {
+            s: {
                 paddingX: 16,
                 paddingY: 8,
                 fontSize: 15,
@@ -74,7 +74,7 @@ export const buttonStyleDefinition = defineButtonStyles({
                 iconGap: 6,
                 radius: 8,
             },
-            large: {
+            l: {
                 paddingX: 24,
                 paddingY: 14,
                 fontSize: 20,
@@ -82,7 +82,7 @@ export const buttonStyleDefinition = defineButtonStyles({
                 iconGap: 8,
                 radius: 10,
             },
-            xlarge: {
+            xl: {
                 paddingX: 32,
                 paddingY: 18,
                 fontSize: 24,

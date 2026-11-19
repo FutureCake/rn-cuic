@@ -12,10 +12,14 @@ import type {
     ResolvedComponentResult,
     StyleDefinition,
 } from '../../../providers-and-hooks';
-import type { StyleOverrides, ThemeMode } from '../../../shared/types';
+import type {
+    Size as SizeScale,
+    StyleOverrides,
+    ThemeMode,
+} from '../../../shared/types';
 
 export type ButtonVariant = 'primary' | 'secondary';
-export type ButtonSize = 'small' | 'large' | 'xlarge';
+export type ButtonSize = Extract<SizeScale, 's' | 'l' | 'xl'>;
 export type ButtonStates = 'pressed' | 'disabled';
 
 export type ButtonSlotStyles = {
