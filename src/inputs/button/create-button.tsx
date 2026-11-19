@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { AnimatedPressable } from '../../lib';
-import { hasSlot } from '../../utils/has-slot';
+import { usePressedState } from '../../shared/hooks/use-pressed-state';
+import { AnimatedPressable } from '../../shared/libs/reanimated';
+import { hasSlot } from '../../shared/utils/has-slot';
 import { ContextProvider } from './context';
 import { ButtonIcon } from './slots/icon';
 import { ButtonText } from './slots/text';
@@ -36,31 +36,24 @@ export function createButton<
     }: ButtonProps<Variant, Size, Theme>) {
         const { theme: ambientTheme } = useTheme();
         const theme = themeProp ?? ambientTheme;
-        const [pressed, setPressed] = useState(false);
-        const effectivePressed = pressed && !disabled;
+        const press = usePressedState({ disabled, onPressIn, onPressOut });
         const { styles, tokens } = useStyles({
             influences: { variant, size, theme },
-            states: { disabled, pressed: effectivePressed },
+            states: { disabled, pressed: press.pressed },
             overrides: styleOverrides,
         });
 
         return (
             <ContextProvider
-                value={{ styles, tokens, pressed: effectivePressed, disabled }}
+                value={{ styles, tokens, pressed: press.pressed, disabled }}
             >
                 <AnimatedPressable
                     {...props}
                     disabled={disabled}
                     accessibilityRole={accessibilityRole}
                     accessibilityState={{ ...accessibilityState, disabled }}
-                    onPressIn={(event) => {
-                        setPressed(true);
-                        onPressIn?.(event);
-                    }}
-                    onPressOut={(event) => {
-                        setPressed(false);
-                        onPressOut?.(event);
-                    }}
+                    onPressIn={press.onPressIn}
+                    onPressOut={press.onPressOut}
                     style={styles.container}
                 >
                     {icon !== undefined && !hasSlot(children, ButtonIcon) && (

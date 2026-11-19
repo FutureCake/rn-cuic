@@ -1,5 +1,5 @@
 import type { StyleProp, TextStyle } from 'react-native';
-import { AnimatedTextInput } from '../../../../lib';
+import { AnimatedTextInput } from '../../../../shared/libs/reanimated';
 import { useSlotContext } from '../context';
 
 /** Native input props are set on the root; the slot only positions/styles it. */

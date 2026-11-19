@@ -13,7 +13,7 @@ import Animated, {
     useSharedValue,
     withTiming,
 } from 'react-native-reanimated';
-import { hasSlot } from '../../utils/has-slot';
+import { hasSlot } from '../../shared/utils/has-slot';
 import { ContextProvider } from './context';
 import { SwitchOption } from './slots/option';
 import type {

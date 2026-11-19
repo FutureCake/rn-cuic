@@ -12,7 +12,7 @@ import type {
     ResolvedComponentResult,
     StyleDefinition,
 } from '../../providers-and-hooks';
-import type { StyleOverrides, ThemeMode } from '../../utils/types';
+import type { StyleOverrides, ThemeMode } from '../../shared/types';
 
 export type ChipSize = 's' | 'm' | 'l';
 /** Declaration order is precedence: disabled wins over pressed over selected. */

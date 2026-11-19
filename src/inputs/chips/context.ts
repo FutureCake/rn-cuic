@@ -1,5 +1,5 @@
 import type { ResolvedComponentResult } from '../../providers-and-hooks';
-import { createSlotContext } from '../../utils';
+import { createSlotContext } from '../../shared';
 import type { ChipsStyleDefinition } from './types';
 
 /** Fixed Chips tokens/slots: parts can share the default-generic contract. */

@@ -1,6 +1,6 @@
 import type { ColorValue, TextStyle, ViewStyle } from 'react-native';
 import type { StyleDefinition } from '../../../providers-and-hooks';
-import type { ThemeMode } from '../../../utils/types';
+import type { ThemeMode } from '../../../shared/types';
 import type {
     FeedbackVariant,
     FieldBaseProps,

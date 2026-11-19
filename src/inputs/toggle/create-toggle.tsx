@@ -1,5 +1,5 @@
 import Animated from 'react-native-reanimated';
-import { AnimatedPressable } from '../../lib';
+import { AnimatedPressable } from '../../shared/libs/reanimated';
 import type { ToggleBuilderOptions, ToggleProps } from './types';
 
 /**

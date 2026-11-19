@@ -1,14 +1,14 @@
 import {
-    Children,
     cloneElement,
     isValidElement,
-    useState,
     type ReactElement,
     type ReactNode,
 } from 'react';
 import { StyleSheet } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { resolveComponentStyles } from '../../providers-and-hooks';
+import { useValidationFeedback } from '../../shared/hooks/use-validation-feedback';
+import { extractSingletonSlots } from '../../shared/utils/extract-singleton-slots';
 import { createChip } from '../chip/create-chip';
 import { chipStyleDefinition } from '../chip/styles';
 import { ContextProvider } from './context';
@@ -22,7 +22,6 @@ import type {
     ChipsSingleProps,
     ChipsStaticProps,
     ChipsValidation,
-    ValidationResult,
 } from './types';
 
 /** The Chip props the group controls; any chip-shaped child qualifies. */
@@ -40,41 +39,6 @@ const structural = StyleSheet.create({
     wrap: { flexWrap: 'wrap' },
     scroll: { flexGrow: 0 },
 });
-
-/**
- * Extract the Header/Feedback singletons; everything else is chip content.
- * Order is enforced (header → chips → feedback) because the chips must land
- * inside the content wrapper — composed slots cannot render in place here.
- */
-function extractSlots(children: ReactNode) {
-    let headerSlot: ReactElement | undefined;
-    let feedbackSlot: ReactElement | undefined;
-    const chips: ReactNode[] = [];
-    for (const child of Children.toArray(children)) {
-        if (isValidElement(child) && child.type === ChipsHeader) {
-            if (headerSlot !== undefined) {
-                duplicateSlotWarning('Chips.Header');
-                continue;
-            }
-            headerSlot = child;
-        } else if (isValidElement(child) && child.type === ChipsFeedback) {
-            if (feedbackSlot !== undefined) {
-                duplicateSlotWarning('Chips.Feedback');
-                continue;
-            }
-            feedbackSlot = child;
-        } else {
-            chips.push(child);
-        }
-    }
-    return { headerSlot, feedbackSlot, chips };
-}
-
-function duplicateSlotWarning(name: string) {
-    if (__DEV__) {
-        console.warn(`Chips: multiple ${name} children; extras are dropped.`);
-    }
-}
 
 /** Stable keys for primitive option values; title/index for the rest. */
 function optionKey(option: ChipsOption<unknown>, index: number): string {
@@ -145,23 +109,18 @@ export function createChips<Variant extends string, Theme extends string>({
     }: ChipsProps<Value, Variant, Theme>) {
         const { theme: ambientTheme } = useTheme();
         const theme = themeProp ?? ambientTheme;
-        const [validationResult, setValidationResult] = useState<
-            ValidationResult<Variant> | undefined
-        >(undefined);
-
-        const activeValidation =
-            validation !== undefined &&
-            validationResult !== undefined &&
-            !validationResult.valid
-                ? validationResult
-                : undefined;
-        const feedbackProp =
-            typeof feedback === 'string' ? { message: feedback } : feedback;
-        const variant =
-            activeValidation?.variant ??
-            feedbackProp?.variant ??
-            defaults.feedbackVariant;
-        const validationMessage = activeValidation?.message;
+        const {
+            variant,
+            validationMessage,
+            message,
+            feedbackMessage,
+            runValidation,
+        } = useValidationFeedback({
+            feedback,
+            validation: validation as
+                ChipsValidation<unknown, Variant> | undefined,
+            defaultVariant: defaults.feedbackVariant,
+        });
 
         const { styles, tokens } = useStyles({
             influences: { layout, feedbackVariant: variant, theme },
@@ -181,17 +140,6 @@ export function createChips<Variant extends string, Theme extends string>({
             selectionMode === 'multi'
                 ? ((value as Value[] | undefined) ?? [])
                 : [];
-
-        const runValidation = (next: Value | null | Value[]) => {
-            if (validation === undefined) return;
-            const selectionValidation = validation as ChipsValidation<
-                unknown,
-                Variant
-            >;
-            const result = selectionValidation.validator(next);
-            setValidationResult(result);
-            selectionValidation.onValidation?.(result);
-        };
 
         const isSelected = (chipValue: unknown) =>
             selectionMode === 'multi'
@@ -217,7 +165,16 @@ export function createChips<Variant extends string, Theme extends string>({
             }
         };
 
-        const { headerSlot, feedbackSlot, chips } = extractSlots(children);
+        /**
+         * Order is enforced (header → chips → feedback) because the chips
+         * must land inside the content wrapper — composed slots cannot
+         * render in place here.
+         */
+        const { slots, rest: chips } = extractSingletonSlots(
+            'Chips',
+            children,
+            { Header: ChipsHeader, Feedback: ChipsFeedback }
+        );
         const groupClose = onClose as
             ((chipValue: unknown) => void) | undefined;
 
@@ -276,14 +233,13 @@ export function createChips<Variant extends string, Theme extends string>({
                   />
               ))
             : chips.map(controlChip);
-        const message = validationMessage ?? feedbackProp?.message;
 
         return (
             <ContextProvider
                 value={{ styles, tokens, validationMessage, message, variant }}
             >
                 <Animated.View {...props} style={styles.container}>
-                    {headerSlot ??
+                    {slots.Header ??
                         (header !== undefined && (
                             <ChipsHeader>{header}</ChipsHeader>
                         ))}
@@ -310,8 +266,8 @@ export function createChips<Variant extends string, Theme extends string>({
                             {renderedChips}
                         </Animated.View>
                     )}
-                    {feedbackSlot ?? (
-                        <ChipsFeedback>{feedbackProp?.message}</ChipsFeedback>
+                    {slots.Feedback ?? (
+                        <ChipsFeedback>{feedbackMessage}</ChipsFeedback>
                     )}
                 </Animated.View>
             </ContextProvider>

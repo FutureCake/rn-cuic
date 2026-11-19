@@ -5,7 +5,7 @@ import type {
     ResolvedComponentResult,
     StyleDefinition,
 } from '../../providers-and-hooks';
-import type { StyleOverrides, ThemeMode } from '../../utils/types';
+import type { StyleOverrides, ThemeMode } from '../../shared/types';
 
 /** The sheet has no boolean runtime states; position is gesture-driven. */
 export type BottomSheetStates = never;

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { ColorValue, TextInputProps } from 'react-native';
-import type { Feedback, Validation, ValidationResult } from './types';
+import { useValidationFeedback } from '../../../shared/hooks/use-validation-feedback';
+import type { Feedback, Validation } from './types';
 
 type FieldBehaviorOptions<Variant extends string> = {
     feedback: string | Feedback<Variant> | undefined;
@@ -25,39 +26,23 @@ export function useFieldBehavior<Variant extends string>({
 }: FieldBehaviorOptions<Variant>) {
     const [focused, setFocused] = useState(false);
     const [hasBlurred, setHasBlurred] = useState(false);
-    const [validationResult, setValidationResult] = useState<
-        ValidationResult<Variant> | undefined
-    >(undefined);
-
-    const activeValidation =
-        validation !== undefined &&
-        validationResult !== undefined &&
-        !validationResult.valid &&
-        (validation.showFeedbackOn === 'change' || hasBlurred)
-            ? validationResult
-            : undefined;
-    const feedbackProp =
-        typeof feedback === 'string' ? { message: feedback } : feedback;
-    const variant =
-        activeValidation?.variant ?? feedbackProp?.variant ?? defaultVariant;
-    const validationMessage = activeValidation?.message;
+    const { runValidation, ...feedbackState } = useValidationFeedback<
+        string,
+        Variant
+    >({
+        feedback,
+        validation,
+        defaultVariant,
+        showInvalid: validation?.showFeedbackOn === 'change' || hasBlurred,
+    });
 
     return {
         focused,
-        variant,
-        /** Active (invalid, visible) validation message, if any. */
-        validationMessage,
-        /** Validation message, else the feedback prop's message. */
-        message: validationMessage ?? feedbackProp?.message,
-        /** The feedback prop's message, for the shorthand Feedback child. */
-        feedbackMessage: feedbackProp?.message,
+        ...feedbackState,
         handlers: {
             onChangeText: (text: string) => {
                 onChangeText?.(text);
-                if (!validation) return;
-                const result = validation.validator(text);
-                setValidationResult(result);
-                validation.onValidation?.(result);
+                runValidation(text);
             },
             onFocus: ((event) => {
                 setFocused(true);

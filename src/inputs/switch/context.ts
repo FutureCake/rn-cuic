@@ -1,6 +1,6 @@
 import type { SharedValue } from 'react-native-reanimated';
 import type { ResolvedComponentResult } from '../../providers-and-hooks';
-import { createSlotContext } from '../../utils';
+import { createSlotContext } from '../../shared';
 import type { SwitchStyleDefinition } from './types';
 
 /** Fixed Switch tokens/slots: parts can share the default-generic contract. */

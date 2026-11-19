@@ -6,8 +6,8 @@ import type {
     StyleProp,
     ViewStyle,
 } from 'react-native';
-import { AnimatedPressable } from '../../../lib';
 import type { ResolvedComponentTokens } from '../../../providers-and-hooks';
+import { AnimatedPressable } from '../../../shared/libs/reanimated';
 import { useSlotContext } from '../context';
 import type { BottomSheetStyleDefinition } from '../types';
 

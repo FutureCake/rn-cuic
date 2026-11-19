@@ -101,11 +101,31 @@ Rules:
 
 ## Implementation requirements
 
+- **Reuse `src/shared/` before writing logic.** Check
+  [src/shared/](../../../src/shared/) for existing hooks
+  (`shared/hooks/`), plain functions (`shared/utils/`), context helpers
+  (`shared/contexts/`), animated wrappers (`shared/libs/`) and contract types
+  (`shared/types.ts`) before implementing behavior in a component — never
+  rewrite the same logic slightly differently. If a component needs a local
+  variation, compose a local hook/function that delegates the heavy lifting
+  to the shared one (cf. `useFieldBehavior` layering focus/blur gating on top
+  of `useValidationFeedback`; Chip gating `usePressedState` handlers behind
+  `interactive`). Current inventory: `usePressedState` (pressed tracking with
+  disabled suppression), `useValidationFeedback` (validation state + feedback
+  normalization + variant/message precedence), `extractSingletonSlots`
+  (first-wins singleton slot extraction with dev warnings), `hasSlot`,
+  `createSlotContext`, and the `Feedback`/`FeedbackVariant`/
+  `ValidationResult`/`ThemeMode`/`StyleOverrides` types. When two components
+  end up duplicating logic, extract it here (hooks → `shared/hooks/`,
+  functions → `shared/utils/`, types → `shared/types.ts`) — but only when it
+  stays readable (user preference: no consolidation that hurts readability).
+  `src/shared/` is internal except what its index re-exports via core.
 - Render only Reanimated components (`Animated.View`, `Animated.Text`,
-  shared wrappers from [src/lib.ts](../../../src/lib.ts) such as
-  `AnimatedPressable`/`AnimatedTextInput` — add new
+  shared wrappers from
+  [src/shared/libs/reanimated.ts](../../../src/shared/libs/reanimated.ts)
+  such as `AnimatedPressable`/`AnimatedTextInput` — add new
   `Animated.createAnimatedComponent(...)` instances there) — never raw RN
-  elements. `ThemeMode` lives in `src/utils/types.ts` (not button).
+  elements. `ThemeMode` lives in `src/shared/types.ts`.
 - Root owns behavior and native props; slots only position/style (TextField
   passes native input props to its Input slot via context).
 - Positioned/overlay components (containers): structural positioning styles

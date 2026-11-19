@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Animated from 'react-native-reanimated';
-import { hasSlot } from '../../../utils/has-slot';
+import { hasSlot } from '../../../shared/utils/has-slot';
 import {
     buildFieldInputProps,
     useFieldBehavior,

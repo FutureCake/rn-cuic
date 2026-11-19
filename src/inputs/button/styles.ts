@@ -1,4 +1,4 @@
-import type { ThemeMode } from '../../utils/types';
+import type { ThemeMode } from '../../shared/types';
 import { defineButtonStyles } from './define-styles';
 import type { ButtonVariant } from './types';
 

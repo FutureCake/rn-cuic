@@ -1,7 +1,7 @@
 import { StyleSheet, type LayoutChangeEvent } from 'react-native';
 import { GestureDetector } from 'react-native-gesture-handler';
 import Animated from 'react-native-reanimated';
-import { AnimatedPressable } from '../../lib';
+import { AnimatedPressable } from '../../shared/libs/reanimated';
 import { ContextProvider } from './context';
 import { useBottomSheetAnimation } from './hooks/use-bottom-sheet-animation';
 import { useBottomSheetSlots } from './hooks/use-bottom-sheet-slots';

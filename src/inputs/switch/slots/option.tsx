@@ -4,8 +4,8 @@ import Animated, {
     interpolateColor,
     useAnimatedStyle,
 } from 'react-native-reanimated';
-import { AnimatedPressable } from '../../../lib';
 import type { ResolvedComponentTokens } from '../../../providers-and-hooks';
+import { AnimatedPressable } from '../../../shared/libs/reanimated';
 import { useSlotContext } from '../context';
 import type { SwitchStyleDefinition } from '../types';
 

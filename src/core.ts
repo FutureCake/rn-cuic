@@ -2,7 +2,7 @@ import { createStylesManager } from './providers-and-hooks/styles-manager';
 import type { StyleDefinitionShape } from './providers-and-hooks/styles-manager/types';
 
 export * from './providers-and-hooks';
-export * from './utils';
+export * from './shared';
 
 /**
  * Instance wiring handed to a descriptor's build step. The hooks are bound to

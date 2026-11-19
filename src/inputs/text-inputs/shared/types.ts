@@ -5,22 +5,15 @@ import type {
     ResolvedComponentResult,
 } from '../../../providers-and-hooks';
 import type { TokenValue } from '../../../providers-and-hooks/styles-manager/types';
-import type { StyleOverrides, ThemeMode } from '../../../utils/types';
+import type {
+    Feedback,
+    FeedbackVariant,
+    StyleOverrides,
+    ThemeMode,
+    ValidationResult,
+} from '../../../shared/types';
 
-export type FeedbackVariant = 'info' | 'warning' | 'error';
-
-export type Feedback<Variant extends string = FeedbackVariant> = {
-    message: string;
-    /** Falls back to the configured default variant. */
-    variant?: Variant;
-};
-
-export type ValidationResult<Variant extends string = FeedbackVariant> = {
-    valid: boolean;
-    /** Feedback variant while invalid; falls back to the feedback's variant. */
-    variant?: Variant;
-    message?: string;
-};
+export type { Feedback, FeedbackVariant, ValidationResult };
 
 export type Validation<Variant extends string = FeedbackVariant> = {
     validator: (text: string) => ValidationResult<Variant>;

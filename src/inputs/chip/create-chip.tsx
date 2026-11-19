@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { AnimatedPressable } from '../../lib';
-import { hasSlot } from '../../utils/has-slot';
+import { usePressedState } from '../../shared/hooks/use-pressed-state';
+import { AnimatedPressable } from '../../shared/libs/reanimated';
+import { hasSlot } from '../../shared/utils/has-slot';
 import { ContextProvider } from './context';
 import { ChipClose } from './slots/close';
 import { ChipIcon } from './slots/icon';
@@ -41,11 +41,10 @@ export function createChip<Size extends string, Theme extends string>({
     }: ChipProps<Size, Theme, Value>) {
         const { theme: ambientTheme } = useTheme();
         const theme = themeProp ?? ambientTheme;
-        const [pressed, setPressed] = useState(false);
-        const effectivePressed = pressed && !disabled;
+        const press = usePressedState({ disabled, onPressIn, onPressOut });
         const { styles, tokens } = useStyles({
             influences: { size, theme },
-            states: { selected, pressed: effectivePressed, disabled },
+            states: { selected, pressed: press.pressed, disabled },
             overrides: styleOverrides,
         });
         const showsShorthandIcon =
@@ -64,7 +63,7 @@ export function createChip<Size extends string, Theme extends string>({
                     styles,
                     tokens,
                     selected,
-                    pressed: effectivePressed,
+                    pressed: press.pressed,
                     disabled,
                     onClose,
                 }}
@@ -99,22 +98,8 @@ export function createChip<Size extends string, Theme extends string>({
                               }
                             : undefined
                     }
-                    onPressIn={
-                        interactive
-                            ? (event) => {
-                                  setPressed(true);
-                                  onPressIn?.(event);
-                              }
-                            : undefined
-                    }
-                    onPressOut={
-                        interactive
-                            ? (event) => {
-                                  setPressed(false);
-                                  onPressOut?.(event);
-                              }
-                            : undefined
-                    }
+                    onPressIn={interactive ? press.onPressIn : undefined}
+                    onPressOut={interactive ? press.onPressOut : undefined}
                     style={styles.container}
                 >
                     {showsShorthandIcon && !hasSlot(children, ChipIcon) && (

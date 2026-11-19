@@ -1,5 +1,5 @@
 import type { ResolvedComponentResult } from '../../../providers-and-hooks';
-import { createSlotContext } from '../../../utils';
+import { createSlotContext } from '../../../shared';
 import type { FieldContextBase } from '../shared/types';
 import type { TextAreaStyleDefinition } from './types';
 

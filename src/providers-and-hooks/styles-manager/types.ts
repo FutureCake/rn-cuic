@@ -1,6 +1,6 @@
 import type { StyleProp, TextStyle, ViewStyle } from 'react-native';
 import type { CSSTransitionProperties } from 'react-native-reanimated';
-import type { StyleOverrides } from '../../utils/types';
+import type { StyleOverrides } from '../../shared/types';
 
 /** Type-only metadata preserves each definition's contract through a collection. */
 declare const styleDefinitionContract: unique symbol;
