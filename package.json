@@ -35,6 +35,11 @@
             "types": "./lib/typescript/src/components/inputs/chips/index.d.ts",
             "default": "./lib/module/components/inputs/chips/index.js"
         },
+        "./icon": {
+            "rn-cuic-source": "./src/components/visuals/icon/index.tsx",
+            "types": "./lib/typescript/src/components/visuals/icon/index.d.ts",
+            "default": "./lib/module/components/visuals/icon/index.js"
+        },
         "./toggle": {
             "rn-cuic-source": "./src/components/inputs/toggle/index.tsx",
             "types": "./lib/typescript/src/components/inputs/toggle/index.d.ts",

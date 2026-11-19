@@ -35,7 +35,7 @@ export function buttonFactory(config?: {
 }): UIComponentDescriptor<StyleDefinitionShape, ThemeMode, unknown> {
     const definition: StyleDefinitionShape =
         config?.definition ?? buttonStyleDefinition;
-    const defaults = config?.defaults ?? { variant: 'primary', size: 'small' };
+    const defaults = config?.defaults ?? { variant: 'primary', size: 's' };
     return {
         definition,
         build: ({ useStyles, useTheme }) =>
