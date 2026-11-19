@@ -16,7 +16,7 @@ export function createChip<Size extends string, Theme extends string>({
     useStyles,
     useTheme,
 }: ChipBuilderOptions<Size, Theme>) {
-    function ChipRoot({
+    function ChipRoot<Value>({
         text,
         icon,
         showIcon = 'selected',
@@ -24,6 +24,7 @@ export function createChip<Size extends string, Theme extends string>({
         closeIcon,
         closeAccessibilityLabel,
         children,
+        value,
         size = defaults.size,
         theme: themeProp,
         selected = false,
@@ -37,7 +38,7 @@ export function createChip<Size extends string, Theme extends string>({
         accessibilityRole,
         styleOverrides,
         ...props
-    }: ChipProps<Size, Theme>) {
+    }: ChipProps<Size, Theme, Value>) {
         const { theme: ambientTheme } = useTheme();
         const theme = themeProp ?? ambientTheme;
         const [pressed, setPressed] = useState(false);
@@ -90,7 +91,10 @@ export function createChip<Size extends string, Theme extends string>({
                     onPress={
                         interactive
                             ? (event) => {
-                                  onChange?.(!selected);
+                                  onChange?.(
+                                      !selected,
+                                      value ?? (text as Value | undefined)
+                                  );
                                   onPress?.(event);
                               }
                             : undefined

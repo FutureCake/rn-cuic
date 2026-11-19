@@ -75,7 +75,13 @@ export type ChipBuilderOptions<
 export type ChipProps<
     Size extends string = ChipSize,
     Theme extends string = ThemeMode,
+    Value = unknown,
 > = Omit<PressableProps, 'children' | 'style'> & {
+    /**
+     * Returned as the second argument of `onChange`; defaults to `text` when
+     * not provided. Inside a Chips group it is also the chip's identity.
+     */
+    value?: Value;
     size?: Size;
     /** Overrides the ambient theme from StylesProvider for this instance. */
     theme?: Theme;
@@ -87,7 +93,7 @@ export type ChipProps<
      * static display item: no pressed feedback, announced as text with
      * `selected` conveyed when true. A close affordance stays operable.
      */
-    onChange?: (selected: boolean) => void;
+    onChange?: (selected: boolean, value: Value | undefined) => void;
     styleOverrides?: StyleOverrides<ChipSlotStyles>;
     text?: string;
     icon?: ImageSourcePropType;

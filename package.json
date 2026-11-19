@@ -30,6 +30,11 @@
             "types": "./lib/typescript/src/inputs/chip/index.d.ts",
             "default": "./lib/module/inputs/chip/index.js"
         },
+        "./chips": {
+            "rn-cuic-source": "./src/inputs/chips/index.tsx",
+            "types": "./lib/typescript/src/inputs/chips/index.d.ts",
+            "default": "./lib/module/inputs/chips/index.js"
+        },
         "./toggle": {
             "rn-cuic-source": "./src/inputs/toggle/index.tsx",
             "types": "./lib/typescript/src/inputs/toggle/index.d.ts",
