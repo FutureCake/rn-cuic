@@ -1,6 +1,6 @@
 ---
 name: component-authoring
-description: 'Add or modify a rn-cuic UI component (Button, Toggle, TextField, or a new input/container/informational). Use when creating a new component, porting/recreating a component from external reference files or another codebase, adding slots/props/tokens/influences/states to an existing one, or restructuring component files. Enforces the strict per-component folder structure and requires interviewing the user until the component contract (influences, tokens, states, slots, shorthand props, behavior) has zero ambiguity.'
+description: 'Add or modify a rn-cuic UI component (Button, Toggle, TextField, or a new input/container/visual). Use when creating a new component, porting/recreating a component from external reference files or another codebase, adding slots/props/tokens/influences/states to an existing one, or restructuring component files. Enforces the strict per-component folder structure and requires interviewing the user until the component contract (influences, tokens, states, slots, shorthand props, behavior) has zero ambiguity.'
 argument-hint: 'Which component to add or change, and what it should do'
 ---
 
@@ -9,9 +9,10 @@ argument-hint: 'Which component to add or change, and what it should do'
 rn-cuic is a themeable RN component library. Every component follows the same
 style-resolution architecture and the same strict folder layout. Never invent a
 new structure; copy the patterns of the existing components
-([button](../../../src/inputs/button/), [toggle](../../../src/inputs/toggle/),
-[text-field](../../../src/inputs/text-inputs/text-field/), and for containers
-[bottom-sheet](../../../src/containers/bottom-sheet/)).
+([button](../../../src/components/inputs/button/),
+[toggle](../../../src/components/inputs/toggle/),
+[text-field](../../../src/components/inputs/text-inputs/text-field/), and for
+containers [bottom-sheet](../../../src/components/containers/bottom-sheet/)).
 
 ## Core concepts (in dependency order)
 
@@ -50,7 +51,7 @@ new structure; copy the patterns of the existing components
 ## Strict folder structure
 
 ```
-src/inputs/<component>/
+src/components/<category>/<component>/   # category: inputs | containers | visuals
 ├── types.ts              # Tokens, influences, states, slot styles,
 │                         #   StyleDefinition alias, BuilderOptions, root Props,
 │                         #   behavior types (e.g. Validation). NO slot prop types.
@@ -87,7 +88,8 @@ Rules:
 - Components without compound slots (Toggle) have **no** context.ts or slots/
   — do not add them speculatively.
 - Closely related components may be grouped in a family folder with a shared
-  module (`src/inputs/text-inputs/{shared/, text-field/, text-area/}`). Each
+  module (`src/components/inputs/text-inputs/{shared/, text-field/,
+  text-area/}`). Each
   component keeps the full per-component layout above and its own exported
   slot components (slot identity drives `hasSlot`), plus its own `styles.ts`
   preset — only behavior (`shared/use-field-behavior.ts`), contract types
@@ -145,8 +147,9 @@ Rules:
 
 ## Registration checklist (every new component)
 
-1. `src/inputs/<component>/factory.ts` — `<component>Factory` returning a
-   `UIComponentDescriptor` (import type from `../../core`). Preset overload
+1. `src/components/<category>/<component>/factory.ts` — `<component>Factory`
+   returning a
+   `UIComponentDescriptor` (import type from `../../../core`). Preset overload
    (`definition?: undefined`, optional preset-typed `defaults`) + custom
    overload (`definition` required, `defaults: NoInfer<…>` required); loose
    implementation signature returns `UIComponentDescriptor<StyleDefinitionShape,
@@ -154,18 +157,21 @@ Rules:
    source of preset defaults), and builds via `create<Component>` with
    `useStyles(options as never)`. Components are built only when their factory
    is passed to `createUI` — adding one is not a breaking change.
-2. `src/inputs/<component>/index.tsx` — the component barrel: export
+2. `src/components/<category>/<component>/index.tsx` — the component barrel:
+   export
    `define<Component>Styles`, `<component>Factory`, `export * from './styles'`
    and `'./types'`, and `export type *` from every slot file.
 3. [src/index.tsx](../../../src/index.tsx) — add a single
-   `export * from './inputs/<component>';` line. The root barrel also
+   `export * from './components/<category>/<component>';` line. The root barrel
+   also
    `export * from './core'`; new component export names must not clash with
    core's (clashing `export *` names are silently dropped).
 4. [package.json](../../../package.json) `exports` +
    [tsconfig.json](../../../tsconfig.json) `paths` — add the
    `rn-cuic/<component>` subpath entry (`rn-cuic-source` → src barrel, `types`
    → `lib/typescript/src/…/index.d.ts`, `default` → `lib/module/…/index.js`).
-5. `src/inputs/index.ts` (or the matching category barrel) if applicable.
+5. `src/components/<category>/index.ts` if the category has a barrel
+   (currently only `visuals/`).
 6. [stories/helpers/ui.ts](../../../stories/helpers/ui.ts) — add
    `<component>Factory()` to the shared story family and its destructured
    export.
@@ -189,7 +195,7 @@ and get confirmation.
 
 | Contract item | Must be answered |
 |---|---|
-| Name & category | inputs / containers / informationals? |
+| Name & category | inputs / containers / visuals? |
 | Influences | Which besides `theme`? Value names? Library defaults? Which are factory `defaults`? |
 | Tokens | Full token list with RN style types; which are per-theme vs fixed? |
 | States | Which booleans? Precedence order on conflicts? |
@@ -240,7 +246,7 @@ snippet, a screenshot/spec):
 
 ```sh
 yarn tsc --project tsconfig.build.json --noEmit
-yarn eslint --fix src/inputs/<component> stories/<category>/<component>.stories.tsx
+yarn eslint --fix src/components/<category>/<component> stories/<category>/<component>.stories.tsx
 yarn tsc --project example/tsconfig.json --noEmit
 ```
 

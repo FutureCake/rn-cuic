@@ -2,18 +2,18 @@ import { useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
-import { bottomSheetFactory } from 'rn-cuic/bottom-sheet';
+import { createUI } from 'rn-cuic/core';
+import { bottomSheetFactory } from '../../src/components/containers/bottom-sheet';
 import {
     buttonFactory,
     buttonStyleDefinition,
     defineButtonStyles,
-} from 'rn-cuic/button';
-import { chipsFactory } from 'rn-cuic/chips';
-import { createUI } from 'rn-cuic/core';
-import { switchFactory } from 'rn-cuic/switch';
-import { toggleFactory } from 'rn-cuic/toggle';
-import { textAreaFactory } from '../../src/inputs/text-inputs/text-area';
-import { textFieldFactory } from '../../src/inputs/text-inputs/text-field';
+} from '../../src/components/inputs/button';
+import { chipsFactory } from '../../src/components/inputs/chips';
+import { switchFactory } from '../../src/components/inputs/switch';
+import { textAreaFactory } from '../../src/components/inputs/text-inputs/text-area';
+import { textFieldFactory } from '../../src/components/inputs/text-inputs/text-field';
+import { toggleFactory } from '../../src/components/inputs/toggle';
 
 const brand = {
     light: { main: '#4f46e5', pressed: '#3730a3', on: '#ffffff' },

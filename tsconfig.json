@@ -9,28 +9,28 @@
                 "./src/core"
             ],
             "rn-cuic/bottom-sheet": [
-                "./src/containers/bottom-sheet/index"
+                "./src/components/containers/bottom-sheet/index"
             ],
             "rn-cuic/button": [
-                "./src/inputs/button/index"
+                "./src/components/inputs/button/index"
             ],
             "rn-cuic/chip": [
-                "./src/inputs/chip/index"
+                "./src/components/inputs/chip/index"
             ],
             "rn-cuic/chips": [
-                "./src/inputs/chips/index"
+                "./src/components/inputs/chips/index"
             ],
             "rn-cuic/toggle": [
-                "./src/inputs/toggle/index"
+                "./src/components/inputs/toggle/index"
             ],
             "rn-cuic/switch": [
-                "./src/inputs/switch/index"
+                "./src/components/inputs/switch/index"
             ],
             "rn-cuic/text-area": [
-                "./src/inputs/text-inputs/text-area/index"
+                "./src/components/inputs/text-inputs/text-area/index"
             ],
             "rn-cuic/text-field": [
-                "./src/inputs/text-inputs/text-field/index"
+                "./src/components/inputs/text-inputs/text-field/index"
             ]
         },
         "allowUnreachableCode": false,
