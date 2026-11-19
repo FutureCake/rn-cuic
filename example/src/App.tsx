@@ -8,7 +8,7 @@ import {
     buttonStyleDefinition,
     defineButtonStyles,
 } from 'rn-cuic/button';
-import { chipFactory } from 'rn-cuic/chip';
+import { chipsFactory } from 'rn-cuic/chips';
 import { createUI } from 'rn-cuic/core';
 import { switchFactory } from 'rn-cuic/switch';
 import { toggleFactory } from 'rn-cuic/toggle';
@@ -85,7 +85,7 @@ const customButtonDefinition = defineButtonStyles({
 const {
     BottomSheet,
     Button,
-    Chip,
+    Chips,
     Toggle,
     Switch,
     TextField,
@@ -100,7 +100,7 @@ const {
             definition: customButtonDefinition,
             defaults: { variant: 'tertiary', size: 'large' },
         }),
-        Chip: chipFactory(),
+        Chips: chipsFactory(),
         Toggle: toggleFactory(),
         Switch: switchFactory(),
         TextField: textFieldFactory(),
@@ -165,22 +165,17 @@ function Showcase() {
                     onChange={setFrequency}
                 />
 
-                <View style={styles.chips}>
-                    {topics.map((topic) => (
-                        <Chip
-                            key={topic}
-                            text={topic}
-                            selected={selectedTopics.includes(topic)}
-                            onChange={(next) =>
-                                setSelectedTopics((current) =>
-                                    next
-                                        ? [...current, topic]
-                                        : current.filter((t) => t !== topic)
-                                )
-                            }
-                        />
-                    ))}
-                </View>
+                <Chips
+                    selectionMode="multi"
+                    header="Topics"
+                    feedback="Pick what lands in your inbox."
+                    options={topics.map((topic) => ({
+                        title: topic,
+                        value: topic,
+                    }))}
+                    value={selectedTopics}
+                    onChange={(next) => setSelectedTopics(next)}
+                />
 
                 <TextField
                     header="Email"
@@ -268,11 +263,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-    },
-    chips: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        gap: 8,
     },
     label: {
         fontSize: 16,

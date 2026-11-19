@@ -15,9 +15,9 @@ function ControlledChip(props: ChipArgs) {
         <Chip
             {...props}
             selected={selected}
-            onChange={(next) => {
+            onChange={(next, value) => {
                 setSelected(next);
-                props.onChange?.(next);
+                props.onChange?.(next, value);
             }}
         />
     );
