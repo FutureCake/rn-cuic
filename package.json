@@ -16,9 +16,9 @@
             "default": "./lib/module/core.js"
         },
         "./bottom-sheet": {
-            "rn-cuic-source": "./src/components/containers/bottom-sheet/index.tsx",
-            "types": "./lib/typescript/src/components/containers/bottom-sheet/index.d.ts",
-            "default": "./lib/module/components/containers/bottom-sheet/index.js"
+            "rn-cuic-source": "./src/components/overlays/bottom-sheet/index.ts",
+            "types": "./lib/typescript/src/components/overlays/bottom-sheet/index.d.ts",
+            "default": "./lib/module/components/overlays/bottom-sheet/index.js"
         },
         "./button": {
             "rn-cuic-source": "./src/components/inputs/button/index.tsx",
@@ -39,6 +39,11 @@
             "rn-cuic-source": "./src/components/visuals/icon/index.tsx",
             "types": "./lib/typescript/src/components/visuals/icon/index.d.ts",
             "default": "./lib/module/components/visuals/icon/index.js"
+        },
+        "./modal": {
+            "rn-cuic-source": "./src/components/overlays/modal/index.ts",
+            "types": "./lib/typescript/src/components/overlays/modal/index.d.ts",
+            "default": "./lib/module/components/overlays/modal/index.js"
         },
         "./toggle": {
             "rn-cuic-source": "./src/components/inputs/toggle/index.tsx",
