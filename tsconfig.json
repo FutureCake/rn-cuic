@@ -9,7 +9,7 @@
                 "./src/core"
             ],
             "rn-cuic/bottom-sheet": [
-                "./src/components/containers/bottom-sheet/index"
+                "./src/components/overlays/bottom-sheet/index"
             ],
             "rn-cuic/button": [
                 "./src/components/inputs/button/index"
@@ -22,6 +22,9 @@
             ],
             "rn-cuic/icon": [
                 "./src/components/visuals/icon/index"
+            ],
+            "rn-cuic/modal": [
+                "./src/components/overlays/modal/index"
             ],
             "rn-cuic/toggle": [
                 "./src/components/inputs/toggle/index"

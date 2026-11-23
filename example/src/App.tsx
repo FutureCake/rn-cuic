@@ -3,7 +3,6 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { createUI } from 'rn-cuic/core';
-import { bottomSheetFactory } from '../../src/components/containers/bottom-sheet';
 import {
     buttonFactory,
     buttonStyleDefinition,
@@ -14,6 +13,8 @@ import { switchFactory } from '../../src/components/inputs/switch';
 import { textAreaFactory } from '../../src/components/inputs/text-inputs/text-area';
 import { textFieldFactory } from '../../src/components/inputs/text-inputs/text-field';
 import { toggleFactory } from '../../src/components/inputs/toggle';
+import { bottomSheetFactory } from '../../src/components/overlays/bottom-sheet';
+import { modalFactory } from '../../src/components/overlays/modal';
 import { iconFactory } from '../../src/components/visuals/icon';
 
 const brand = {
@@ -88,6 +89,7 @@ const {
     Button,
     Chips,
     Icon,
+    Modal,
     Toggle,
     Switch,
     TextField,
@@ -104,6 +106,7 @@ const {
         }),
         Chips: chipsFactory(),
         Icon: iconFactory(),
+        Modal: modalFactory(),
         Toggle: toggleFactory(),
         Switch: switchFactory(),
         TextField: textFieldFactory(),
@@ -140,6 +143,7 @@ function Showcase() {
     const [email, setEmail] = useState('');
     const [message, setMessage] = useState('');
     const [sheetOpen, setSheetOpen] = useState(true);
+    const [modalOpen, setModalOpen] = useState(false);
 
     return (
         <View
@@ -220,17 +224,11 @@ function Showcase() {
                 </View>
 
                 <Button
-                    variant="tertiary"
-                    text="Subscribe"
-                    onPress={() =>
-                        console.log('subscribe', { email, frequency })
-                    }
-                />
-
-                <Button
                     text="Open bottom sheet"
                     onPress={() => setSheetOpen(true)}
                 />
+
+                <Button text="Open modal" onPress={() => setModalOpen(true)} />
             </ScrollView>
 
             {sheetOpen && (
@@ -254,6 +252,15 @@ function Showcase() {
                         </Text>
                     </BottomSheet.Content>
                 </BottomSheet>
+            )}
+
+            {modalOpen && (
+                <Modal onClose={() => setModalOpen(false)}>
+                    <Text style={[styles.label, dark && styles.labelDark]}>
+                        A centered modal card. Press outside to close.
+                    </Text>
+                    <Button text="Done" onPress={() => setModalOpen(false)} />
+                </Modal>
             )}
         </View>
     );

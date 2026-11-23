@@ -1,4 +1,3 @@
-export * from './components/containers/bottom-sheet';
 export * from './components/inputs/button';
 export * from './components/inputs/chip';
 export * from './components/inputs/chips';
@@ -6,5 +5,7 @@ export * from './components/inputs/switch';
 export * from './components/inputs/text-inputs/text-area';
 export * from './components/inputs/text-inputs/text-field';
 export * from './components/inputs/toggle';
+export * from './components/overlays/bottom-sheet';
+export * from './components/overlays/modal';
 export * from './components/visuals/icon';
 export * from './core';
