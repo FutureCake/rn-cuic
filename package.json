@@ -35,10 +35,25 @@
             "types": "./lib/typescript/src/components/inputs/chips/index.d.ts",
             "default": "./lib/module/components/inputs/chips/index.js"
         },
+        "./box": {
+            "rn-cuic-source": "./src/components/layouts/box/index.ts",
+            "types": "./lib/typescript/src/components/layouts/box/index.d.ts",
+            "default": "./lib/module/components/layouts/box/index.js"
+        },
+        "./stacks": {
+            "rn-cuic-source": "./src/components/layouts/stacks/index.ts",
+            "types": "./lib/typescript/src/components/layouts/stacks/index.d.ts",
+            "default": "./lib/module/components/layouts/stacks/index.js"
+        },
         "./icon": {
             "rn-cuic-source": "./src/components/visuals/icon/index.tsx",
             "types": "./lib/typescript/src/components/visuals/icon/index.d.ts",
             "default": "./lib/module/components/visuals/icon/index.js"
+        },
+        "./surface": {
+            "rn-cuic-source": "./src/components/visuals/surface/index.tsx",
+            "types": "./lib/typescript/src/components/visuals/surface/index.d.ts",
+            "default": "./lib/module/components/visuals/surface/index.js"
         },
         "./modal": {
             "rn-cuic-source": "./src/components/overlays/modal/index.ts",

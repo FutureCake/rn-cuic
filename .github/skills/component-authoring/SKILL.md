@@ -51,7 +51,7 @@ containers [bottom-sheet](../../../src/components/containers/bottom-sheet/)).
 ## Strict folder structure
 
 ```
-src/components/<category>/<component>/   # category: inputs | containers | visuals
+src/components/<category>/<component>/   # category: inputs | overlays | visuals | layouts
 ├── types.ts              # Tokens, influences, states, slot styles,
 │                         #   StyleDefinition alias, BuilderOptions, root Props,
 │                         #   behavior types (e.g. Validation). NO slot prop types.
@@ -100,6 +100,14 @@ Rules:
 - Simplify whenever possible (user principle: "if we can simplify we should
   always simplify"). No factory wrappers around slot components; no unused
   abstraction layers.
+- **Layout primitives (`layouts/`, e.g. VStack) skip the factory architecture
+  entirely**: no tokens/influences/states/factory/createUI registration — a
+  single `<component>.tsx` (plain component + its prop types) plus an
+  `index.ts` barrel, exported directly from the root barrel and its own
+  subpath. Structural facts (spacing, padding, align/justify) are plain
+  props, not variants. Static primitives render plain RN elements (no
+  Reanimated) and still get a story + example-app demo, but are NOT added to
+  `stories/helpers/ui.ts` or any `createUI` call.
 
 ## Implementation requirements
 
@@ -122,12 +130,15 @@ Rules:
   functions → `shared/utils/`, types → `shared/types.ts`) — but only when it
   stays readable (user preference: no consolidation that hurts readability).
   `src/shared/` is internal except what its index re-exports via core.
-- Render only Reanimated components (`Animated.View`, `Animated.Text`,
-  shared wrappers from
+- Themed/animated components render Reanimated components (`Animated.View`,
+  `Animated.Text`, shared wrappers from
   [src/shared/libs/reanimated.ts](../../../src/shared/libs/reanimated.ts)
   such as `AnimatedPressable`/`AnimatedTextInput` — add new
-  `Animated.createAnimatedComponent(...)` instances there) — never raw RN
-  elements. `ThemeMode` lives in `src/shared/types.ts`.
+  `Animated.createAnimatedComponent(...)` instances there) — required
+  wherever resolved slot styles carry CSS `transition`s or animated values.
+  Components with NO animation (static layout primitives like VStack) use
+  plain RN elements; only use Animated components when the element actually
+  animates. `ThemeMode` lives in `src/shared/types.ts`.
 - Root owns behavior and native props; slots only position/style (TextField
   passes native input props to its Input slot via context).
 - Positioned/overlay components (containers): structural positioning styles

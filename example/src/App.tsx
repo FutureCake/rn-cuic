@@ -13,9 +13,12 @@ import { switchFactory } from '../../src/components/inputs/switch';
 import { textAreaFactory } from '../../src/components/inputs/text-inputs/text-area';
 import { textFieldFactory } from '../../src/components/inputs/text-inputs/text-field';
 import { toggleFactory } from '../../src/components/inputs/toggle';
+import { Box } from '../../src/components/layouts/box';
+import { HStack, VStack, ZStack } from '../../src/components/layouts/stacks';
 import { bottomSheetFactory } from '../../src/components/overlays/bottom-sheet';
 import { modalFactory } from '../../src/components/overlays/modal';
 import { iconFactory } from '../../src/components/visuals/icon';
+import { surfaceFactory } from '../../src/components/visuals/surface';
 
 const brand = {
     light: { main: '#4f46e5', pressed: '#3730a3', on: '#ffffff' },
@@ -90,6 +93,7 @@ const {
     Chips,
     Icon,
     Modal,
+    Surface,
     Toggle,
     Switch,
     TextField,
@@ -107,6 +111,7 @@ const {
         Chips: chipsFactory(),
         Icon: iconFactory(),
         Modal: modalFactory(),
+        Surface: surfaceFactory(),
         Toggle: toggleFactory(),
         Switch: switchFactory(),
         TextField: textFieldFactory(),
@@ -213,7 +218,7 @@ function Showcase() {
                     feedback="Grows with your message, up to 8 lines."
                 />
 
-                <View style={styles.row}>
+                <HStack align="center" justify="space-between">
                     {(['xs', 's', 'm', 'l', 'xl'] as const).map((size) => (
                         <Icon
                             key={size}
@@ -221,14 +226,47 @@ function Showcase() {
                             source={require('../assets/android-icon-monochrome.png')}
                         />
                     ))}
-                </View>
+                </HStack>
 
-                <Button
-                    text="Open bottom sheet"
-                    onPress={() => setSheetOpen(true)}
-                />
+                <Box padding={{ x: 24, top: 8, bottom: 16 }} style={styles.box}>
+                    <Text>Box with x + top/bottom padding</Text>
+                </Box>
 
-                <Button text="Open modal" onPress={() => setModalOpen(true)} />
+                <HStack spacing={12}>
+                    {(['framed', 'contained', 'neutral'] as const).map(
+                        (variant) => (
+                            <Surface
+                                key={variant}
+                                variant={variant}
+                                elevation="first"
+                                padding={12}
+                            >
+                                <Text>{variant}</Text>
+                            </Surface>
+                        )
+                    )}
+                </HStack>
+
+                <ZStack align="center" offset={{ x: 12, y: 8 }}>
+                    {['#c7d2fe', '#a5b4fc', '#818cf8'].map((color) => (
+                        <View
+                            key={color}
+                            style={[styles.layer, { backgroundColor: color }]}
+                        />
+                    ))}
+                </ZStack>
+
+                <VStack spacing={12}>
+                    <Button
+                        text="Open bottom sheet"
+                        onPress={() => setSheetOpen(true)}
+                    />
+
+                    <Button
+                        text="Open modal"
+                        onPress={() => setModalOpen(true)}
+                    />
+                </VStack>
             </ScrollView>
 
             {sheetOpen && (
@@ -290,5 +328,14 @@ const styles = StyleSheet.create({
     },
     labelDark: {
         color: '#ffffff',
+    },
+    box: {
+        borderRadius: 12,
+        backgroundColor: '#eef2ff',
+    },
+    layer: {
+        width: 96,
+        height: 64,
+        borderRadius: 12,
     },
 });

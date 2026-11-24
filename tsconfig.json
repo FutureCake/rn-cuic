@@ -20,8 +20,17 @@
             "rn-cuic/chips": [
                 "./src/components/inputs/chips/index"
             ],
+            "rn-cuic/box": [
+                "./src/components/layouts/box/index"
+            ],
+            "rn-cuic/stacks": [
+                "./src/components/layouts/stacks/index"
+            ],
             "rn-cuic/icon": [
                 "./src/components/visuals/icon/index"
+            ],
+            "rn-cuic/surface": [
+                "./src/components/visuals/surface/index"
             ],
             "rn-cuic/modal": [
                 "./src/components/overlays/modal/index"
@@ -37,7 +46,7 @@
             ],
             "rn-cuic/text-field": [
                 "./src/components/inputs/text-inputs/text-field/index"
-            ]
+            ],
         },
         "allowUnreachableCode": false,
         "allowUnusedLabels": false,
