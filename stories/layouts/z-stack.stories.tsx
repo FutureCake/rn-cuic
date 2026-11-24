@@ -38,13 +38,12 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const cards = (
-    <>
-        <Card label="Bottom" color="#e0e7ff" />
-        <Card label="Middle" color="#c7d2fe" />
-        <Card label="Top" color="#a5b4fc" />
-    </>
-);
+// An array (not a Fragment) so ZStack receives each card as its own layer.
+const cards = [
+    <Card key="bottom" label="Bottom" color="#e0e7ff" />,
+    <Card key="middle" label="Middle" color="#c7d2fe" />,
+    <Card key="top" label="Top" color="#a5b4fc" />,
+];
 
 export const Staggered: Story = {
     render: (args) => <ZStack {...args}>{cards}</ZStack>,
