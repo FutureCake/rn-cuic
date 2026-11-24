@@ -6,32 +6,37 @@ import {
 } from 'react';
 import { StyleSheet } from 'react-native';
 import Animated from 'react-native-reanimated';
-import { resolveComponentStyles } from '../../../providers-and-hooks';
 import { useValidationFeedback } from '../../../shared/hooks/use-validation-feedback';
 import { extractSingletonSlots } from '../../../shared/utils/extract-singleton-slots';
-import { createChip } from '../chip/create-chip';
-import { chipStyleDefinition } from '../chip/styles';
+import type { ChipProps } from '../chip/types';
 import { ContextProvider } from './context';
 import { ChipsFeedback } from './slots/feedback';
 import { ChipsHeader } from './slots/header';
 import type {
     ChipsBuilderOptions,
     ChipsMultiProps,
-    ChipsOption,
     ChipsProps,
     ChipsSingleProps,
     ChipsStaticProps,
     ChipsValidation,
 } from './types';
 
-/** The Chip props the group controls; any chip-shaped child qualifies. */
-type ControlledChipProps = {
-    value?: unknown;
-    text?: string;
-    selected?: boolean;
-    onChange?: (selected: boolean, value?: unknown) => void;
-    onClose?: () => void;
-};
+/**
+ * The Chip props the group reads and injects. Derived from ChipProps so a
+ * renamed Chip prop fails to compile here; Size/Theme widen to `string`
+ * because the group cannot know the app's configured unions.
+ */
+type ControlledChipProps = Pick<
+    ChipProps<string, string>,
+    | 'value'
+    | 'text'
+    | 'size'
+    | 'theme'
+    | 'disabled'
+    | 'selected'
+    | 'onChange'
+    | 'onClose'
+>;
 
 /** Structural layout; visual styling belongs to the slot styles. */
 const structural = StyleSheet.create({
@@ -40,42 +45,17 @@ const structural = StyleSheet.create({
     scroll: { flexGrow: 0 },
 });
 
-/** Stable keys for primitive option values; title/index for the rest. */
-function optionKey(option: ChipsOption<unknown>, index: number): string {
-    const { value, title } = option;
-    if (typeof value === 'string' || typeof value === 'number') {
-        return String(value);
-    }
-    return title || `option-${index}`;
-}
-
 /**
  * Bind shared behavior to the configured defaults and style hooks. The group
- * is a controller: `options` render preset chips carrying the group's visual
- * props, while composed Chip children only get the control wiring injected
- * (`selected`/`onChange`/`onClose`) and feed control actions back to the
- * group's caller.
+ * is a controller: Chip children get the control wiring injected
+ * (`selected`/`onChange`/`onClose`) plus the group's `disabled` and default
+ * `size`, and feed control actions back to the group's caller.
  */
 export function createChips<Variant extends string, Theme extends string>({
     defaults,
     useStyles,
     useTheme,
 }: ChipsBuilderOptions<Variant, Theme>) {
-    /**
-     * Renders `options` with the preset chip styling. Resolved outside the
-     * styles manager, so provider overrides for a `Chip` key do not reach it;
-     * restyle per option via `styleOverrides` or compose Chip children.
-     */
-    const OptionChip = createChip<string, Theme>({
-        defaults: { size: 'm' },
-        useStyles: (options) =>
-            resolveComponentStyles(
-                chipStyleDefinition,
-                options as never
-            ) as never,
-        useTheme,
-    });
-
     /**
      * Overloads per selection mode keep JSX generic inference exact; single
      * is declared last so ComponentProps resolves to the default mode.
@@ -103,7 +83,6 @@ export function createChips<Variant extends string, Theme extends string>({
         onClose,
         style,
         styleOverrides,
-        options,
         children,
         ...props
     }: ChipsProps<Value, Variant, Theme>) {
@@ -184,55 +163,33 @@ export function createChips<Variant extends string, Theme extends string>({
             const chipProps = child.props;
             const identity = chipProps.value ?? chipProps.text;
             if (identity === undefined) return child;
-            const injected: ControlledChipProps = {};
-            if (selectionEnabled) {
-                injected.selected = isSelected(identity);
-                injected.onChange = (next, chipValue) => {
-                    toggle(identity);
-                    chipProps.onChange?.(next, chipValue);
-                };
-            }
-            if (groupClose !== undefined) {
-                injected.onClose = () => {
-                    chipProps.onClose?.();
-                    groupClose(identity);
-                };
-            }
+            // Only set keys are spread: cloneElement treats an explicit
+            // `undefined` as a value and would erase the chip's own prop.
+            // A disabled group disables every chip; the group's size and
+            // theme are only defaults, so a chip's own values win.
+            const injected: ControlledChipProps = {
+                ...(disabled && { disabled: true }),
+                ...(size !== undefined &&
+                    chipProps.size === undefined && { size }),
+                ...(themeProp !== undefined &&
+                    chipProps.theme === undefined && { theme: themeProp }),
+                ...(selectionEnabled && {
+                    selected: isSelected(identity),
+                    onChange: (next: boolean, chipValue: unknown) => {
+                        toggle(identity);
+                        chipProps.onChange?.(next, chipValue);
+                    },
+                }),
+                ...(groupClose !== undefined && {
+                    onClose: () => {
+                        chipProps.onClose?.();
+                        groupClose(identity);
+                    },
+                }),
+            };
             return cloneElement(child, injected);
         };
-        const useOptions = options !== undefined;
-        if (__DEV__ && useOptions && chips.length > 0) {
-            console.warn(
-                'Chips: both options and chip children were provided; options win and chip children are ignored.'
-            );
-        }
-        const renderedChips = useOptions
-            ? options.map((option, index) => (
-                  <OptionChip
-                      key={optionKey(option, index)}
-                      text={option.title}
-                      value={option.value}
-                      theme={themeProp}
-                      size={size}
-                      disabled={disabled}
-                      selected={
-                          selectionEnabled
-                              ? isSelected(option.value)
-                              : undefined
-                      }
-                      onChange={
-                          selectionEnabled
-                              ? () => toggle(option.value)
-                              : undefined
-                      }
-                      onClose={
-                          groupClose === undefined
-                              ? undefined
-                              : () => groupClose(option.value)
-                      }
-                  />
-              ))
-            : chips.map(controlChip);
+        const renderedChips = chips.map(controlChip);
 
         return (
             <ContextProvider

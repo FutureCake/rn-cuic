@@ -13,10 +13,13 @@ const toppings = [
     'Peppers',
     'Pineapple',
 ];
-const toppingOptions = toppings.map((topping) => ({
-    title: topping,
-    value: topping,
-}));
+
+/** The group controls Chip children; identity is each chip's `value`. */
+function toppingChips(items: readonly string[]) {
+    return items.map((topping) => (
+        <Chip key={topping} value={topping} text={topping} />
+    ));
+}
 
 type ChipsArgs = ComponentProps<typeof Chips>;
 
@@ -30,7 +33,9 @@ function SingleSelectChips({ value: _value, onChange, ...rest }: ChipsArgs) {
                 setValue(next);
                 onChange?.(next);
             }}
-        />
+        >
+            {toppingChips(toppings)}
+        </Chips>
     );
 }
 
@@ -50,7 +55,9 @@ function MultiSelectChips({
                 setValue(next);
                 onChange?.(next);
             }}
-        />
+        >
+            {toppingChips(toppings)}
+        </Chips>
     );
 }
 
@@ -62,7 +69,6 @@ const meta = {
         layout: 'wrap',
         theme: 'light',
         disabled: false,
-        options: toppingOptions,
     },
     argTypes: {
         layout: { control: 'select', options: ['wrap', 'scroll'] },
@@ -128,7 +134,9 @@ function ValidatedChips({
                               message: 'No more than two toppings.',
                           },
             }}
-        />
+        >
+            {toppingChips(toppings)}
+        </Chips>
     );
 }
 
@@ -149,10 +157,6 @@ function RemovableChips({
     return (
         <Chips
             {...rest}
-            options={items.map((topping) => ({
-                title: topping,
-                value: topping,
-            }))}
             selectionMode="multi"
             value={value}
             onChange={(next) => setValue(next)}
@@ -165,7 +169,9 @@ function RemovableChips({
                 );
                 onClose?.(removed);
             }}
-        />
+        >
+            {toppingChips(items)}
+        </Chips>
     );
 }
 
@@ -190,15 +196,9 @@ function DisplayOnlyChips({
     ...rest
 }: ChipsArgs) {
     return (
-        <Chips
-            {...rest}
-            selectionMode="none"
-            header="Read-only tags"
-            options={toppings.slice(0, 3).map((topping) => ({
-                title: topping,
-                value: topping,
-            }))}
-        />
+        <Chips {...rest} selectionMode="none" header="Read-only tags">
+            {toppingChips(toppings.slice(0, 3))}
+        </Chips>
     );
 }
 
@@ -212,7 +212,6 @@ function ComposedChips({
     value: _value,
     onChange: _onChange,
     validation: _validation,
-    options: _options,
     ...rest
 }: ChipsArgs) {
     const [value, setValue] = useState<unknown>(null);
@@ -232,9 +231,7 @@ function ComposedChips({
                     </Animated.Text>
                 )}
             </Chips.Header>
-            {toppings.slice(0, 4).map((topping) => (
-                <Chip key={topping} value={topping} text={topping} />
-            ))}
+            {toppingChips(toppings.slice(0, 4))}
             <Chips.Feedback>
                 {({ message, style }) =>
                     message !== undefined ? (

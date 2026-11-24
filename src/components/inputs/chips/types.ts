@@ -83,15 +83,6 @@ export type ChipsValidation<
     onValidation?: (result: ValidationResult<Variant>) => void;
 };
 
-/**
- * Data-driven chip, rendered by the group with the preset chip styling.
- * `value` is the identity used for selection, `onChange` and `onClose`.
- */
-export type ChipsOption<Value> = {
-    title: string;
-    value: Value;
-};
-
 /** Supplied by createUI: configured defaults plus instance-bound hooks. */
 export type ChipsBuilderOptions<
     Variant extends string = FeedbackVariant,
@@ -111,11 +102,14 @@ type ChipsBaseProps<Value, Variant extends string, Theme extends string> = Omit<
 > & {
     /** Wrapping rows (default) or a single scrollable line. */
     layout?: ChipsLayout;
-    /** Overrides the ambient theme from StylesProvider for this instance. */
+    /**
+     * Overrides the ambient theme from StylesProvider for this instance;
+     * also the default theme for Chip children that set none.
+     */
     theme?: Theme;
-    /** Disables the group; spread onto options-rendered chips only. */
+    /** Disables the group and every Chip child. */
     disabled?: boolean;
-    /** Size for options-rendered chips; composed Chip children set their own. */
+    /** Default size for Chip children; a chip's own `size` wins. */
     size?: string;
     /** Shorthand for a Header child. */
     header?: string;
@@ -131,21 +125,13 @@ type ChipsBaseProps<Value, Variant extends string, Theme extends string> = Omit<
     style?: StyleProp<ViewStyle>;
     styleOverrides?: StyleOverrides<ChipsSlotStyles>;
     /**
-     * Data-driven chips, rendered with the preset chip styling and
-     * controlled by the group; the group's size/disabled/theme are spread
-     * onto them. Mutually exclusive with Chip children: when both are given,
-     * options win and chip children are ignored. For custom chip content or
-     * styling, compose Chip children instead.
-     */
-    options?: readonly ChipsOption<Value>[];
-    /**
-     * Chip children; the group controls them by injecting only the control
+     * Chip children; the group controls them by injecting the control
      * wiring: `selected` and `onChange` (identity is the chip's `value ??
-     * text`) plus `onClose` chaining — visual props like size stay the
-     * chip's own. Chips without an identity are left untouched. Chips.Header
-     * and Chips.Feedback are extracted from the direct children (in both
-     * modes) and always render header → chips → feedback; one of each,
-     * extras are dropped.
+     * text`) plus `onClose` chaining. It also forwards the group's
+     * `disabled`, and `size`/`theme` as defaults the chip's own props beat.
+     * Chips without an identity are left untouched. Chips.Header and
+     * Chips.Feedback are extracted from the direct children and always
+     * render header → chips → feedback; one of each, extras are dropped.
      */
     children?: ReactNode;
 };

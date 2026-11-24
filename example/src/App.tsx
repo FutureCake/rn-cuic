@@ -8,6 +8,7 @@ import {
     buttonStyleDefinition,
     defineButtonStyles,
 } from '../../src/components/inputs/button';
+import { chipFactory } from '../../src/components/inputs/chip';
 import { chipsFactory } from '../../src/components/inputs/chips';
 import { switchFactory } from '../../src/components/inputs/switch';
 import { textAreaFactory } from '../../src/components/inputs/text-inputs/text-area';
@@ -90,6 +91,7 @@ const customButtonDefinition = defineButtonStyles({
 const {
     BottomSheet,
     Button,
+    Chip,
     Chips,
     Icon,
     Modal,
@@ -108,6 +110,7 @@ const {
             definition: customButtonDefinition,
             defaults: { variant: 'tertiary', size: 'l' },
         }),
+        Chip: chipFactory(),
         Chips: chipsFactory(),
         Icon: iconFactory(),
         Modal: modalFactory(),
@@ -181,13 +184,13 @@ function Showcase() {
                     selectionMode="multi"
                     header="Topics"
                     feedback="Pick what lands in your inbox."
-                    options={topics.map((topic) => ({
-                        title: topic,
-                        value: topic,
-                    }))}
                     value={selectedTopics}
                     onChange={(next) => setSelectedTopics(next)}
-                />
+                >
+                    {topics.map((topic) => (
+                        <Chip key={topic} value={topic} text={topic} />
+                    ))}
+                </Chips>
 
                 <TextField
                     header="Email"
