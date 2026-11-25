@@ -12811,6 +12811,7 @@ __metadata:
   dependencies:
     "@babel/core": "npm:^7.29.7"
     "@expo/metro-runtime": "npm:~57.0.16"
+    "@react-native-async-storage/async-storage": "npm:2.2.0"
     "@react-native/metro-config": "npm:0.86.3"
     expo: "npm:~57.0.28"
     expo-status-bar: "npm:~57.0.1"

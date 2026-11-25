@@ -3,6 +3,8 @@
     "exclude": [
         "example",
         "lib",
+        "stories",
+        ".rnstorybook",
         "type-tests",
         "**/__tests__/**"
     ]
