@@ -32,6 +32,9 @@
             "rn-cuic/surface": [
                 "./src/components/visuals/surface/index"
             ],
+            "rn-cuic/text": [
+                "./src/components/visuals/text/index"
+            ],
             "rn-cuic/modal": [
                 "./src/components/overlays/modal/index"
             ],

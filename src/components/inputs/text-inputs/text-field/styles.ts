@@ -43,7 +43,10 @@ export const textFieldStyleDefinition = defineTextFieldStyles({
         fontSize: 16,
         headerFontSize: 14,
         feedbackFontSize: 14,
-        fontFamily: undefined,
+        font: 'body',
+        fontWeight: 400,
+        headerFontWeight: 400,
+        feedbackFontWeight: 400,
         borderWidth: 1,
         radius: 8,
         paddingX: 20,
@@ -70,14 +73,14 @@ export const textFieldStyleDefinition = defineTextFieldStyles({
     },
     slotStyles: {
         container: () => ({}),
-        header: (tokens) => ({
-            fontFamily: tokens.fontFamily,
+        header: (tokens, { font }) => ({
+            ...font(tokens.font, tokens.headerFontWeight),
             fontSize: tokens.headerFontSize,
             color: tokens.textColor,
             marginBottom: tokens.gap,
         }),
-        input: (tokens) => ({
-            fontFamily: tokens.fontFamily,
+        input: (tokens, { font }) => ({
+            ...font(tokens.font, tokens.fontWeight),
             fontSize: tokens.fontSize,
             color: tokens.textColor,
             backgroundColor: tokens.bgColor,
@@ -88,8 +91,8 @@ export const textFieldStyleDefinition = defineTextFieldStyles({
             paddingHorizontal: tokens.paddingX,
             overflow: 'hidden',
         }),
-        feedback: (tokens) => ({
-            fontFamily: tokens.fontFamily,
+        feedback: (tokens, { font }) => ({
+            ...font(tokens.font, tokens.feedbackFontWeight),
             fontSize: tokens.feedbackFontSize,
             color: tokens.feedbackColor,
             marginTop: tokens.gap,

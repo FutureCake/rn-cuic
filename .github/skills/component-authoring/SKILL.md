@@ -23,14 +23,18 @@ containers [bottom-sheet](../../../src/components/containers/bottom-sheet/)).
    `feedbackVariant`). Each is a string-union generic with a library default
    (`Variant extends string = ButtonVariant`). `theme` is always an influence;
    components read it `themeProp ?? useTheme().theme` (ambient from
-   `StylesProvider`).
+   `StylesProvider`). An influence may be **optional** (`weight?: W`, see
+   Text) when omitting it must defer to earlier resolvers; the resolver skips
+   it when undefined.
 3. **States** — boolean runtime conditions (`pressed`, `focused`, `disabled`,
    `active`). **Declaration order is precedence**: later state declarations win
    on token conflicts (`disabled` is declared last so it wins).
 4. **Slot styles** — the styled parts of a component mapped to their RN style
    type: `{ container: ViewStyle; text: TextStyle; icon: ImageStyle }`. These
    name every visual part, even for single-element components (Toggle:
-   `container`/`indicator`).
+   `container`/`indicator`). Slot style resolvers receive `(tokens, kit)`;
+   `kit.font(role, weight)` resolves font roles against the createUI
+   instance's `fonts`.
 5. **Style definition** — `StyleDefinition<Influences, Tokens, States,
    SlotStyles>` tying 1–4 together. Authored only through the component's
    `define<Component>Styles` helper, which infers influence value names from
@@ -139,6 +143,15 @@ Rules:
   Components with NO animation (static layout primitives like VStack) use
   plain RN elements; only use Animated components when the element actually
   animates. `ThemeMode` lives in `src/shared/types.ts`.
+- **Fonts**: text-bearing components never hold `fontFamily`. Tokens carry
+  `font: FontRole` (preset `'body'`; `'heading'` for display text) plus a
+  `FontWeight` token per text part, mirroring the size tokens (`fontWeight`,
+  `headerFontWeight`, `feedbackFontWeight`). Text slots spread
+  `...font(tokens.font, tokens.<weight>)` from the kit, which maps weights to
+  faces, so weights must never be set as raw style props. Input slots get no
+  `lineHeight` (iOS misaligns single-line TextInput text). Anything measuring
+  text outside slot styles (TextArea's probe) derives typography from the
+  resolved slot style, not raw tokens.
 - Root owns behavior and native props; slots only position/style (TextField
   passes native input props to its Input slot via context).
 - Positioned/overlay components (containers): structural positioning styles

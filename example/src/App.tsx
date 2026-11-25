@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { createUI } from 'rn-cuic/core';
@@ -8,6 +8,7 @@ import {
     buttonStyleDefinition,
     defineButtonStyles,
 } from '../../src/components/inputs/button';
+import { chipFactory } from '../../src/components/inputs/chip';
 import { chipsFactory } from '../../src/components/inputs/chips';
 import { switchFactory } from '../../src/components/inputs/switch';
 import { textAreaFactory } from '../../src/components/inputs/text-inputs/text-area';
@@ -19,6 +20,10 @@ import { bottomSheetFactory } from '../../src/components/overlays/bottom-sheet';
 import { modalFactory } from '../../src/components/overlays/modal';
 import { iconFactory } from '../../src/components/visuals/icon';
 import { surfaceFactory } from '../../src/components/visuals/surface';
+import {
+    defineTextStyles,
+    textFactory,
+} from '../../src/components/visuals/text';
 
 const brand = {
     light: { main: '#4f46e5', pressed: '#3730a3', on: '#ffffff' },
@@ -84,16 +89,81 @@ const customButtonDefinition = defineButtonStyles({
     transition: buttonStyleDefinition.transition,
 });
 
-// One selective family: a custom Button definition, presets for the rest.
+const typePalette = {
+    light: { text: '#222222', muted: '#6B6B70' },
+    dark: { text: '#F2F2F5', muted: '#A0A0A8' },
+} as const;
+
+/**
+ * A custom type scale: the preset's four steps plus a `code` variant on a
+ * custom `code` font role (declared in createUI `fonts` below).
+ */
+const customTextDefinition = defineTextStyles({
+    defaultTokens: {
+        font: 'body',
+        fontWeight: 400,
+        fontSize: 16,
+        lineHeight: 24,
+        letterSpacing: 0,
+        color: typePalette.light.text,
+    },
+    influenceResolvers: {
+        theme: {
+            light: { color: typePalette.light.text },
+            dark: { color: typePalette.dark.text },
+        },
+        variant: {
+            title: {
+                font: 'heading',
+                fontWeight: 700,
+                fontSize: 28,
+                lineHeight: 34,
+            },
+            body: {},
+            label: { fontWeight: 500, fontSize: 14, lineHeight: 20 },
+            caption: ({ theme }) => ({
+                fontSize: 12,
+                lineHeight: 16,
+                color: typePalette[theme].muted,
+            }),
+            code: { font: 'code', fontSize: 14, lineHeight: 20 },
+        },
+        weight: {
+            regular: { fontWeight: 400 },
+            medium: { fontWeight: 500 },
+            semibold: { fontWeight: 600 },
+            bold: { fontWeight: 700 },
+        },
+    },
+    stateResolvers: {},
+    slotStyles: {
+        text: (tokens, { font }) => ({
+            ...font(tokens.font, tokens.fontWeight),
+            fontSize: tokens.fontSize,
+            lineHeight: tokens.lineHeight,
+            letterSpacing: tokens.letterSpacing,
+            color: tokens.color,
+        }),
+    },
+    transition: {
+        transitionProperty: ['color', 'fontSize', 'lineHeight'],
+        transitionDuration: 150,
+    },
+});
+
+// One selective family: custom Button and Text definitions, presets for the
+// rest.
 // Importing only the factories the app uses keeps the rest of the library
 // out of the bundle.
 const {
     BottomSheet,
     Button,
+    Chip,
     Chips,
     Icon,
     Modal,
     Surface,
+    Text,
     Toggle,
     Switch,
     TextField,
@@ -102,16 +172,36 @@ const {
     useTheme,
 } = createUI({
     theme: 'light',
+    // iOS-bundled faces, so the example needs no font assets. Apps load their
+    // own fonts (e.g. expo-font) and pass the registered names here.
+    fonts: {
+        // One face per weight: weights resolve to the nearest face.
+        body: {
+            400: 'AvenirNext-Regular',
+            500: 'AvenirNext-Medium',
+            600: 'AvenirNext-DemiBold',
+            700: 'AvenirNext-Bold',
+        },
+        // A natively registered family: fontWeight passes through.
+        heading: 'Georgia',
+        // A custom role, used by the Text `code` variant.
+        code: 'Menlo',
+    },
     components: {
         BottomSheet: bottomSheetFactory(),
         Button: buttonFactory({
             definition: customButtonDefinition,
             defaults: { variant: 'tertiary', size: 'l' },
         }),
+        Chip: chipFactory(),
         Chips: chipsFactory(),
         Icon: iconFactory(),
         Modal: modalFactory(),
         Surface: surfaceFactory(),
+        Text: textFactory({
+            definition: customTextDefinition,
+            defaults: { variant: 'body' },
+        }),
         Toggle: toggleFactory(),
         Switch: switchFactory(),
         TextField: textFieldFactory(),
@@ -126,6 +216,8 @@ const frequencies = [
 ];
 
 const topics = ['News', 'Sports', 'Tech'];
+
+const weights = ['regular', 'medium', 'semibold', 'bold'] as const;
 
 export default function App() {
     return (
@@ -162,14 +254,33 @@ function Showcase() {
                 contentContainerStyle={styles.container}
             >
                 <View style={styles.row}>
-                    <Text style={[styles.label, dark && styles.labelDark]}>
-                        Dark theme
-                    </Text>
+                    <Text>Dark theme</Text>
                     <Toggle
                         active={dark}
                         onChange={(next) => setTheme(next ? 'dark' : 'light')}
                     />
                 </View>
+
+                <VStack spacing={8}>
+                    <Text variant="title">Typography</Text>
+                    <Text>
+                        Body copy in Avenir Next with a{' '}
+                        <Text weight="bold">bold nested span</Text> that
+                        inherits the rest.
+                    </Text>
+                    <HStack spacing={12}>
+                        {weights.map((weight) => (
+                            <Text key={weight} weight={weight}>
+                                {weight}
+                            </Text>
+                        ))}
+                    </HStack>
+                    <Text variant="label">Label</Text>
+                    <Text variant="caption">
+                        Caption text, muted per theme.
+                    </Text>
+                    <Text variant="code">createUI({'{ fonts }'})</Text>
+                </VStack>
 
                 <Switch
                     options={frequencies}
@@ -181,13 +292,13 @@ function Showcase() {
                     selectionMode="multi"
                     header="Topics"
                     feedback="Pick what lands in your inbox."
-                    options={topics.map((topic) => ({
-                        title: topic,
-                        value: topic,
-                    }))}
                     value={selectedTopics}
                     onChange={(next) => setSelectedTopics(next)}
-                />
+                >
+                    {topics.map((topic) => (
+                        <Chip key={topic} value={topic} text={topic} />
+                    ))}
+                </Chips>
 
                 <TextField
                     header="Email"
@@ -229,7 +340,8 @@ function Showcase() {
                 </HStack>
 
                 <Box padding={{ x: 24, top: 8, bottom: 16 }} style={styles.box}>
-                    <Text>Box with x + top/bottom padding</Text>
+                    {/* Fixed light fill: pin the text to the light palette. */}
+                    <Text theme="light">Box with x + top/bottom padding</Text>
                 </Box>
 
                 <HStack spacing={12}>
@@ -276,27 +388,21 @@ function Showcase() {
                     showHandleOnMinimized
                 >
                     <BottomSheet.Minimized>
-                        <Text style={[styles.label, dark && styles.labelDark]}>
-                            Quick note — tap to expand
-                        </Text>
+                        <Text>Quick note — tap to expand</Text>
                     </BottomSheet.Minimized>
                     <BottomSheet.Content>
                         <TextField
                             header="Note"
                             placeholder="The sheet rises with the keyboard…"
                         />
-                        <Text style={[styles.label, dark && styles.labelDark]}>
-                            Swipe down to minimize, further to close.
-                        </Text>
+                        <Text>Swipe down to minimize, further to close.</Text>
                     </BottomSheet.Content>
                 </BottomSheet>
             )}
 
             {modalOpen && (
                 <Modal onClose={() => setModalOpen(false)}>
-                    <Text style={[styles.label, dark && styles.labelDark]}>
-                        A centered modal card. Press outside to close.
-                    </Text>
+                    <Text>A centered modal card. Press outside to close.</Text>
                     <Button text="Done" onPress={() => setModalOpen(false)} />
                 </Modal>
             )}
@@ -321,13 +427,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-    },
-    label: {
-        fontSize: 16,
-        color: '#111111',
-    },
-    labelDark: {
-        color: '#ffffff',
     },
     box: {
         borderRadius: 12,

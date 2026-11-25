@@ -1,5 +1,6 @@
 import { createStylesManager } from './providers-and-hooks/styles-manager';
 import type { StyleDefinitionShape } from './providers-and-hooks/styles-manager/types';
+import type { Fonts } from './shared/types';
 
 export * from './providers-and-hooks';
 export * from './shared';
@@ -39,7 +40,8 @@ type BuiltComponentOf<Descriptor> = Descriptor extends {
  * Create once at module scope, passing a descriptor per component the app
  * uses. Returned components and hooks use this instance's provider, not
  * another createUI instance's. Each key names its component in the returned
- * object and in the provider's `styles` overrides.
+ * object and in the provider's `styles` overrides. Omit `fonts` to use the
+ * system font everywhere.
  */
 export function createUI<
     Theme extends string,
@@ -50,6 +52,12 @@ export function createUI<
 >(config: {
     /** Initial ambient theme for this instance's StylesProvider. */
     theme: NoInfer<Theme>;
+    /**
+     * Font roles shared by every component. Roles left out fall back to
+     * `body`, then to the system font. The app loads the fonts; these are the
+     * registered names.
+     */
+    fonts?: Fonts;
     components: Components &
         Record<
             string,
@@ -65,6 +73,7 @@ export function createUI<
 >;
 export function createUI(config: {
     theme: string;
+    fonts?: Fonts;
     components: Record<
         string,
         UIComponentDescriptor<StyleDefinitionShape, string, unknown>
@@ -74,7 +83,11 @@ export function createUI(config: {
     for (const [key, descriptor] of Object.entries(config.components)) {
         definitions[key] = descriptor.definition;
     }
-    const manager = createStylesManager(definitions, config.theme);
+    const manager = createStylesManager(
+        definitions,
+        config.theme,
+        config.fonts
+    );
     const ui: Record<string, unknown> = { ...manager };
     for (const [key, descriptor] of Object.entries(config.components)) {
         ui[key] = descriptor.build({

@@ -1,6 +1,6 @@
 import type { ColorValue, TextStyle, ViewStyle } from 'react-native';
 import type { StyleDefinition } from '../../../../providers-and-hooks';
-import type { ThemeMode } from '../../../../shared/types';
+import type { FontRole, FontWeight, ThemeMode } from '../../../../shared/types';
 import type {
     FeedbackVariant,
     FieldBaseProps,
@@ -31,8 +31,12 @@ export type TextAreaTokens = {
     fontSize: number;
     headerFontSize: number;
     feedbackFontSize: number;
-    /** Leave undefined to use the platform system font. */
-    fontFamily: TextStyle['fontFamily'];
+    /** Role from createUI fonts; falls back to body, then the system font. */
+    font: FontRole;
+    /** Input text weight. */
+    fontWeight: FontWeight;
+    headerFontWeight: FontWeight;
+    feedbackFontWeight: FontWeight;
     borderWidth: number;
     radius: ViewStyle['borderRadius'];
     paddingX: ViewStyle['padding'];
@@ -76,10 +80,10 @@ export type TextAreaBuilderOptions<
  * Compose TextArea.Header, TextArea.Input and TextArea.Feedback in render
  * order via children; parts that are omitted fall back to their defaults.
  *
- * Height measurement reads the resolved `fontSize`/`fontFamily` tokens, so
- * change text metrics through the style definition (or StylesProvider
- * overrides) rather than `styleOverrides.input` or `TextArea.Input`'s own
- * style, or the measured line height will drift from the rendered text.
+ * Height measurement reads the input slot's resolved font metrics (tokens and
+ * `styleOverrides.input`), so change text metrics there rather than through
+ * `TextArea.Input`'s own style, or the measured line height will drift from
+ * the rendered text.
  */
 export type TextAreaProps<
     Variant extends string = FeedbackVariant,

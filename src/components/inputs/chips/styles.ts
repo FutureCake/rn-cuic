@@ -16,7 +16,9 @@ export const chipsStyleDefinition = defineChipsStyles({
     defaultTokens: {
         headerFontSize: 14,
         feedbackFontSize: 14,
-        fontFamily: undefined,
+        font: 'body',
+        headerFontWeight: 400,
+        feedbackFontWeight: 400,
         gap: 8,
         rowGap: 8,
         sectionGap: 6,
@@ -44,14 +46,14 @@ export const chipsStyleDefinition = defineChipsStyles({
             columnGap: tokens.gap,
             rowGap: tokens.rowGap,
         }),
-        header: (tokens) => ({
-            fontFamily: tokens.fontFamily,
+        header: (tokens, { font }) => ({
+            ...font(tokens.font, tokens.headerFontWeight),
             fontSize: tokens.headerFontSize,
             color: tokens.headerColor,
             marginBottom: tokens.sectionGap,
         }),
-        feedback: (tokens) => ({
-            fontFamily: tokens.fontFamily,
+        feedback: (tokens, { font }) => ({
+            ...font(tokens.font, tokens.feedbackFontWeight),
             fontSize: tokens.feedbackFontSize,
             color: tokens.feedbackColor,
             marginTop: tokens.sectionGap,

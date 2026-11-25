@@ -11,4 +11,5 @@ export * from './components/overlays/bottom-sheet';
 export * from './components/overlays/modal';
 export * from './components/visuals/icon';
 export * from './components/visuals/surface';
+export * from './components/visuals/text';
 export * from './core';

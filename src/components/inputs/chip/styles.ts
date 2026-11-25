@@ -70,7 +70,8 @@ const themeColors = {
 export const chipStyleDefinition = defineChipStyles({
     defaultTokens: {
         fontSize: 15,
-        fontFamily: undefined,
+        font: 'body',
+        fontWeight: 400,
         paddingX: 12,
         paddingY: 6,
         gap: 6,
@@ -123,8 +124,8 @@ export const chipStyleDefinition = defineChipStyles({
             borderColor: tokens.borderColor,
             backgroundColor: tokens.bgColor,
         }),
-        text: (tokens) => ({
-            fontFamily: tokens.fontFamily,
+        text: (tokens, { font }) => ({
+            ...font(tokens.font, tokens.fontWeight),
             fontSize: tokens.fontSize,
             color: tokens.textColor,
         }),
@@ -134,8 +135,8 @@ export const chipStyleDefinition = defineChipStyles({
             height: tokens.iconSize,
             resizeMode: 'contain',
         }),
-        close: (tokens) => ({
-            fontFamily: tokens.fontFamily,
+        close: (tokens, { font }) => ({
+            ...font(tokens.font, tokens.fontWeight),
             fontSize: tokens.closeSize,
             color: tokens.closeColor,
         }),

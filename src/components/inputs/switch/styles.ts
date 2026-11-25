@@ -43,7 +43,8 @@ const themeColors = {
 export const switchStyleDefinition = defineSwitchStyles({
     defaultTokens: {
         fontSize: 16,
-        fontFamily: undefined,
+        font: 'body',
+        fontWeight: 400,
         borderWidth: 2,
         radius: 30,
         padding: 2,
@@ -85,8 +86,8 @@ export const switchStyleDefinition = defineSwitchStyles({
             paddingVertical: tokens.optionPaddingY,
             paddingHorizontal: tokens.optionPaddingX,
         }),
-        optionText: (tokens) => ({
-            fontFamily: tokens.fontFamily,
+        optionText: (tokens, { font }) => ({
+            ...font(tokens.font, tokens.fontWeight),
             fontSize: tokens.fontSize,
             color: tokens.textColor,
         }),

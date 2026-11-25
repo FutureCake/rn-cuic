@@ -11,7 +11,12 @@ import type {
     ResolvedComponentResult,
     StyleDefinition,
 } from '../../../providers-and-hooks';
-import type { StyleOverrides, ThemeMode } from '../../../shared/types';
+import type {
+    FontRole,
+    FontWeight,
+    StyleOverrides,
+    ThemeMode,
+} from '../../../shared/types';
 
 export type SwitchStates = 'disabled';
 
@@ -24,8 +29,9 @@ export type SwitchSlotStyles = {
 
 export type SwitchTokens = {
     fontSize: number;
-    /** Leave undefined to use the platform system font. */
-    fontFamily: TextStyle['fontFamily'];
+    /** Role from createUI fonts; falls back to body, then the system font. */
+    font: FontRole;
+    fontWeight: FontWeight;
     borderWidth: number;
     radius: ViewStyle['borderRadius'];
     /** Inner inset between the border and the options; also offsets the indicator. */

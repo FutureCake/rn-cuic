@@ -48,7 +48,8 @@ export const buttonStyleDefinition = defineButtonStyles({
         alignSelf: 'auto',
         justifyContent: 'center',
         fontSize: 17,
-        fontFamily: undefined,
+        font: 'body',
+        fontWeight: 400,
         paddingX: 16,
         paddingY: 10,
         iconGap: 8,
@@ -109,8 +110,8 @@ export const buttonStyleDefinition = defineButtonStyles({
             alignSelf: tokens.alignSelf,
             gap: tokens.iconGap,
         }),
-        text: (tokens) => ({
-            fontFamily: tokens.fontFamily,
+        text: (tokens, { font }) => ({
+            ...font(tokens.font, tokens.fontWeight),
             fontSize: tokens.fontSize,
             color: tokens.textColor,
         }),
