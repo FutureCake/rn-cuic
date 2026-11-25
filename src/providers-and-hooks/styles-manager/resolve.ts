@@ -1,3 +1,4 @@
+import { systemStyleKit, type StyleKit } from './fonts';
 import type {
     ResolveComponentOptions,
     ResolvedComponentResult,
@@ -5,7 +6,7 @@ import type {
 } from './types';
 
 type Tokens = Record<string, unknown>;
-type Influences = Record<string, PropertyKey>;
+type Influences = Record<string, PropertyKey | undefined>;
 type TokenEntry = Tokens | ((influences: Influences) => Tokens);
 
 interface RuntimeDefinition {
@@ -15,7 +16,7 @@ interface RuntimeDefinition {
         Record<PropertyKey, TokenEntry | undefined> | undefined
     >;
     stateResolvers: Record<string, TokenEntry | undefined>;
-    slotStyles: Record<string, (tokens: Tokens) => object>;
+    slotStyles: Record<string, (tokens: Tokens, kit: StyleKit) => object>;
     transition?: object;
 }
 
@@ -26,10 +27,14 @@ function evaluate(entry: TokenEntry, influences: Influences): Tokens {
     return typeof entry === 'function' ? entry(influences) : entry;
 }
 
-/** Pure resolver, shared by the hook and tests. Later token overrides win. */
+/**
+ * Pure resolver, shared by the hook and tests. Later token overrides win.
+ * The kit resolves font roles; it defaults to system fonts.
+ */
 export function resolveComponentStyles<Definition extends StyleDefinitionShape>(
     definition: Definition,
-    options: ResolveComponentOptions<Definition>
+    options: ResolveComponentOptions<Definition>,
+    kit: StyleKit = systemStyleKit
 ): ResolvedComponentResult<Definition> {
     // Erasure is isolated here; public inputs/outputs retain their component contract.
     const config = definition as unknown as RuntimeDefinition;
@@ -80,7 +85,7 @@ export function resolveComponentStyles<Definition extends StyleDefinitionShape>(
 
     const slots: Record<string, object> = {};
     for (const [slot, getStyle] of Object.entries(config.slotStyles)) {
-        const baseStyle = { ...getStyle(tokens), ...config.transition };
+        const baseStyle = { ...getStyle(tokens, kit), ...config.transition };
         const override = overrides[slot];
         // Do not flatten or spread animated styles: retain their identity and metadata.
         slots[slot] =

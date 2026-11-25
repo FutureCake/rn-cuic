@@ -1,6 +1,6 @@
 import type { ColorValue, TextStyle, ViewStyle } from 'react-native';
 import type { StyleDefinition } from '../../../../providers-and-hooks';
-import type { ThemeMode } from '../../../../shared/types';
+import type { FontRole, FontWeight, ThemeMode } from '../../../../shared/types';
 import type {
     FeedbackVariant,
     FieldBaseProps,
@@ -31,8 +31,12 @@ export type TextFieldTokens = {
     fontSize: number;
     headerFontSize: number;
     feedbackFontSize: number;
-    /** Leave undefined to use the platform system font. */
-    fontFamily: TextStyle['fontFamily'];
+    /** Role from createUI fonts; falls back to body, then the system font. */
+    font: FontRole;
+    /** Input text weight. */
+    fontWeight: FontWeight;
+    headerFontWeight: FontWeight;
+    feedbackFontWeight: FontWeight;
     borderWidth: number;
     radius: ViewStyle['borderRadius'];
     paddingX: ViewStyle['padding'];

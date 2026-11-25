@@ -13,6 +13,8 @@ import type {
     StyleDefinition,
 } from '../../../providers-and-hooks';
 import type {
+    FontRole,
+    FontWeight,
     Size as SizeScale,
     StyleOverrides,
     ThemeMode,
@@ -32,8 +34,9 @@ export type ButtonTokens = {
     alignSelf: ViewStyle['alignSelf'];
     justifyContent: ViewStyle['justifyContent'];
     fontSize: number;
-    /** Leave undefined to use the platform system font. */
-    fontFamily: TextStyle['fontFamily'];
+    /** Role from createUI fonts; falls back to body, then the system font. */
+    font: FontRole;
+    fontWeight: FontWeight;
     paddingX: ViewStyle['padding'];
     paddingY: ViewStyle['padding'];
     iconGap: number;

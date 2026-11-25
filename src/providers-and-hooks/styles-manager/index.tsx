@@ -5,6 +5,8 @@ import {
     useState,
     type ReactNode,
 } from 'react';
+import type { Fonts } from '../../shared/types';
+import { createStyleKit } from './fonts';
 import { resolveComponentStyles } from './resolve';
 import type {
     ResolveComponentOptions,
@@ -14,16 +16,18 @@ import type {
 } from './types';
 
 /**
- * Creates an isolated provider/hook set bound to a typed component collection
- * and an ambient theme. Author definitions with the component's define helper
- * (for example defineButtonStyles) to preserve the full typed contract.
+ * Creates an isolated provider/hook set bound to a typed component collection,
+ * an ambient theme and optional fonts. Author definitions with the component's
+ * define helper (for example defineButtonStyles) to preserve the typed contract.
  */
 export function createStylesManager<
     Definitions extends {
         [Component in keyof Definitions]: StyleDefinitionShape;
     },
     Theme extends string,
->(defaultStyles: Definitions, defaultTheme: Theme) {
+>(defaultStyles: Definitions, defaultTheme: Theme, fonts?: Fonts) {
+    // Fonts are static per instance: resolve roles through one shared kit.
+    const kit = createStyleKit(fonts);
     const StylesContext = createContext<Definitions | null>(null);
     const ThemeContext = createContext<{
         theme: Theme;
@@ -124,11 +128,12 @@ export function createStylesManager<
                 'useResolveComponentStyles must be used within StylesProvider.'
             );
         }
-        return resolveComponentStyles(styles[component], options);
+        return resolveComponentStyles(styles[component], options, kit);
     }
 
     return { StylesProvider, useTheme, useResolveComponentStyles };
 }
 
 export { resolveComponentStyles } from './resolve';
+export type { FontStyle, StyleKit } from './fonts';
 export type * from './types';

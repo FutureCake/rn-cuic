@@ -55,6 +55,11 @@
             "types": "./lib/typescript/src/components/visuals/surface/index.d.ts",
             "default": "./lib/module/components/visuals/surface/index.js"
         },
+        "./text": {
+            "rn-cuic-source": "./src/components/visuals/text/index.tsx",
+            "types": "./lib/typescript/src/components/visuals/text/index.d.ts",
+            "default": "./lib/module/components/visuals/text/index.js"
+        },
         "./modal": {
             "rn-cuic-source": "./src/components/overlays/modal/index.ts",
             "types": "./lib/typescript/src/components/overlays/modal/index.d.ts",

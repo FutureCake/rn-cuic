@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { StyleSheet, type StyleProp, type TextStyle } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { hasSlot } from '../../../../shared/utils/has-slot';
 import {
@@ -10,6 +11,13 @@ import { TextAreaFeedback } from './slots/feedback';
 import { TextAreaHeader } from './slots/header';
 import { TextAreaInput } from './slots/input';
 import type { TextAreaBuilderOptions, TextAreaProps } from './types';
+
+/** The input's resolved font metrics, so hidden measuring text matches it. */
+function pickTypography(style: StyleProp<TextStyle>): TextStyle {
+    const { fontFamily, fontWeight, fontSize, letterSpacing } =
+        StyleSheet.flatten(style) ?? {};
+    return { fontFamily, fontWeight, fontSize, letterSpacing };
+}
 
 /**
  * Bind shared behavior to the configured defaults and style hooks; the slot
@@ -79,7 +87,10 @@ export function createTextArea<Variant extends string, Theme extends string>({
         // estimate for the frames before the first layout pass. Content is
         // measured from a hidden mirror of the text (iOS Fabric does not emit
         // onContentSizeChange while the input has a fixed height).
-        const lineHeight = measuredLineHeight ?? tokens.fontSize * 1.4;
+        const typography = pickTypography(styles.input);
+        const lineHeight =
+            measuredLineHeight ??
+            (typography.fontSize ?? tokens.fontSize) * 1.4;
         const growEnabled = grow || maxLines !== undefined;
         let lines = numLines;
         if (growEnabled && contentHeight !== undefined) {
@@ -127,8 +138,7 @@ export function createTextArea<Variant extends string, Theme extends string>({
                             position: 'absolute',
                             opacity: 0,
                             pointerEvents: 'none',
-                            fontFamily: tokens.fontFamily,
-                            fontSize: tokens.fontSize,
+                            ...typography,
                         }}
                     >
                         Ag
@@ -153,8 +163,7 @@ export function createTextArea<Variant extends string, Theme extends string>({
                                 paddingHorizontal: tokens.paddingX,
                                 opacity: 0,
                                 pointerEvents: 'none',
-                                fontFamily: tokens.fontFamily,
-                                fontSize: tokens.fontSize,
+                                ...typography,
                             }}
                         >
                             {text}

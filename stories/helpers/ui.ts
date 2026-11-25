@@ -9,11 +9,15 @@ import {
     surfaceFactory,
     switchFactory,
     textAreaFactory,
+    textFactory,
     textFieldFactory,
     toggleFactory,
 } from 'rn-cuic';
 
-/** One preset family shared by all stories; mirrors a consumer's module-scope call. */
+/**
+ * One preset family shared by all stories; mirrors a consumer's module-scope
+ * call. No `fonts`: stories show the system-font default.
+ */
 export const {
     BottomSheet,
     Button,
@@ -24,6 +28,7 @@ export const {
     Surface,
     Toggle,
     Switch,
+    Text,
     TextField,
     TextArea,
     StylesProvider,
@@ -40,6 +45,7 @@ export const {
         Surface: surfaceFactory(),
         Toggle: toggleFactory(),
         Switch: switchFactory(),
+        Text: textFactory(),
         TextField: textFieldFactory(),
         TextArea: textAreaFactory(),
     },

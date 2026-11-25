@@ -107,7 +107,8 @@ const { Button, StylesProvider } = createUI({
 A factory with no arguments selects the preset; pass `{ definition, defaults }`
 for a custom family. `rn-cuic/core` exports `createUI`, the styles manager, and
 the shared utilities; `rn-cuic/button`, `rn-cuic/chip`, `rn-cuic/toggle`,
-`rn-cuic/switch`, and `rn-cuic/text-field` each export their factory,
+`rn-cuic/switch`, `rn-cuic/text-field`, and `rn-cuic/text` each export their
+factory,
 `define<Component>Styles`, the preset definition, and all component types.
 
 ## Theming
@@ -152,6 +153,117 @@ export function App() {
 - A `theme` prop on a single component instance overrides the ambient theme for
   that instance only.
 
+## Fonts
+
+Fonts are configured once per `createUI` instance and shared by every
+component: the Text type scale, button labels, chips and input text alike.
+Without `fonts`, everything uses the platform system font.
+
+```tsx
+import { buttonFactory, createUI, textFactory } from 'rn-cuic';
+
+const { Button, Text, StylesProvider } = createUI({
+    theme: 'light',
+    fonts: {
+        // One face per weight: each weight resolves to the nearest face.
+        body: { 400: 'Inter-Regular', 500: 'Inter-Medium', 700: 'Inter-Bold' },
+        // A natively registered family: fontWeight passes through.
+        heading: 'Fraunces',
+    },
+    components: {
+        Button: buttonFactory(),
+        Text: textFactory(),
+    },
+});
+```
+
+- **Roles.** `body` is every component's default; `heading` is used by Text
+  titles. `heading` falls back to `body` and `body` to the system font, so
+  `fonts: { body: … }` alone re-fonts the whole app.
+- **Two spec forms.** A string is a family name, and `fontWeight` passes
+  through. Use it for system families and fonts registered natively with
+  several weights. A weight map names one face per weight, for fonts loaded as
+  separate files (e.g. with expo-font's `useFonts`). The nearest weight wins,
+  ties go to the heavier face, and `fontWeight` is reset to `'normal'` so
+  platforms never synthesize bold on top.
+- **Loading is the app's job.** Load fonts before rendering components that use
+  them, and pass the registered names.
+- **Weights come from tokens.** Use `fontWeight` / `headerFontWeight` /
+  `feedbackFontWeight` and Text's `weight` prop. A `fontWeight` in
+  `styleOverrides` bypasses the weight map.
+- **Per-component typeface.** Every text-bearing component has a `font` token
+  (default `'body'`). Point it at another role, e.g.
+  `styles={{ Button: { defaultTokens: { font: 'heading' } } }}`.
+
+### Text
+
+`textFactory()` adds a themed Text. Its preset type scale is `variant`
+(`title | body | label | caption`, default `body`), with an optional `weight`
+(`regular | medium | semibold | bold`) and `color`:
+
+```tsx
+<Text variant="title">Settings</Text>
+<Text>
+    Signed in as <Text weight="bold">Ada</Text>
+</Text>
+```
+
+A nested Text inherits its parent's variant, weight, theme and color unless it
+sets its own. Color and size changes animate, so theme switches fade.
+
+### Custom roles
+
+Any other key in `fonts` is a custom role. Use it from a custom Text definition,
+where the variant map is the type scale (variant and weight names are inferred,
+as with `defineButtonStyles`):
+
+```tsx
+import { defineTextStyles, textFactory } from 'rn-cuic';
+
+const textDefinition = defineTextStyles({
+    defaultTokens: {
+        font: 'body',
+        fontWeight: 400,
+        fontSize: 16,
+        lineHeight: 24,
+        letterSpacing: 0,
+        color: '#222',
+    },
+    influenceResolvers: {
+        theme: { light: {}, dark: { color: '#F2F2F5' } },
+        variant: {
+            body: {},
+            code: { font: 'code', fontSize: 14, lineHeight: 20 },
+        },
+        weight: { regular: { fontWeight: 400 }, bold: { fontWeight: 700 } },
+    },
+    stateResolvers: {},
+    slotStyles: {
+        text: (tokens, { font }) => ({
+            ...font(tokens.font, tokens.fontWeight),
+            fontSize: tokens.fontSize,
+            lineHeight: tokens.lineHeight,
+            letterSpacing: tokens.letterSpacing,
+            color: tokens.color,
+        }),
+    },
+});
+
+const { Text, StylesProvider } = createUI({
+    theme: 'light',
+    fonts: { body: 'Inter', code: 'JetBrainsMono-Regular' },
+    components: {
+        Text: textFactory({
+            definition: textDefinition,
+            defaults: { variant: 'body' },
+        }),
+    },
+});
+```
+
+Custom role names are checked at runtime: a role missing from `fonts` falls
+back to `body` and logs a development-only warning.
+
 ## Overriding styles
 
 Three levels, from narrowest to widest.
@@ -166,7 +278,7 @@ resolved slot styles. Button's slots are `container`, `text`, and `icon`:
     text="Save"
     styleOverrides={{
         container: { borderRadius: 24 },
-        text: { fontWeight: '700' },
+        text: { textTransform: 'uppercase' },
     }}
 />
 ```
@@ -395,7 +507,7 @@ needed), rather than relying only on tokens.
 
 The library does not register or wrap third-party components. Build them as
 ordinary React components on top of the same resolver the built-ins use.
-`createStylesManager(definitions, defaultTheme)` creates an isolated
+`createStylesManager(definitions, defaultTheme, fonts?)` creates an isolated
 `StylesProvider`, `useTheme`, and `useResolveComponentStyles` bound to your
 definitions — the same machinery `createUI` uses internally:
 
@@ -464,9 +576,11 @@ that behavior.
 Resolution starts from the required, complete `defaultTokens`, merges the
 selected entry from each influence resolver group in declaration order, merges
 active state overrides in declaration order, then invokes each slot's style
-callback with the final tokens. Later merges win. Resolver entries are partial
+callback with the final tokens and a kit whose `font(role, weight)` resolves
+font roles against the instance's `fonts`. Later merges win. Resolver entries are partial
 tokens or pure callbacks; influence callbacks receive the other influences
-(never their own), state callbacks receive all influences.
+(never their own), state callbacks receive all influences. An influence may be
+optional (Text's `weight?`); when it is omitted, its resolver is skipped.
 
 An influence value without a matching resolver entry applies no overrides and
 logs a development-only warning. Reanimated's `transition` configuration is

@@ -11,7 +11,12 @@ import type {
     ResolvedComponentResult,
     StyleDefinition,
 } from '../../../providers-and-hooks';
-import type { StyleOverrides, ThemeMode } from '../../../shared/types';
+import type {
+    FontRole,
+    FontWeight,
+    StyleOverrides,
+    ThemeMode,
+} from '../../../shared/types';
 import type {
     Feedback,
     FeedbackVariant,
@@ -44,8 +49,10 @@ export type ChipsSlotStyles = {
 export type ChipsTokens = {
     headerFontSize: number;
     feedbackFontSize: number;
-    /** Leave undefined to use the platform system font. */
-    fontFamily: TextStyle['fontFamily'];
+    /** Role from createUI fonts; falls back to body, then the system font. */
+    font: FontRole;
+    headerFontWeight: FontWeight;
+    feedbackFontWeight: FontWeight;
     /** Space between chips on a line. */
     gap: number;
     /** Space between wrapped lines. */
