@@ -15,6 +15,11 @@
             "types": "./lib/typescript/src/core.d.ts",
             "default": "./lib/module/core.js"
         },
+        "./amitges": {
+            "rn-cuic-source": "./src/pre-cooked/amitges.ts",
+            "types": "./lib/typescript/src/pre-cooked/amitges.d.ts",
+            "default": "./lib/module/pre-cooked/amitges.js"
+        },
         "./bottom-sheet": {
             "rn-cuic-source": "./src/components/overlays/bottom-sheet/index.ts",
             "types": "./lib/typescript/src/components/overlays/bottom-sheet/index.d.ts",

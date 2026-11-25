@@ -111,7 +111,9 @@ Rules:
   subpath. Structural facts (spacing, padding, align/justify) are plain
   props, not variants. Static primitives render plain RN elements (no
   Reanimated) and still get a story + example-app demo, but are NOT added to
-  `stories/helpers/ui.ts` or any `createUI` call.
+  `stories/helpers/ui.ts` or any `createUI` call. They ARE re-exported from
+  the pre-cooked family ([src/pre-cooked/amitges.ts](../../../src/pre-cooked/amitges.ts))
+  with an `export * from '../components/layouts/<component>';` line.
 
 ## Implementation requirements
 
@@ -196,14 +198,20 @@ Rules:
    → `lib/typescript/src/…/index.d.ts`, `default` → `lib/module/…/index.js`).
 5. `src/components/<category>/index.ts` if the category has a barrel
    (currently only `visuals/`).
-6. [stories/helpers/ui.ts](../../../stories/helpers/ui.ts) — add
+6. [src/pre-cooked/amitges.ts](../../../src/pre-cooked/amitges.ts) — the
+   zero-setup family consumers import as `rn-cuic/amitges` (no `createUI`
+   call on their side). Import `<component>Factory` from its component
+   barrel, add `<Component>: <component>Factory()` (preset, no config) to the
+   `components` map, and add `<Component>` to the destructured export. Keep
+   both lists alphabetical. Every factory component must be in this family.
+7. [stories/helpers/ui.ts](../../../stories/helpers/ui.ts) — add
    `<component>Factory()` to the shared story family and its destructured
    export.
-7. Story in `stories/<category>/<component>.stories.tsx` (stories are part of
+8. Story in `stories/<category>/<component>.stories.tsx` (stories are part of
    the build typecheck). Import the component from `../helpers/ui`, use the
    `withRenderContainer` decorator; demo shorthand props, compound slots, and
    render-function children.
-8. [example/src/App.tsx](../../../example/src/App.tsx) — add the component to
+9. [example/src/App.tsx](../../../example/src/App.tsx) — add the component to
    the example app: `<component>Factory()` (preset, via its `rn-cuic/<component>`
    subpath import) in the module-scope `createUI` call and a minimal demo in
    `Showcase`. If the component needs runtime infrastructure (providers such

@@ -8,6 +8,9 @@
             "rn-cuic/core": [
                 "./src/core"
             ],
+            "rn-cuic/amitges": [
+                "./src/pre-cooked/amitges"
+            ],
             "rn-cuic/bottom-sheet": [
                 "./src/components/overlays/bottom-sheet/index"
             ],

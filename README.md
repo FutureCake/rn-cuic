@@ -86,6 +86,30 @@ and the native `Pressable` props. Pressed/disabled styling and animated style
 transitions are built in. Components and hooks throw when used outside their
 matching `StylesProvider`.
 
+## Zero setup: `rn-cuic/amitges`
+
+To skip `createUI` entirely, import the ready-made family. Every component
+comes with its preset, the system font, and a `'light'` initial theme:
+
+```tsx
+import { Button, StylesProvider, Text, VStack } from 'rn-cuic/amitges';
+
+export function App() {
+    return (
+        <StylesProvider>
+            <VStack spacing={12}>
+                <Text variant="title">Welcome</Text>
+                <Button text="Continue" onPress={submit} />
+            </VStack>
+        </StylesProvider>
+    );
+}
+```
+
+`StylesProvider` still takes `theme` and per-component `styles` overrides.
+This entry bundles every component, though. For custom definitions, `fonts`,
+or a smaller bundle, call `createUI` yourself.
+
 ## Smaller bundles: subpath imports
 
 Importing from the root `'rn-cuic'` pulls every component into the bundle
