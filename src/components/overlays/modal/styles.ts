@@ -52,6 +52,6 @@ export const modalStyleDefinition = defineModalStyles({
     // shared value and must not be re-timed by a CSS transition.
     transition: {
         transitionProperty: ['backgroundColor', 'borderColor'],
-        transitionDuration: 150,
+        transitionDuration: 499,
     },
 });

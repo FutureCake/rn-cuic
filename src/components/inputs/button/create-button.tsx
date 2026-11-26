@@ -12,18 +12,20 @@ import type { ButtonBuilderOptions, ButtonProps } from './types';
  */
 export function createButton<
     Variant extends string,
+    Shape extends string,
     Size extends string,
     Theme extends string,
 >({
     defaults,
     useStyles,
     useTheme,
-}: ButtonBuilderOptions<Variant, Size, Theme>) {
+}: ButtonBuilderOptions<Variant, Shape, Size, Theme>) {
     function ButtonRoot({
         text,
         icon,
         children,
         variant = defaults.variant,
+        shape = defaults.shape,
         size = defaults.size,
         theme: themeProp,
         disabled = false,
@@ -33,12 +35,12 @@ export function createButton<
         accessibilityRole = 'button',
         styleOverrides,
         ...props
-    }: ButtonProps<Variant, Size, Theme>) {
+    }: ButtonProps<Variant, Shape, Size, Theme>) {
         const { theme: ambientTheme } = useTheme();
         const theme = themeProp ?? ambientTheme;
         const press = usePressedState({ disabled, onPressIn, onPressOut });
         const { styles, tokens } = useStyles({
-            influences: { variant, size, theme },
+            influences: { variant, shape, size, theme },
             states: { disabled, pressed: press.pressed },
             overrides: styleOverrides,
         });

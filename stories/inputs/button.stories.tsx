@@ -11,8 +11,9 @@ const meta = {
     decorators: [withRenderContainer],
     args: {
         text: 'Press and hold',
-        variant: 'primary',
-        size: 's',
+        variant: 'solid',
+        shape: 'block',
+        size: 'm',
         theme: 'light',
         disabled: false,
     },
@@ -20,9 +21,10 @@ const meta = {
         text: { control: 'text' },
         variant: {
             control: 'select',
-            options: ['primary', 'secondary'],
+            options: ['solid', 'outline', 'ghost', 'text'],
         },
-        size: { control: 'select', options: ['s', 'l', 'xl'] },
+        shape: { control: 'select', options: ['block', 'hug', 'pill'] },
+        size: { control: 'select', options: ['s', 'm', 'l', 'xl'] },
         theme: { control: 'select', options: ['light', 'dark'] },
         disabled: { control: 'boolean' },
         onPress: { action: 'pressed' },
@@ -35,6 +37,48 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
+
+/** The five common recipes: variant × shape, with size kept orthogonal. */
+export const Recipes: Story = {
+    render: (args) => (
+        <>
+            <Button
+                {...args}
+                variant="solid"
+                shape="block"
+                size="l"
+                text="Main action"
+            />
+            <Button
+                {...args}
+                variant="ghost"
+                shape="block"
+                size="s"
+                text="Secondary option"
+            />
+            <Button
+                {...args}
+                variant="solid"
+                shape="pill"
+                size="s"
+                text="Action"
+            />
+            <Button
+                {...args}
+                variant="ghost"
+                shape="pill"
+                size="s"
+                text="Ghost action"
+            />
+            <Button
+                {...args}
+                variant="text"
+                size="s"
+                text="Inline text button"
+            />
+        </>
+    ),
+};
 
 export const Disabled: Story = {
     args: {
@@ -57,7 +101,7 @@ export const IconOverride: Story = {
             <Button.Icon>
                 {({ tokens }) => (
                     <ActivityIndicator
-                        color={tokens.iconColor}
+                        color={tokens.textColor}
                         size={tokens.iconSize}
                     />
                 )}
@@ -130,7 +174,7 @@ export const TokenAwareIcon: Story = {
             <Button.Icon>
                 {({ tokens }) => (
                     <ActivityIndicator
-                        color={tokens.iconColor}
+                        color={tokens.textColor}
                         size={tokens.iconSize}
                         accessibilityLabel="Loading"
                     />

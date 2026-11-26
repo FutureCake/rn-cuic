@@ -2,19 +2,19 @@ import { useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
-import { createUI } from 'rn-cuic/core';
 import {
-    buttonFactory,
-    buttonStyleDefinition,
-    defineButtonStyles,
-} from '../../src/components/inputs/button';
+    SafeAreaProvider,
+    useSafeAreaInsets,
+} from 'react-native-safe-area-context';
+import { Box } from 'rn-cuic/box';
+import { createUI } from 'rn-cuic/core';
+import { buttonFactory } from '../../src/components/inputs/button';
 import { chipFactory } from '../../src/components/inputs/chip';
 import { chipsFactory } from '../../src/components/inputs/chips';
 import { switchFactory } from '../../src/components/inputs/switch';
 import { textAreaFactory } from '../../src/components/inputs/text-inputs/text-area';
 import { textFieldFactory } from '../../src/components/inputs/text-inputs/text-field';
 import { toggleFactory } from '../../src/components/inputs/toggle';
-import { Box } from '../../src/components/layouts/box';
 import { HStack, VStack, ZStack } from '../../src/components/layouts/stacks';
 import { bottomSheetFactory } from '../../src/components/overlays/bottom-sheet';
 import { modalFactory } from '../../src/components/overlays/modal';
@@ -24,70 +24,6 @@ import {
     defineTextStyles,
     textFactory,
 } from '../../src/components/visuals/text';
-
-const brand = {
-    light: { main: '#4f46e5', pressed: '#3730a3', on: '#ffffff' },
-    dark: { main: '#818cf8', pressed: '#a5b4fc', on: '#1e1b4b' },
-} as const;
-
-/** Preset button reskinned: indigo brand colors and a fully rounded shape. */
-const customButtonDefinition = defineButtonStyles({
-    defaultTokens: {
-        ...buttonStyleDefinition.defaultTokens,
-        radius: 999,
-        bgColor: brand.light.main,
-        textColor: brand.light.on,
-        iconColor: brand.light.on,
-    },
-    influenceResolvers: {
-        theme: {
-            light: {
-                bgColor: brand.light.main,
-                textColor: brand.light.on,
-                iconColor: brand.light.on,
-            },
-            dark: {
-                bgColor: brand.dark.main,
-                textColor: brand.dark.on,
-                iconColor: brand.dark.on,
-            },
-        },
-        variant: {
-            primary: {},
-            secondary: ({ theme }) => ({
-                bgColor: 'transparent',
-                textColor: brand[theme].main,
-                iconColor: brand[theme].main,
-            }),
-            tertiary: ({ theme }) => ({
-                bgColor: 'transparent',
-                textColor: brand[theme].main,
-                iconColor: brand[theme].main,
-            }),
-        },
-        size: {
-            s: { paddingX: 16, paddingY: 8, fontSize: 15, iconSize: 18 },
-            l: { paddingX: 24, paddingY: 14, fontSize: 20, iconSize: 24 },
-            xl: { paddingX: 32, paddingY: 18, fontSize: 24, iconSize: 28 },
-        },
-    },
-    stateResolvers: {
-        pressed: ({ theme, variant }) =>
-            variant === 'primary'
-                ? { bgColor: brand[theme].pressed }
-                : {
-                      textColor: brand[theme].pressed,
-                      iconColor: brand[theme].pressed,
-                  },
-        disabled: {
-            bgColor: '#c7d2fe',
-            textColor: '#eef2ff',
-            iconColor: '#eef2ff',
-        },
-    },
-    slotStyles: buttonStyleDefinition.slotStyles,
-    transition: buttonStyleDefinition.transition,
-});
 
 const typePalette = {
     light: { text: '#222222', muted: '#6B6B70' },
@@ -147,7 +83,7 @@ const customTextDefinition = defineTextStyles({
     },
     transition: {
         transitionProperty: ['color', 'fontSize', 'lineHeight'],
-        transitionDuration: 150,
+        transitionDuration: 499,
     },
 });
 
@@ -174,25 +110,22 @@ const {
     theme: 'light',
     // iOS-bundled faces, so the example needs no font assets. Apps load their
     // own fonts (e.g. expo-font) and pass the registered names here.
-    fonts: {
-        // One face per weight: weights resolve to the nearest face.
-        body: {
-            400: 'AvenirNext-Regular',
-            500: 'AvenirNext-Medium',
-            600: 'AvenirNext-DemiBold',
-            700: 'AvenirNext-Bold',
-        },
-        // A natively registered family: fontWeight passes through.
-        heading: 'Georgia',
-        // A custom role, used by the Text `code` variant.
-        code: 'Menlo',
-    },
+    // fonts: {
+    //     // One face per weight: weights resolve to the nearest face.
+    //     body: {
+    //         400: 'AvenirNext-Regular',
+    //         500: 'AvenirNext-Medium',
+    //         600: 'AvenirNext-DemiBold',
+    //         700: 'AvenirNext-Bold',
+    //     },
+    //     // A natively registered family: fontWeight passes through.
+    //     heading: 'Georgia',
+    //     // A custom role, used by the Text `code` variant.
+    //     code: 'Menlo',
+    // },
     components: {
         BottomSheet: bottomSheetFactory(),
-        Button: buttonFactory({
-            definition: customButtonDefinition,
-            defaults: { variant: 'tertiary', size: 'l' },
-        }),
+        Button: buttonFactory(),
         Chip: chipFactory(),
         Chips: chipsFactory(),
         Icon: iconFactory(),
@@ -221,17 +154,20 @@ const weights = ['regular', 'medium', 'semibold', 'bold'] as const;
 
 export default function App() {
     return (
-        <GestureHandlerRootView style={styles.root}>
-            <KeyboardProvider>
-                <StylesProvider>
-                    <Showcase />
-                </StylesProvider>
-            </KeyboardProvider>
-        </GestureHandlerRootView>
+        <SafeAreaProvider>
+            <GestureHandlerRootView style={styles.root}>
+                <KeyboardProvider>
+                    <StylesProvider>
+                        <Showcase />
+                    </StylesProvider>
+                </KeyboardProvider>
+            </GestureHandlerRootView>
+        </SafeAreaProvider>
     );
 }
 
 function Showcase() {
+    const { top } = useSafeAreaInsets();
     const { theme, setTheme } = useTheme();
     const dark = theme === 'dark';
 
@@ -251,7 +187,7 @@ function Showcase() {
         >
             <ScrollView
                 style={styles.screen}
-                contentContainerStyle={styles.container}
+                contentContainerStyle={[styles.container, { paddingTop: top }]}
             >
                 <View style={styles.row}>
                     <Text>Dark theme</Text>
@@ -340,7 +276,6 @@ function Showcase() {
                 </HStack>
 
                 <Box padding={{ x: 24, top: 8, bottom: 16 }} style={styles.box}>
-                    {/* Fixed light fill: pin the text to the light palette. */}
                     <Text theme="light">Box with x + top/bottom padding</Text>
                 </Box>
 
@@ -368,13 +303,18 @@ function Showcase() {
                     ))}
                 </ZStack>
 
-                <VStack spacing={12}>
+                <VStack spacing={16}>
                     <Button
-                        text="Open bottom sheet"
+                        icon={require('../assets/cup.png')}
+                        variant="solid"
+                        shape="hug"
+                        size="l"
+                        // text="Open bottom sheet"
                         onPress={() => setSheetOpen(true)}
                     />
 
                     <Button
+                        size="l"
                         text="Open modal"
                         onPress={() => setModalOpen(true)}
                     />
@@ -421,6 +361,7 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         justifyContent: 'center',
         padding: 24,
+        paddingBottom: 100,
         gap: 24,
     },
     row: {

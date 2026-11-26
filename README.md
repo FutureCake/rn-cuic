@@ -80,9 +80,27 @@ export function App() {
 }
 ```
 
-The default `Button` accepts `variant` (`'primary' | 'secondary'`), `size`
-(`'small' | 'large' | 'xlarge'`), `disabled`, an optional per-instance `theme`,
-and the native `Pressable` props. Pressed/disabled styling and animated style
+The default `Button` accepts three independent style props, plus `disabled`,
+an optional per-instance `theme`, and the native `Pressable` props:
+
+- `variant`: `'solid'` (filled, the default), `'outline'` (same footprint,
+  bordered instead of filled), `'ghost'` (same footprint, no fill) or `'text'`
+  (a bare label with no padding or background).
+- `shape`: `'block'` (full width, the default), `'hug'` (content width with the
+  regular radius) or `'pill'` (content width with fully rounded corners). `text`
+  buttons ignore it.
+- `size`: `'s' | 'm' | 'l' | 'xl'` (default `'m'`).
+
+| Use | Props |
+| --- | --- |
+| Main call to action | `variant="solid" shape="block" size="l"` |
+| Secondary option under it | `variant="ghost" shape="block" size="s"` |
+| Secondary action next to a main one | `variant="outline" shape="block" size="l"` |
+| Action inside a card or row | `variant="solid" shape="pill" size="s"` |
+| Quieter action inside a card or row | `variant="ghost" shape="pill" size="s"` |
+| Inline text link | `variant="text"` with any `size` |
+
+ Pressed/disabled styling and animated style
 transitions are built in. Components and hooks throw when used outside their
 matching `StylesProvider`.
 
@@ -154,7 +172,7 @@ function ThemeSwitch() {
     const { theme, setTheme } = useTheme();
     return (
         <Button
-            variant="secondary"
+            variant="ghost"
             text={`Switch to ${theme === 'light' ? 'dark' : 'light'}`}
             onPress={() => setTheme(theme === 'light' ? 'dark' : 'light')}
         />

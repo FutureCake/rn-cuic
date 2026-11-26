@@ -59,5 +59,5 @@ export const chipsStyleDefinition = defineChipsStyles({
             marginTop: tokens.sectionGap,
         }),
     },
-    transition: { transitionProperty: 'all', transitionDuration: 150 },
+    transition: { transitionProperty: 'all', transitionDuration: 499 },
 });

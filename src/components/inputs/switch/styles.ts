@@ -94,6 +94,6 @@ export const switchStyleDefinition = defineSwitchStyles({
     },
     transition: {
         transitionProperty: 'backgroundColor',
-        transitionDuration: 150,
+        transitionDuration: 499,
     },
 });

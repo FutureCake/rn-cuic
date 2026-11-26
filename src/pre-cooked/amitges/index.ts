@@ -1,21 +1,24 @@
-import { createUI } from '../core';
-import { buttonFactory } from '../components/inputs/button';
-import { chipFactory } from '../components/inputs/chip';
-import { chipsFactory } from '../components/inputs/chips';
-import { switchFactory } from '../components/inputs/switch';
-import { textAreaFactory } from '../components/inputs/text-inputs/text-area';
-import { textFieldFactory } from '../components/inputs/text-inputs/text-field';
-import { toggleFactory } from '../components/inputs/toggle';
-import { bottomSheetFactory } from '../components/overlays/bottom-sheet';
-import { modalFactory } from '../components/overlays/modal';
-import { iconFactory } from '../components/visuals/icon';
-import { surfaceFactory } from '../components/visuals/surface';
-import { textFactory } from '../components/visuals/text';
+import { buttonFactory } from '../../components/inputs/button';
+import { chipFactory } from '../../components/inputs/chip';
+import { chipsFactory } from '../../components/inputs/chips';
+import { switchFactory } from '../../components/inputs/switch';
+import { textAreaFactory } from '../../components/inputs/text-inputs/text-area';
+import { textFieldFactory } from '../../components/inputs/text-inputs/text-field';
+import { toggleFactory } from '../../components/inputs/toggle';
+import { bottomSheetFactory } from '../../components/overlays/bottom-sheet';
+import { modalFactory } from '../../components/overlays/modal';
+import { iconFactory } from '../../components/visuals/icon';
+import { surfaceFactory } from '../../components/visuals/surface';
+import { textFactory } from '../../components/visuals/text';
+import { createUI } from '../../core';
 
 // Layout primitives need no createUI registration; re-exported so this entry
 // covers every component.
-export * from '../components/layouts/box';
-export * from '../components/layouts/stacks';
+export * from '../../components/layouts/box';
+export * from '../../components/layouts/stacks';
+
+// Style constants: colors, spacings, and radii.
+export * from './style-consts';
 
 /**
  * Ready-made family: every component with its preset definition, the system

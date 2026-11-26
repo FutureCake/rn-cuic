@@ -10,27 +10,35 @@ type InfluenceValueMap<
     Values extends string,
     OwnKey extends keyof ButtonInfluences,
     Variant extends string,
+    Shape extends string,
     Size extends string,
     Theme extends string,
 > = {
     [Value in Values]: TokenValue<
         ButtonTokens,
-        Omit<ButtonInfluences<Variant, Size, Theme>, OwnKey>
+        Omit<ButtonInfluences<Variant, Shape, Size, Theme>, OwnKey>
     >;
 };
 
 /**
  * The single authoring path for Button style definitions. Supported variant,
- * size and theme names are inferred from the resolver maps; use an empty
- * entry (`outline: {}`) for a name that needs no token overrides.
+ * shape, size and theme names are inferred from the resolver maps; use an
+ * empty entry (`outline: {}`) for a name that needs no token overrides.
+ * Resolvers apply in declaration order, so later influences win.
  */
 export function defineButtonStyles<
     Variant extends string,
+    Shape extends string,
     Size extends string,
     Theme extends string,
 >(
     definition: Omit<
-        ButtonStyleDefinition<NoInfer<Variant>, NoInfer<Size>, NoInfer<Theme>>,
+        ButtonStyleDefinition<
+            NoInfer<Variant>,
+            NoInfer<Shape>,
+            NoInfer<Size>,
+            NoInfer<Theme>
+        >,
         'influenceResolvers'
     > & {
         influenceResolvers: {
@@ -38,6 +46,15 @@ export function defineButtonStyles<
                 Variant,
                 'variant',
                 NoInfer<Variant>,
+                NoInfer<Shape>,
+                NoInfer<Size>,
+                NoInfer<Theme>
+            >;
+            shape: InfluenceValueMap<
+                Shape,
+                'shape',
+                NoInfer<Variant>,
+                NoInfer<Shape>,
                 NoInfer<Size>,
                 NoInfer<Theme>
             >;
@@ -45,6 +62,7 @@ export function defineButtonStyles<
                 Size,
                 'size',
                 NoInfer<Variant>,
+                NoInfer<Shape>,
                 NoInfer<Size>,
                 NoInfer<Theme>
             >;
@@ -52,11 +70,12 @@ export function defineButtonStyles<
                 Theme,
                 'theme',
                 NoInfer<Variant>,
+                NoInfer<Shape>,
                 NoInfer<Size>,
                 NoInfer<Theme>
             >;
         };
     }
-): ButtonStyleDefinition<Variant, Size, Theme> {
+): ButtonStyleDefinition<Variant, Shape, Size, Theme> {
     return definition;
 }

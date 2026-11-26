@@ -99,5 +99,5 @@ export const textFieldStyleDefinition = defineTextFieldStyles({
             paddingRight: tokens.paddingX,
         }),
     },
-    transition: { transitionProperty: 'all', transitionDuration: 150 },
+    transition: { transitionProperty: 'all', transitionDuration: 499 },
 });

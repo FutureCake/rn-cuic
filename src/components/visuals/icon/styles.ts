@@ -31,5 +31,5 @@ export const iconStyleDefinition = defineIconStyles({
             tintColor: tokens.iconColor,
         }),
     },
-    transition: { transitionProperty: 'all', transitionDuration: 150 },
+    transition: { transitionProperty: 'all', transitionDuration: 499 },
 });

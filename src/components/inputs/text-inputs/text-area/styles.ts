@@ -100,5 +100,5 @@ export const textAreaStyleDefinition = defineTextAreaStyles({
             paddingRight: tokens.paddingX,
         }),
     },
-    transition: { transitionProperty: 'all', transitionDuration: 150 },
+    transition: { transitionProperty: 'all', transitionDuration: 499 },
 });

@@ -68,5 +68,5 @@ export const surfaceStyleDefinition = defineSurfaceStyles({
             boxShadow: tokens.shadow,
         }),
     },
-    transition: { transitionProperty: 'all', transitionDuration: 150 },
+    transition: { transitionProperty: 'all', transitionDuration: 499 },
 });

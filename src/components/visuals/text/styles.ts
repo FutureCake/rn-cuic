@@ -58,6 +58,6 @@ export const textStyleDefinition = defineTextStyles({
     },
     transition: {
         transitionProperty: ['color', 'fontSize', 'lineHeight'],
-        transitionDuration: 150,
+        transitionDuration: 499,
     },
 });

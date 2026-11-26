@@ -1,43 +1,10 @@
-import type { ThemeMode } from '../../../shared/types';
+import {
+    colors,
+    fontSizes,
+    radii,
+    spacings,
+} from '../../../pre-cooked/amitges/style-consts';
 import { defineButtonStyles } from './define-styles';
-import type { ButtonVariant } from './types';
-
-const themeColors = {
-    light: {
-        default: { bgColor: '#222', textColor: '#FFF', iconColor: '#FFF' },
-        disabled: {
-            bgColor: '#cbcbcb',
-            textColor: '#e3e3e3',
-            iconColor: '#e3e3e3',
-        },
-        pressed: { bgColor: '#000', textColor: '#FFF', iconColor: '#FFF' },
-    },
-    dark: {
-        default: { bgColor: '#c3c3c3', textColor: '#000', iconColor: '#000' },
-        disabled: {
-            bgColor: '#505050',
-            textColor: '#adadad',
-            iconColor: '#adadad',
-        },
-        pressed: { bgColor: '#FFF', textColor: '#000', iconColor: '#000' },
-    },
-} as const;
-
-function transparentColors(theme: ThemeMode) {
-    const color = theme === 'light' ? '#000' : '#FFF';
-    return { bgColor: 'transparent', textColor: color, iconColor: color };
-}
-
-function stateColors(
-    theme: ThemeMode,
-    variant: ButtonVariant,
-    state: 'pressed' | 'disabled'
-) {
-    const colors = themeColors[theme][state];
-    return variant === 'primary'
-        ? colors
-        : { ...colors, bgColor: 'transparent' };
-}
 
 /**
  * Default preset: a complete, usable button out of the box.
@@ -55,48 +22,132 @@ export const buttonStyleDefinition = defineButtonStyles({
         iconGap: 8,
         iconSize: 20,
         radius: 8,
-        ...themeColors.light.default,
+        textColor: colors.gray_1000,
+        bgColor: colors.gray_900,
+        // Every variant reserves the border so solid, outline and ghost share a footprint.
+        borderColor: 'transparent',
+        borderWidth: 1,
+        scale: 1,
     },
     influenceResolvers: {
         theme: {
-            light: themeColors.light.default,
-            dark: themeColors.dark.default,
-        },
-        variant: {
-            primary: {},
-            secondary: ({ theme }) => transparentColors(theme),
+            light: {
+                bgColor: colors.gray_000,
+                textColor: colors.gray_1000,
+            },
+            dark: {
+                bgColor: colors.gray_1000,
+                textColor: colors.gray_000,
+            },
         },
         size: {
             s: {
-                paddingX: 16,
-                paddingY: 8,
-                fontSize: 15,
-                iconSize: 18,
-                iconGap: 6,
-                radius: 8,
+                paddingX: spacings.s16,
+                paddingY: spacings.s8,
+                fontSize: fontSizes.s,
+                fontWeight: 500,
+                iconSize: fontSizes.s,
+                iconGap: spacings.s4,
+                radius: radii.m,
+            },
+            m: {
+                paddingX: spacings.s24,
+                paddingY: spacings.s12,
+                fontSize: fontSizes.m,
+                fontWeight: 500,
+                iconSize: fontSizes.m,
+                iconGap: spacings.s4,
+                radius: radii.m,
             },
             l: {
-                paddingX: 24,
-                paddingY: 14,
-                fontSize: 20,
-                iconSize: 24,
-                iconGap: 8,
-                radius: 10,
+                paddingX: spacings.s28,
+                paddingY: spacings.s16,
+                fontSize: fontSizes.l,
+                fontWeight: 500,
+                iconSize: fontSizes.l,
+                iconGap: spacings.s8,
+                radius: radii.m,
             },
-            xl: {
-                paddingX: 32,
-                paddingY: 18,
-                fontSize: 24,
-                iconSize: 28,
-                iconGap: 10,
-                radius: 12,
+            xl: ({ shape }) => ({
+                paddingX: shape === 'hug' ? spacings.s8 : spacings.s40,
+                paddingY: shape === 'hug' ? spacings.s8 : spacings.s20,
+                borderWidth: 2,
+                fontSize: fontSizes.xxl,
+                fontWeight: 600,
+                iconSize: fontSizes.xxl,
+                iconGap: spacings.s12,
+                radius: radii.m,
+            }),
+        },
+        shape: {
+            block: { alignSelf: 'stretch' },
+            hug: { alignSelf: 'flex-start' },
+            pill: {
+                alignSelf: 'flex-start',
+                radius: 9999,
             },
+        },
+        variant: {
+            solid: {},
+            outline: ({ theme }) => ({
+                bgColor: 'transparent',
+                borderColor:
+                    theme === 'light' ? colors.gray_000 : colors.gray_1000,
+                textColor:
+                    theme === 'light' ? colors.gray_000 : colors.gray_1000,
+            }),
+            ghost: ({ theme }) => ({
+                bgColor: 'transparent',
+                textColor:
+                    theme === 'light' ? colors.gray_000 : colors.gray_1000,
+            }),
+            text: ({ theme }) => ({
+                paddingX: 0,
+                paddingY: 0,
+                radius: 0,
+                borderWidth: 0,
+                alignSelf: 'flex-start',
+                justifyContent: 'flex-start',
+                bgColor: 'transparent',
+                textColor:
+                    theme === 'light' ? colors.gray_000 : colors.gray_1000,
+            }),
         },
     },
     stateResolvers: {
-        pressed: ({ theme, variant }) => stateColors(theme, variant, 'pressed'),
-        disabled: ({ theme, variant }) =>
-            stateColors(theme, variant, 'disabled'),
+        pressed: {
+            scale: 1.02,
+        },
+        disabled: ({ theme, variant }) => {
+            const solidVariant =
+                variant === 'solid'
+                    ? {
+                          bgColor:
+                              theme === 'light'
+                                  ? colors.gray_800
+                                  : colors.gray_300,
+                          textColor:
+                              theme === 'light'
+                                  ? colors.gray_1000
+                                  : colors.gray_500,
+                      }
+                    : {};
+
+            const disabledTextColor =
+                theme === 'light' ? colors.gray_700 : colors.gray_400;
+            const outlineVariant =
+                variant === 'outline'
+                    ? {
+                          borderColor: disabledTextColor,
+                      }
+                    : {};
+
+            return {
+                textColor: disabledTextColor,
+                ...solidVariant,
+                ...outlineVariant,
+            };
+        },
     },
     slotStyles: {
         container: (tokens) => ({
@@ -104,11 +155,14 @@ export const buttonStyleDefinition = defineButtonStyles({
             paddingVertical: tokens.paddingY,
             borderRadius: tokens.radius,
             backgroundColor: tokens.bgColor,
+            borderColor: tokens.borderColor,
+            borderWidth: tokens.borderWidth,
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: tokens.justifyContent,
             alignSelf: tokens.alignSelf,
             gap: tokens.iconGap,
+            transform: [{ scale: tokens.scale }],
         }),
         text: (tokens, { font }) => ({
             ...font(tokens.font, tokens.fontWeight),
@@ -116,11 +170,11 @@ export const buttonStyleDefinition = defineButtonStyles({
             color: tokens.textColor,
         }),
         icon: (tokens) => ({
-            tintColor: tokens.iconColor,
+            tintColor: tokens.textColor,
             width: tokens.iconSize,
             height: tokens.iconSize,
             resizeMode: 'contain',
         }),
     },
-    transition: { transitionProperty: 'all', transitionDuration: 150 },
+    transition: { transitionProperty: 'all', transitionDuration: 499 },
 });
