@@ -73,6 +73,10 @@ export function createStylesManager<
                     ...base.stateResolvers,
                     ...override.stateResolvers,
                 },
+                structureResolvers: {
+                    ...base.structureResolvers,
+                    ...override.structureResolvers,
+                },
                 slotStyles: { ...base.slotStyles, ...override.slotStyles },
             };
         }

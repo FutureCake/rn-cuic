@@ -14,9 +14,29 @@ export type SlotTransition = CSSTransitionProperties<
 /** Type-only metadata preserves each definition's contract through a collection. */
 declare const styleDefinitionContract: unique symbol;
 
-/** Static token overrides or a callback with the supplied influence context. */
-export type TokenValue<Tokens extends object, Influences extends object> =
-    Partial<Tokens> | ((influences: Influences) => Partial<Tokens>);
+/**
+ * Every structure flag a component declares, true when that part is present
+ * (for example `{ hasIcon: true, hasText: false }`). Empty for components
+ * without structure flags.
+ */
+export type StructureFlags<Structures extends string> = Readonly<
+    Record<Structures, boolean>
+>;
+
+/**
+ * Static token overrides or a callback with the supplied influence context.
+ * Callbacks also receive the component's structure flags as a second argument.
+ */
+export type TokenValue<
+    Tokens extends object,
+    Influences extends object,
+    Structures extends string = never,
+> =
+    | Partial<Tokens>
+    | ((
+          influences: Influences,
+          structure: StructureFlags<Structures>
+      ) => Partial<Tokens>);
 
 /**
  * Influence values must be object keys. An optional influence (`weight?: W`)
@@ -30,11 +50,13 @@ export type InfluenceShape<Influences> = {
 export type TokenResolvers<
     Influences extends InfluenceShape<Influences>,
     Tokens extends object,
+    Structures extends string = never,
 > = {
     [Key in keyof Influences]?: {
         [Value in Extract<Influences[Key], PropertyKey>]?: TokenValue<
             Tokens,
-            Omit<Influences, Key>
+            Omit<Influences, Key>,
+            Structures
         >;
     };
 };
@@ -44,8 +66,18 @@ export type StateTokenResolvers<
     Influences extends InfluenceShape<Influences>,
     Tokens extends object,
     States extends string,
+    Structures extends string = never,
 > = {
-    [State in States]?: TokenValue<Tokens, Influences>;
+    [State in States]?: TokenValue<Tokens, Influences, Structures>;
+};
+
+/** Overrides applied when the corresponding structure flag is true. */
+export type StructureTokenResolvers<
+    Influences extends InfluenceShape<Influences>,
+    Tokens extends object,
+    Structures extends string,
+> = {
+    [Structure in Structures]?: TokenValue<Tokens, Influences, Structures>;
 };
 
 /**
@@ -70,8 +102,12 @@ export type SlotStyleResolvers<
  * optional influences may be omitted, which skips their resolver.
  * Each influence resolver maps its supported values to token overrides.
  * Influence callbacks receive the other influences; their own value is the key.
- * State callbacks receive the entire influences object.
- * Influences and states apply in declaration order; later entries win.
+ * State and structure callbacks receive the entire influences object.
+ * Every callback also receives the structure flags as its second argument.
+ * Order: default tokens, influences, active structures, active states; each
+ * section applies in declaration order and later entries win.
+ * Structures are boolean content flags (for example `hasIcon`, `hasText`)
+ * the component derives from what it renders; they are optional per component.
  * SlotStyles maps slot names to their native style types, for example
  * `{ container: ViewStyle; text: TextStyle }`.
  * Default tokens provide a complete starting point before partial overrides.
@@ -83,16 +119,23 @@ export type StyleDefinition<
     SlotStyles extends {
         [Slot in keyof SlotStyles]: TextStyle | ViewStyle;
     },
+    Structures extends string = never,
 > = {
     readonly [styleDefinitionContract]?: {
         influences: Influences;
         tokens: Tokens;
         states: States;
         slots: SlotStyles;
+        structures: Structures;
     };
     defaultTokens: Tokens;
-    influenceResolvers: TokenResolvers<Influences, Tokens>;
-    stateResolvers: StateTokenResolvers<Influences, Tokens, States>;
+    influenceResolvers: TokenResolvers<Influences, Tokens, Structures>;
+    stateResolvers: StateTokenResolvers<Influences, Tokens, States, Structures>;
+    structureResolvers?: StructureTokenResolvers<
+        Influences,
+        Tokens,
+        Structures
+    >;
     slotStyles: SlotStyleResolvers<Tokens, SlotStyles>;
     /** Reanimated CSS transition settings to spread into each slot's style. */
     transition?: SlotTransition;
@@ -115,6 +158,7 @@ export type StyleDefinitionOverride<Definition> =
         tokens: infer Tokens extends object;
         states: infer States extends string;
         slots: infer Slots;
+        structures: infer Structures extends string;
     }
         ? {
               defaultTokens?: Partial<Tokens>;
@@ -122,11 +166,22 @@ export type StyleDefinitionOverride<Definition> =
                   [Key in keyof Influences]?: {
                       [
                           Value in Extract<Influences[Key], PropertyKey>
-                      ]?: TokenValue<Tokens, Omit<Influences, Key>>;
+                      ]?: TokenValue<Tokens, Omit<Influences, Key>, Structures>;
                   };
               };
               stateResolvers?: {
-                  [State in States]?: TokenValue<Tokens, Influences>;
+                  [State in States]?: TokenValue<
+                      Tokens,
+                      Influences,
+                      Structures
+                  >;
+              };
+              structureResolvers?: {
+                  [Structure in Structures]?: TokenValue<
+                      Tokens,
+                      Influences,
+                      Structures
+                  >;
               };
               slotStyles?: {
                   [Slot in keyof Slots]?: (
@@ -143,13 +198,19 @@ export type ResolveComponentOptions<Definition> =
         influences: infer Influences;
         states: infer States extends string;
         slots: infer Slots extends object;
+        structures: infer Structures extends string;
     }
         ? {
               influences: Influences;
               states?: Partial<Record<States, boolean>>;
               /** Applied last per slot, preserving style arrays. */
               overrides?: StyleOverrides<Slots>;
-          }
+          } & ([Structures] extends [never]
+              ? { structure?: never }
+              : {
+                    /** Every declared flag, so callbacks always see a boolean. */
+                    structure: StructureFlags<Structures>;
+                })
         : never;
 
 /** Native slot styles and optional overrides, composed as style arrays. */
@@ -174,6 +235,7 @@ export interface StyleDefinitionShape {
     defaultTokens: object;
     influenceResolvers: object;
     stateResolvers: object;
+    structureResolvers?: object;
     slotStyles: Record<
         string,
         (tokens: never, kit: never) => TextStyle | ViewStyle

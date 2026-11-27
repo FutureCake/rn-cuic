@@ -7,7 +7,9 @@ import type {
 
 type Tokens = Record<string, unknown>;
 type Influences = Record<string, PropertyKey | undefined>;
-type TokenEntry = Tokens | ((influences: Influences) => Tokens);
+type Flags = Readonly<Record<string, boolean>>;
+type TokenEntry =
+    Tokens | ((influences: Influences, structure: Flags) => Tokens);
 
 interface RuntimeDefinition {
     defaultTokens: Tokens;
@@ -16,6 +18,7 @@ interface RuntimeDefinition {
         Record<PropertyKey, TokenEntry | undefined> | undefined
     >;
     stateResolvers: Record<string, TokenEntry | undefined>;
+    structureResolvers?: Record<string, TokenEntry | undefined>;
     slotStyles: Record<string, (tokens: Tokens, kit: StyleKit) => object>;
     transition?: object;
 }
@@ -23,8 +26,12 @@ interface RuntimeDefinition {
 const hasOwn = (object: object, key: PropertyKey) =>
     Object.prototype.hasOwnProperty.call(object, key);
 
-function evaluate(entry: TokenEntry, influences: Influences): Tokens {
-    return typeof entry === 'function' ? entry(influences) : entry;
+function evaluate(
+    entry: TokenEntry,
+    influences: Influences,
+    structure: Flags
+): Tokens {
+    return typeof entry === 'function' ? entry(influences, structure) : entry;
 }
 
 /**
@@ -41,12 +48,16 @@ export function resolveComponentStyles<Definition extends StyleDefinitionShape>(
     const {
         influences,
         states = {},
+        structure: structureOption = {},
         overrides = {},
     } = options as {
         influences: Influences;
         states?: Record<string, boolean>;
+        structure?: Flags;
         overrides?: Record<string, unknown>;
     };
+    // Copied so callbacks cannot mutate the caller's flags.
+    const structure: Flags = { ...structureOption };
     const tokens = { ...config.defaultTokens };
 
     // Declaration order; each influence applies at most once.
@@ -72,7 +83,17 @@ export function resolveComponentStyles<Definition extends StyleDefinitionShape>(
         // Match the type-level Omit: a resolver cannot inspect its own influence.
         const otherInfluences = { ...influences };
         delete otherInfluences[influence];
-        Object.assign(tokens, evaluate(entry, otherInfluences));
+        Object.assign(tokens, evaluate(entry, otherInfluences, structure));
+    }
+
+    // Declaration order; later active structures win.
+    for (const [flag, entry] of Object.entries(
+        config.structureResolvers ?? {}
+    )) {
+        if (!structure[flag] || entry === undefined) {
+            continue;
+        }
+        Object.assign(tokens, evaluate(entry, influences, structure));
     }
 
     // Declaration order; later active states win.
@@ -80,7 +101,7 @@ export function resolveComponentStyles<Definition extends StyleDefinitionShape>(
         if (!states[state] || entry === undefined) {
             continue;
         }
-        Object.assign(tokens, evaluate(entry, influences));
+        Object.assign(tokens, evaluate(entry, influences, structure));
     }
 
     const slots: Record<string, object> = {};

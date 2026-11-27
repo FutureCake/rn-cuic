@@ -68,16 +68,16 @@ export const buttonStyleDefinition = defineButtonStyles({
                 iconGap: spacings.s8,
                 radius: radii.m,
             },
-            xl: ({ shape }) => ({
-                paddingX: shape === 'hug' ? spacings.s8 : spacings.s40,
-                paddingY: shape === 'hug' ? spacings.s8 : spacings.s20,
+            xl: {
+                paddingX: spacings.s40,
+                paddingY: spacings.s20,
                 borderWidth: 2,
                 fontSize: fontSizes.xxl,
                 fontWeight: 600,
                 iconSize: fontSizes.xxl,
                 iconGap: spacings.s12,
                 radius: radii.m,
-            }),
+            },
         },
         shape: {
             block: { alignSelf: 'stretch' },
@@ -112,6 +112,23 @@ export const buttonStyleDefinition = defineButtonStyles({
                 textColor:
                     theme === 'light' ? colors.gray_000 : colors.gray_1000,
             }),
+        },
+    },
+    structureResolvers: {
+        hasIcon: ({ size }, { hasText }) => {
+            if (hasText) return {};
+
+            switch (size) {
+                case 'xl':
+                    return { paddingX: spacings.s8, paddingY: spacings.s8 };
+                case 'l':
+                    return { paddingX: spacings.s4, paddingY: spacings.s4 };
+                case 'm':
+                    return { paddingX: spacings.s2, paddingY: spacings.s2 };
+                case 's':
+                default:
+                    return { paddingX: 0, paddingY: 0 };
+            }
         },
     },
     stateResolvers: {
