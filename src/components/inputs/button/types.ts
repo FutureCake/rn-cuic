@@ -34,6 +34,13 @@ export type ButtonVariant = 'solid' | 'outline' | 'ghost' | 'text';
 export type ButtonShape = 'block' | 'hug' | 'pill';
 export type ButtonSize = Extract<SizeScale, 's' | 'm' | 'l' | 'xl'>;
 export type ButtonStates = 'pressed' | 'disabled';
+/**
+ * Content flags derived from what the button renders: `hasIcon` for an
+ * `icon` prop or `Button.Icon` child, `hasText` for a `text` prop or
+ * `Button.Text` child. Combine them in callbacks, for example icon-only is
+ * `hasIcon` with `{ hasText: false }`.
+ */
+export type ButtonStructure = 'hasIcon' | 'hasText';
 
 export type ButtonSlotStyles = {
     container: ViewStyle;
@@ -76,7 +83,8 @@ export type ButtonStyleDefinition<
     ButtonInfluences<Variant, Shape, Size, Theme>,
     ButtonTokens,
     ButtonStates,
-    ButtonSlotStyles
+    ButtonSlotStyles,
+    ButtonStructure
 >;
 
 /** Supplied by createUI: configured defaults plus instance-bound hooks. */

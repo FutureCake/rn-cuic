@@ -308,8 +308,8 @@ function Showcase() {
                         icon={require('../assets/cup.png')}
                         variant="solid"
                         shape="hug"
-                        size="l"
-                        // text="Open bottom sheet"
+                        size="xl"
+                        // text="Open"
                         onPress={() => setSheetOpen(true)}
                     />
 

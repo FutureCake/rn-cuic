@@ -39,9 +39,15 @@ export function createButton<
         const { theme: ambientTheme } = useTheme();
         const theme = themeProp ?? ambientTheme;
         const press = usePressedState({ disabled, onPressIn, onPressOut });
+        const hasExplicitIcon = hasSlot(children, ButtonIcon);
+        const hasExplicitText = hasSlot(children, ButtonText);
         const { styles, tokens } = useStyles({
             influences: { variant, shape, size, theme },
             states: { disabled, pressed: press.pressed },
+            structure: {
+                hasIcon: icon !== undefined || hasExplicitIcon,
+                hasText: text !== undefined || hasExplicitText,
+            },
             overrides: styleOverrides,
         });
 
@@ -58,11 +64,11 @@ export function createButton<
                     onPressOut={press.onPressOut}
                     style={styles.container}
                 >
-                    {icon !== undefined && !hasSlot(children, ButtonIcon) && (
+                    {icon !== undefined && !hasExplicitIcon && (
                         <ButtonIcon source={icon} />
                     )}
                     {children}
-                    {text !== undefined && !hasSlot(children, ButtonText) && (
+                    {text !== undefined && !hasExplicitText && (
                         <ButtonText>{text}</ButtonText>
                     )}
                 </AnimatedPressable>
